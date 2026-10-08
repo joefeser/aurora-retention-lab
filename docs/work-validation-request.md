@@ -1,16 +1,20 @@
-# Sanitized request for work-side validation
+# Work-side validation coverage
 
-Please assess whether parent-aligned time partitioning is compatible with the messaging application's actual schema and queries. Return sanitized structure and aggregate profiles only; do not include credentials, account identifiers, customer data, real message bodies, or production connection strings.
+The sanitized brief and both work-agent responses were already supplied. Do not request the entire schema/workload package again. They supplied the ID-only keys, queue ORM/database mismatch, push and template cascades, soft history, mutable queue scheduling, payload characteristics, and backlog/retention context used in this POC.
 
-The lab established a constraint worth testing explicitly: under SHARE locks on expired leaf partitions, live UPDATE and cascading DELETE by ID only blocked, while tested SQL with an ID and constant partition timestamp was admitted. Live parent-routed inserts and reads continued. These were synthetic Aurora PostgreSQL 17.9 tests using literal SQL, not EF/prepared plans.
+[Phase 8](phase-8.md) implements a runnable EF sample of that relationship contract. Its source is intentionally a minimal synthetic reconstruction, not a claim to contain every work table, column, index, or query. The following checklist distinguishes inputs from tests and decisions.
 
-Please provide:
+| Topic | Already supplied / implemented | Remaining specific validation or decision |
+| --- | --- | --- |
+| Keys and relationships | ID-only baseline, composite alternative, queue uniqueness mismatch, push/template cascades, soft history | Reconcile supplied per-table DDL, indexes, incoming FKs, triggers, and extra referencing tables against the sample; record only unrepresented deltas. Full migration impact and global bare-ID identity remain decisions |
+| Scheduling | Queue time is mutable; parent's time unmutated in reviewed code; sample adds immutable parent trigger | Business retention anchor, future-date range, independent child/history retention |
+| ORM | Supplied key/navigation patterns reconstructed in EF; actual generated SQL captured | Work's exact SDK/EF/Npgsql versions and any unmodeled interceptors or raw writers |
+| Plans and pooling | Local 16/17 cold and warmed pooled connections; custom/generic/automatic plan counters | Aurora wire protocol, proxy settings, representative partition count/data skew and resulting automatic plan choices |
+| Queries | Sample insert/read, tracked update, bulk update/delete, rescheduling, parent/template cascades | Map the supplied actual writer, bulk-job, and template-cascade SQL shapes to tests; identify each uncovered query and request only missing sanitized query/parameter deltas |
+| Workload | Supplied backlog and payload estimates informed bounded fixtures | Measured fanout/size distributions, contention, WAL/vacuum/replication impact and throughput under stated conditions |
+| Migration | Source-locked tiny copy/backfill, exact old-column comparison, identity advancement | Deployment-specific cutover window, grants/index inventory, online catch-up if needed, rollback after new writes |
+| Archive | AWS synthetic export/restore receipts; local EF archive-retirement integration | Template archive fidelity, history policy, durable retry/commit reconciliation, restore SLA and long-term retention controls |
 
-1. Exact database engine/version, ORM/provider versions, and whether writes use prepared/generic plans or connection pooling/proxy.
-2. Sanitized parent, queue, push, and history DDL, indexes, incoming FKs, triggers, uniqueness rules, and any additional referencing tables. Identify soft relationships separately.
-3. Actual query shapes for insert, update, delete, rescheduling, bulk jobs, and template-related cascades. Synthetic parameter values are sufficient. Can the parent's immutable retention timestamp accompany each write and FK?
-4. Whether parent retention timestamps can change, which database/application rules enforce immutability, and whether children or history have independent retention requirements.
-5. Aggregate parent/child row counts, age distribution, payload size percentiles, fanout percentiles/skew, index sizes, and observed delete throughput with its measurement conditions.
-6. Typical and peak write concurrency, long-transaction duration, allowable writer blocking/cutover downtime, archive restore needs, and rollback expectations.
+If asking work for follow-up, cite the specific untested behavior and request only that delta, with sanitized structure or aggregate measurements. Keep credentials, account details, customer data, real message bodies, and connection strings out of replies and the repository. No production DDL execution is requested by this checklist.
 
-Please return a compatibility matrix with each query/relationship marked: compatible as-is, requires change, or unknown. Include evidence and an estimated application/migration effort range with assumptions. Treat a composite primary key as a change to the application identity contract; it does not enforce uniqueness of bare ID by itself. Do not propose production DDL execution as part of this review.
+Production compatibility cannot be assessed until that per-table and per-query reconciliation is complete. Start with the supplied material; a fact omitted by this minimal sample is not automatically missing from the work-side evidence.

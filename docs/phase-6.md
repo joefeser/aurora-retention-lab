@@ -58,7 +58,7 @@ Evidence files and each phase's method distinguish these claims. They do not est
 
 ## Recommended next work with the work team
 
-Use [the sanitized validation request](work-validation-request.md) to obtain schema/query facts and dataset profiles. Then run an application compatibility and representative migration rehearsal. Do not spend further lab capacity producing increasingly large arbitrary synthetic tables in place of those inputs.
+The sanitized work-side responses already supplied the relationship model and workload estimates. [Phase 8](phase-8.md) now exercises those inputs through a local EF sample and a bounded copy/backfill rehearsal. Use [the validation coverage checklist](work-validation-request.md) to distinguish supplied facts from untested behavior and specific unresolved inputs. Larger arbitrary synthetic tables do not substitute for representative query and workload coverage.
 
 A production archive controller would need a durable attempt/manifest state model, independent verification, fenced ownership, retry and commit reconciliation, and explicit restore/cutover/rollback procedures. Those are implementation projects beyond these disposable runners. A retained old table is not a lossless rollback once writes resume elsewhere.
 
@@ -66,6 +66,6 @@ A production archive controller would need a durable attempt/manifest state mode
 
 Review and merge the recovery PR first, then the stress/decision PR based on its branch. After the first merge, verify the second PR's base and diff against main, especially after a squash merge; do not blindly merge a diff that includes the predecessor again. No PR is automatically merged by this work.
 
-The teardown reminder is October 9, 2026 at **11 AM Central**. It is a reminder, not automatic deletion. Use `python3 scripts/aws-lab.py delete`, then verify `DELETE_COMPLETE` and remaining inventory. The original USD 50 budget remains in force; a 1 ACU ceiling does not cap total spend, and billing telemetry can lag. This phase adds no infrastructure. All synthetic tables, restores, and S3 objects remain until teardown.
+The owner-confirmed teardown schedule is maintained in the [lab lifecycle](lab-lifecycle.md). It is a reminder, not automatic deletion. Use `python3 scripts/aws-lab.py delete`, then verify `DELETE_COMPLETE` and remaining inventory. The original USD 50 budget remains in force; a 1 ACU ceiling does not cap total spend, and billing telemetry can lag. This phase adds no infrastructure. All synthetic tables, restores, and S3 objects remain until teardown.
 
 Retirement receipts now distinguish `commit_state: not_attempted`, `unknown` (commit intent persisted, outcome not yet confirmed), and `committed`. A confirmed commit is persisted with `stage: committed_unverified` before fresh checks. A failed fresh check leaves that state and `passed: false`; retirement is already durable and cannot be rolled back. Only successful checks transition to `complete`. Historical receipts predate these added fields and are not retroactively relabeled.

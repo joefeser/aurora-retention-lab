@@ -38,3 +38,5 @@ Phase 5: [query shapes and bounded recovery](docs/phase-5.md), covering abandone
 Phase 6: [larger synthetic case and decision report](docs/phase-6.md), including remaining production gates and a [sanitized work-side validation request](docs/work-validation-request.md).
 
 Phase 7: [prepared-plan admission](docs/phase-7.md), showing why partition-qualified prepared queries still need plan-cache compatibility tests.
+
+Phase 8: [EF application sample and compatibility results](docs/phase-8.md), built from the supplied sanitized relationship model, with local PostgreSQL 16/17 migration, plan reuse, cascade, and archive-retirement probes.

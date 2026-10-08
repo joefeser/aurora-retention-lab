@@ -33,4 +33,4 @@ Work-side validation must include plan-cache behavior, not just whether the SQL 
 
 Each probe uses a new session, PREPARE, and its first attempted execution under the fence. The separate unfenced controls use separate sessions. Reused/warmed plans, automatic custom-to-generic selection, pooling, EF, long transactions, multiple writers, and Aurora prepared-statement behavior remain unproven. The Data API literal-query results from phase 5 are a separate evidence layer. This is a two-row relationship fixture, not a performance test.
 
-Review this follow-on after the recovery and stress/decision PRs. The October 9, 11 AM Central teardown reminder remains unchanged.
+Review this follow-on after the recovery and stress/decision PRs. See the [lab lifecycle](lab-lifecycle.md) for the owner-confirmed teardown schedule; it supersedes the earlier deadline.
