@@ -16,6 +16,17 @@ class RetirementGateTests(unittest.TestCase):
     def test_complete_verified_set(self):
         retirement.require_verified(self.fixture())
 
+    def test_larger_fixture_requires_its_actual_counts(self):
+        exports = {t: {'verified': True, 'encryption': 'aws:kms',
+                       'rows': 4096*(8 if t == 'push' else 1)}
+                   for t in retirement.TABLES}
+        retirement.require_verified(exports, 4096, 8)
+        with self.assertRaises(RuntimeError):
+            retirement.require_verified(self.fixture(), 4096, 8)
+        exports['push']['rows'] = 4096*2
+        with self.assertRaises(RuntimeError):
+            retirement.require_verified(exports, 4096, 8)
+
     def test_each_missing_relation_blocks_retirement(self):
         for table in retirement.TABLES:
             with self.subTest(table=table):

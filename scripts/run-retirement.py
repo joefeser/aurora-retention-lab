@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Two small, quiescent Aurora retirement trials; only the recorded lab is used."""
+import argparse
 import importlib.util
 import json
 from pathlib import Path
@@ -17,16 +18,36 @@ ROWS = 1024
 LIVE = 32
 
 
-def require_verified(exports):
+def require_verified(exports, rows=ROWS, push_per_parent=2):
     if set(exports) != set(TABLES) or any(
         exports[t].get('verified') is not True or exports[t].get('encryption') != 'aws:kms'
-        or exports[t].get('rows') != ROWS * (2 if t == 'push' else 1)
+        or exports[t].get('rows') != rows * (push_per_parent if t == 'push' else 1)
         for t in TABLES
     ):
         raise RuntimeError('Retirement requires every related archive to be verified')
 
 
+def commit_and_verify(arm, commit, verify, persist):
+    # Persist before dispatch: lost acknowledgements must never look uncommitted.
+    arm['commit_state'] = 'unknown'
+    arm['stage'] = 'commit_pending'
+    persist()
+    commit()
+    arm['commit_state'] = 'committed'
+    arm['stage'] = 'committed_unverified'
+    persist()
+    verify()
+    arm['stage'] = 'complete'
+    arm['passed'] = True
+    persist()
+
+
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--rows', type=int, choices=(1024,4096), default=1024)
+    parser.add_argument('--push-per-parent', type=int, choices=(2,8), default=2)
+    args = parser.parse_args()
+    rows, fanout = args.rows, args.push_per_parent
     state = lab.checked_state()
     if state['status'] not in ('CREATE_COMPLETE', 'UPDATE_COMPLETE'):
         raise RuntimeError('Lab is not stable')
@@ -38,7 +59,7 @@ def main():
     run = uuid.uuid4().hex
     dest = ROOT/'.lab'/run
     dest.mkdir()
-    record = {'passed': False, 'capacity': capacity, 'expired_parents_per_arm': ROWS,
+    record = {'passed': False, 'capacity': capacity, 'expired_parents_per_arm': rows, 'push_per_parent': fanout,
               'live_parents_per_arm': LIVE, 'trials': [],
               'scope': 'Quiescent synthetic comparison; two trials with reversed order; no concurrent writers'}
     base = ['--resource-arn', out['ClusterArn'], '--secret-arn', out['SecretArn'], '--database', 'retentionlab']
@@ -74,7 +95,7 @@ def main():
         for trial, order in enumerate((('delete', 'partition'), ('partition', 'delete')), 1):
             for mode in order:
                 s = f'retire_{run[:10]}_{trial}_{mode}'
-                arm = {'trial': trial, 'mode': mode, 'schema': s, 'exports': {}, 'passed': False}
+                arm = {'trial': trial, 'mode': mode, 'schema': s, 'exports': {}, 'passed': False, 'commit_state': 'not_attempted'}
                 record['trials'].append(arm)
                 partition = mode == 'partition'
                 pk = 'id,scheduled_at' if partition else 'id'
@@ -96,14 +117,14 @@ def main():
                     for t in TABLES:
                         for label, day in (('old', '2026-09-01'), ('live', '2026-10-01')):
                             sql(f"CREATE TABLE {s}.{t}_{label} PARTITION OF {s}.{t} FOR VALUES FROM ('{day}') TO ('{day}'::date+1)")
-                for lo in range(1, ROWS+LIVE+1, 256):
-                    hi = min(lo+255, ROWS+LIVE)
+                for lo in range(1, rows+LIVE+1, 256):
+                    hi = min(lo+255, rows+LIVE)
                     sql(f'''INSERT INTO {s}.event SELECT n,
-                      CASE WHEN n<={ROWS} THEN '2026-09-01 12:00Z' ELSE '2026-10-01 12:00Z' END::timestamptz,
+                      CASE WHEN n<={rows} THEN '2026-09-01 12:00Z' ELSE '2026-10-01 12:00Z' END::timestamptz,
                       string_agg(md5(n::text||':'||b::text),'' ORDER BY b)
                       FROM generate_series({lo},{hi}) n CROSS JOIN generate_series(1,1024) b GROUP BY n''')
                 sql(f'INSERT INTO {s}.queue SELECT id,id,scheduled_at,scheduled_at,left(body,8192) FROM {s}.event')
-                sql(f'INSERT INTO {s}.push SELECT e.id*2+b,e.id,scheduled_at,scheduled_at,md5(e.id::text||b::text) FROM {s}.event e CROSS JOIN generate_series(0,1) b')
+                sql(f'INSERT INTO {s}.push SELECT e.id*{fanout}+b,e.id,scheduled_at,scheduled_at,md5(e.id::text||b::text) FROM {s}.event e CROSS JOIN generate_series(0,{fanout-1}) b')
                 sql(f'INSERT INTO {s}.history SELECT id,id,parent_scheduled_at,md5(id::text) FROM {s}.queue')
                 # One expired queue has a live delivery date: retention follows its parent.
                 sql(f"UPDATE {s}.queue SET scheduled_at='2026-10-01 15:00Z' WHERE id=1")
@@ -122,27 +143,46 @@ def main():
                     where = f"{column} < '2026-10-01'::timestamptz"
                     sql(f'CREATE TABLE {s}.{t}_keepers AS SELECT * FROM {s}.{t} WHERE NOT ({where})')
                     sql(f'CREATE TABLE {s}.{t}_restored (LIKE {s}.{t} INCLUDING DEFAULTS)')
-                    key = f'runs/{run}/{trial}-{mode}-{t}.csv'
-                    query = f'SELECT * FROM {s}.{t} WHERE {where} ORDER BY id'
-                    quoted = query.replace("'", "''")
-                    uri = f"aws_commons.create_s3_uri('{out['Bucket']}','{key}','{region}')"
-                    tick = time.monotonic()
-                    exported = values(f"SELECT * FROM aws_s3.query_export_to_s3('{quoted}',{uri},options := 'format csv')")
-                    export_seconds = time.monotonic()-tick
-                    expected = ROWS * (2 if t == 'push' else 1)
-                    if exported[:2] != [expected, 1]:
-                        raise RuntimeError('Unexpected archive row/file count')
-                    metadata = archive.verified_object_metadata(lab.aws(region, 's3api', 'head-object', '--bucket', out['Bucket'], '--key', key))
-                    tick = time.monotonic()
-                    sql(f"SELECT aws_s3.table_import_from_s3('{s}.{t}_restored','','(format csv)',{uri})")
-                    import_seconds = time.monotonic()-tick
-                    check(f'''SELECT NOT EXISTS(
-                      (SELECT * FROM {s}.{t} WHERE {where} EXCEPT ALL SELECT * FROM {s}.{t}_restored)
-                      UNION ALL (SELECT * FROM {s}.{t}_restored EXCEPT ALL SELECT * FROM {s}.{t} WHERE {where}))''')
-                    arm['exports'][t] = {'rows': expected, 'bytes': exported[2], 'verified': True,
-                        'export_seconds': round(export_seconds,3), 'import_seconds': round(import_seconds,3), **metadata}
+                    chunk_column = 'id' if t == 'event' else ('queue_id' if t == 'history' else 'event_id')
+                    sql(f'CREATE INDEX ON {s}.{t}_restored({chunk_column})')
+                    expected = rows * (fanout if t == 'push' else 1)
+                    check(f'SELECT count(*)={expected} FROM {s}.{t} WHERE {where}')
+                    batches = []
+                    for lo in range(1, rows+1, 512):
+                        hi = min(lo+511, rows)
+                        subset = f'{chunk_column} BETWEEN {lo} AND {hi}'
+                        key = f'runs/{run}/{trial}-{mode}-{t}-{lo}-{hi}.csv'
+                        query = f'SELECT * FROM {s}.{t} WHERE {where} AND {subset} ORDER BY id'
+                        quoted = query.replace("'", "''")
+                        uri = f"aws_commons.create_s3_uri('{out['Bucket']}','{key}','{region}')"
+                        arm['stage'] = f'{t} {lo}-{hi} export'
+                        persist()
+                        tick = time.monotonic()
+                        exported = values(f"SELECT * FROM aws_s3.query_export_to_s3('{quoted}',{uri},options := 'format csv')")
+                        export_seconds = time.monotonic()-tick
+                        chunk_rows = (hi-lo+1) * (fanout if t == 'push' else 1)
+                        if exported[:2] != [chunk_rows, 1]:
+                            raise RuntimeError('Unexpected archive row/file count')
+                        metadata = archive.verified_object_metadata(lab.aws(region, 's3api', 'head-object', '--bucket', out['Bucket'], '--key', key))
+                        arm['stage'] = f'{t} {lo}-{hi} import'
+                        persist()
+                        tick = time.monotonic()
+                        sql(f"SELECT aws_s3.table_import_from_s3('{s}.{t}_restored','','(format csv)',{uri})")
+                        import_seconds = time.monotonic()-tick
+                        arm['stage'] = f'{t} {lo}-{hi} compare'
+                        persist()
+                        check(f'''SELECT NOT EXISTS(
+                          (SELECT * FROM {s}.{t} WHERE {where} AND {subset} EXCEPT ALL SELECT * FROM {s}.{t}_restored WHERE {subset})
+                          UNION ALL (SELECT * FROM {s}.{t}_restored WHERE {subset} EXCEPT ALL SELECT * FROM {s}.{t} WHERE {where} AND {subset}))''')
+                        batches.append({'first_parent_id':lo,'last_parent_id':hi,'rows':chunk_rows,
+                            'bytes':exported[2],'verified':True,'export_seconds':round(export_seconds,3),
+                            'import_seconds':round(import_seconds,3),**metadata})
+                    check(f'SELECT count(*)={expected} FROM {s}.{t}_restored')
+                    arm['exports'][t] = {'rows':expected,'verified':True,'encryption':'aws:kms',
+                        'bytes':sum(b['bytes'] for b in batches),'batches':batches}
                 arm['archive_verify_client_seconds'] = round(time.monotonic()-archive_start,3)
-                require_verified(arm['exports'])
+                arm['stage'] = 'retirement'
+                require_verified(arm['exports'], rows, fanout)
                 persist()  # Keep verification evidence before destructive SQL.
                 sql(f'CREATE TABLE {s}.timing(seconds double precision)')
                 if partition:
@@ -160,17 +200,21 @@ def main():
                 arm['retire_client_seconds'] = round(time.monotonic()-tick,3)
                 arm['retire_server_seconds'] = values(f'SELECT seconds FROM {s}.timing')[0]
                 for t in TABLES:
-                    check(f'''SELECT (SELECT count(*) FROM {s}.{t})={LIVE * (2 if t == 'push' else 1)}
+                    check(f'''SELECT (SELECT count(*) FROM {s}.{t})={LIVE * (fanout if t == 'push' else 1)}
                       AND NOT EXISTS((SELECT * FROM {s}.{t} EXCEPT ALL SELECT * FROM {s}.{t}_keepers)
                       UNION ALL (SELECT * FROM {s}.{t}_keepers EXCEPT ALL SELECT * FROM {s}.{t}))''')
-                call('commit-transaction', '--transaction-id', transaction)
-                transaction = None
-                arm['lock_through_commit_client_seconds'] = round(time.monotonic()-lock_start,3)
-                # New transactions prove committed state, not just in-transaction observations.
-                for t in TABLES:
-                    check(f'SELECT count(*)={LIVE * (2 if t == "push" else 1)} FROM {s}.{t}')
-                arm['passed'] = True
-                persist()
+                def commit():
+                    nonlocal transaction
+                    call('commit-transaction', '--transaction-id', transaction)
+                    transaction = None
+                    arm['lock_through_commit_client_seconds'] = round(time.monotonic()-lock_start,3)
+
+                def verify():
+                    # New transactions prove committed counts rather than transaction-local observations.
+                    for t in TABLES:
+                        check(f'SELECT count(*)={LIVE * (fanout if t == "push" else 1)} FROM {s}.{t}')
+
+                commit_and_verify(arm, commit, verify, persist)
                 print(f'PASS trial {trial} {mode}: retirement {arm["retire_server_seconds"]:.6f}s server; archive/verify {arm["archive_verify_client_seconds"]}s', flush=True)
         record['passed'] = True
     finally:
