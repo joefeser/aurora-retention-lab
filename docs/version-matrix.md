@@ -35,6 +35,8 @@ Aurora PostgreSQL 17.9 passed the cloud fixture with `aws_s3` 2.0 and `pg_partma
 
 Concurrent detach, EF mappings, RDS Proxy, production throughput, and direct-leaf identity behavior on Aurora are not covered by the AWS fixture. Scheduled maintenance was not configured; the proof calls maintenance manually with automatic retention disabled.
 
+Phase 2's [cooperative migration rehearsal](phase-2.md) also passed seven assertions on both local 16.15 and 17.11. The 128 MiB and 1 GiB S3 baselines ran only on Aurora 17.9; there is no Aurora 16 performance comparison.
+
 ## References
 
 - [PostgreSQL 16 CREATE TABLE](https://www.postgresql.org/docs/16/sql-createtable.html)
