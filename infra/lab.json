@@ -1,0 +1,535 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Disposable synthetic Aurora retention lab; no NAT, proxy, public database, or retained snapshots.",
+  "Parameters": {
+    "EngineVersion": {
+      "Type": "String",
+      "Default": "17.9",
+      "AllowedPattern": "17\\.[0-9]+"
+    }
+  },
+  "Resources": {
+    "Vpc": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": "10.83.0.0/16",
+        "EnableDnsSupport": true,
+        "EnableDnsHostnames": true,
+        "Tags": [
+          {
+            "Key": "Project",
+            "Value": "aurora-retention-lab"
+          },
+          {
+            "Key": "Purpose",
+            "Value": "synthetic-disposable-poc"
+          }
+        ]
+      }
+    },
+    "Subnet0": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": {
+          "Ref": "Vpc"
+        },
+        "CidrBlock": "10.83.0.0/24",
+        "AvailabilityZone": {
+          "Fn::Select": [
+            0,
+            {
+              "Fn::GetAZs": ""
+            }
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "Project",
+            "Value": "aurora-retention-lab"
+          },
+          {
+            "Key": "Purpose",
+            "Value": "synthetic-disposable-poc"
+          }
+        ]
+      }
+    },
+    "Subnet1": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": {
+          "Ref": "Vpc"
+        },
+        "CidrBlock": "10.83.1.0/24",
+        "AvailabilityZone": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::GetAZs": ""
+            }
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "Project",
+            "Value": "aurora-retention-lab"
+          },
+          {
+            "Key": "Purpose",
+            "Value": "synthetic-disposable-poc"
+          }
+        ]
+      }
+    },
+    "RouteTable": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "Vpc"
+        },
+        "Tags": [
+          {
+            "Key": "Project",
+            "Value": "aurora-retention-lab"
+          },
+          {
+            "Key": "Purpose",
+            "Value": "synthetic-disposable-poc"
+          }
+        ]
+      }
+    },
+    "RouteAssociation0": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "RouteTable"
+        },
+        "SubnetId": {
+          "Ref": "Subnet0"
+        }
+      }
+    },
+    "RouteAssociation1": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "RouteTable"
+        },
+        "SubnetId": {
+          "Ref": "Subnet1"
+        }
+      }
+    },
+    "S3Endpoint": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "VpcId": {
+          "Ref": "Vpc"
+        },
+        "ServiceName": {
+          "Fn::Sub": "com.amazonaws.${AWS::Region}.s3"
+        },
+        "VpcEndpointType": "Gateway",
+        "RouteTableIds": [
+          {
+            "Ref": "RouteTable"
+          }
+        ]
+      }
+    },
+    "SecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "No inbound access; SQL uses IAM Data API",
+        "VpcId": {
+          "Ref": "Vpc"
+        },
+        "Tags": [
+          {
+            "Key": "Project",
+            "Value": "aurora-retention-lab"
+          },
+          {
+            "Key": "Purpose",
+            "Value": "synthetic-disposable-poc"
+          }
+        ]
+      }
+    },
+    "SubnetGroup": {
+      "Type": "AWS::RDS::DBSubnetGroup",
+      "Properties": {
+        "DBSubnetGroupDescription": "Isolated synthetic lab subnets",
+        "SubnetIds": [
+          {
+            "Ref": "Subnet0"
+          },
+          {
+            "Ref": "Subnet1"
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Project",
+            "Value": "aurora-retention-lab"
+          },
+          {
+            "Key": "Purpose",
+            "Value": "synthetic-disposable-poc"
+          }
+        ]
+      }
+    },
+    "Archive": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "aws:kms",
+                "KMSMasterKeyID": "alias/aws/s3"
+              }
+            }
+          ]
+        },
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true
+        },
+        "Tags": [
+          {
+            "Key": "Project",
+            "Value": "aurora-retention-lab"
+          },
+          {
+            "Key": "Purpose",
+            "Value": "synthetic-disposable-poc"
+          }
+        ]
+      },
+      "DeletionPolicy": "Delete",
+      "UpdateReplacePolicy": "Delete"
+    },
+    "ArchivePolicy": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "Archive"
+        },
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Deny",
+              "Principal": "*",
+              "Action": "s3:*",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "Archive",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Sub": "${Archive.Arn}/*"
+                }
+              ],
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "S3Role": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "rds.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": {
+                    "Ref": "AWS::AccountId"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "LabArchiveOnly",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:GetBucketLocation",
+                    "s3:ListBucket"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "Archive",
+                      "Arn"
+                    ]
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:PutObject",
+                    "s3:AbortMultipartUpload",
+                    "s3:DeleteObject"
+                  ],
+                  "Resource": {
+                    "Fn::Sub": "${Archive.Arn}/runs/*"
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "kms:Decrypt",
+                    "kms:GenerateDataKey"
+                  ],
+                  "Resource": {
+                    "Fn::Sub": "arn:${AWS::Partition}:kms:${AWS::Region}:${AWS::AccountId}:key/*"
+                  },
+                  "Condition": {
+                    "StringEquals": {
+                      "kms:ViaService": {
+                        "Fn::Sub": "s3.${AWS::Region}.amazonaws.com"
+                      },
+                      "kms:CallerAccount": {
+                        "Ref": "AWS::AccountId"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Project",
+            "Value": "aurora-retention-lab"
+          },
+          {
+            "Key": "Purpose",
+            "Value": "synthetic-disposable-poc"
+          }
+        ]
+      }
+    },
+    "Cluster": {
+      "Type": "AWS::RDS::DBCluster",
+      "Properties": {
+        "Engine": "aurora-postgresql",
+        "EngineVersion": {
+          "Ref": "EngineVersion"
+        },
+        "EngineMode": "provisioned",
+        "DatabaseName": "retentionlab",
+        "MasterUsername": "labadmin",
+        "ManageMasterUserPassword": true,
+        "StorageEncrypted": true,
+        "EnableHttpEndpoint": true,
+        "ServerlessV2ScalingConfiguration": {
+          "MinCapacity": 0.5,
+          "MaxCapacity": 1
+        },
+        "DBSubnetGroupName": {
+          "Ref": "SubnetGroup"
+        },
+        "VpcSecurityGroupIds": [
+          {
+            "Ref": "SecurityGroup"
+          }
+        ],
+        "AssociatedRoles": [
+          {
+            "RoleArn": {
+              "Fn::GetAtt": [
+                "S3Role",
+                "Arn"
+              ]
+            },
+            "FeatureName": "s3Export"
+          },
+          {
+            "RoleArn": {
+              "Fn::GetAtt": [
+                "S3ImportRole",
+                "Arn"
+              ]
+            },
+            "FeatureName": "s3Import"
+          }
+        ],
+        "BackupRetentionPeriod": 1,
+        "DeletionProtection": false,
+        "CopyTagsToSnapshot": true,
+        "Tags": [
+          {
+            "Key": "Project",
+            "Value": "aurora-retention-lab"
+          },
+          {
+            "Key": "Purpose",
+            "Value": "synthetic-disposable-poc"
+          }
+        ]
+      },
+      "DeletionPolicy": "Delete",
+      "UpdateReplacePolicy": "Delete"
+    },
+    "Writer": {
+      "Type": "AWS::RDS::DBInstance",
+      "Properties": {
+        "Engine": "aurora-postgresql",
+        "DBClusterIdentifier": {
+          "Ref": "Cluster"
+        },
+        "DBInstanceClass": "db.serverless",
+        "PubliclyAccessible": false,
+        "AutoMinorVersionUpgrade": false,
+        "Tags": [
+          {
+            "Key": "Project",
+            "Value": "aurora-retention-lab"
+          },
+          {
+            "Key": "Purpose",
+            "Value": "synthetic-disposable-poc"
+          }
+        ]
+      },
+      "DeletionPolicy": "Delete",
+      "UpdateReplacePolicy": "Delete"
+    },
+    "S3ImportRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "rds.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": {
+                    "Ref": "AWS::AccountId"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "LabArchiveOnly",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:GetBucketLocation",
+                    "s3:ListBucket"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "Archive",
+                      "Arn"
+                    ]
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:GetObject"
+                  ],
+                  "Resource": {
+                    "Fn::Sub": "${Archive.Arn}/runs/*"
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "kms:Decrypt",
+                    "kms:GenerateDataKey"
+                  ],
+                  "Resource": {
+                    "Fn::Sub": "arn:${AWS::Partition}:kms:${AWS::Region}:${AWS::AccountId}:key/*"
+                  },
+                  "Condition": {
+                    "StringEquals": {
+                      "kms:ViaService": {
+                        "Fn::Sub": "s3.${AWS::Region}.amazonaws.com"
+                      },
+                      "kms:CallerAccount": {
+                        "Ref": "AWS::AccountId"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Project",
+            "Value": "aurora-retention-lab"
+          },
+          {
+            "Key": "Purpose",
+            "Value": "synthetic-disposable-poc"
+          }
+        ]
+      }
+    }
+  },
+  "Outputs": {
+    "ClusterArn": {
+      "Value": {
+        "Fn::GetAtt": [
+          "Cluster",
+          "DBClusterArn"
+        ]
+      }
+    },
+    "SecretArn": {
+      "Value": {
+        "Fn::GetAtt": [
+          "Cluster",
+          "MasterUserSecret.SecretArn"
+        ]
+      }
+    },
+    "Bucket": {
+      "Value": {
+        "Ref": "Archive"
+      }
+    }
+  }
+}

@@ -19,3 +19,10 @@ The initial `main` commit contains intent and scope documentation only. All impl
 - How to create and completely tear down an isolated AWS experiment.
 
 See [the experiment scope](docs/experiment-scope.md) and [the lab lifecycle](docs/lab-lifecycle.md).
+
+## Run the POC
+
+Start with `python3 scripts/run-local.py` (Python 3 and Docker required).
+See [running and tearing down the lab](docs/running-the-lab.md) for the AWS experiment, commands, costs, and evidence limits.
+
+Results: [observed findings](docs/findings.md) and [PostgreSQL 16/17 capability matrix](docs/version-matrix.md). Local tests passed on 16.15 and 17.11; the small S3 experiment passed on Aurora 17.9. These are correctness proofs, not production-scale benchmarks.

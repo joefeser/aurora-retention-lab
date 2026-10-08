@@ -1,0 +1,82 @@
+{
+  "run_id": "e4a5a5fec742444faed6e5275526f793",
+  "schema": "poc_e4a5a5fec742",
+  "checks": [
+    "mutable delivery time stays in parent-aligned partition",
+    "destination-denied export preserves source contents",
+    "queue S3 restore equals source, including duplicates and NULLs",
+    "event S3 restore equals source, including duplicates and NULLs",
+    "same-count corrupted restore is rejected",
+    "event verification restored",
+    "queue verification before retirement",
+    "live parent and child preserved",
+    "pg_partman maintenance creates partitions without background worker"
+  ],
+  "exports": [
+    {
+      "table": "queue",
+      "rows": 100,
+      "files": 1,
+      "bytes": 2648026,
+      "key": "runs/e4a5a5fec742444faed6e5275526f793/queue.csv",
+      "etag": "\"0e038bcb28f99d0beb3be00918943406-1\"",
+      "encryption": "aws:kms"
+    },
+    {
+      "table": "event",
+      "rows": 100,
+      "files": 1,
+      "bytes": 2649426,
+      "key": "runs/e4a5a5fec742444faed6e5275526f793/event.csv",
+      "etag": "\"de0c58bb5a1bc3d2e26a68a9817751bd-1\"",
+      "encryption": "aws:kms"
+    }
+  ],
+  "passed": true,
+  "engine": "PostgreSQL 17.9 on aarch64-unknown-linux-gnu, compiled by aarch64-unknown-linux-gnu-gcc (GCC) 10.5.0, 64-bit",
+  "extensions": [
+    [
+      {
+        "stringValue": "aws_s3"
+      },
+      {
+        "stringValue": "2.0"
+      }
+    ],
+    [
+      {
+        "stringValue": "pg_partman"
+      },
+      {
+        "stringValue": "5.2.4"
+      }
+    ]
+  ],
+  "export_failure": {
+    "kind": "destination_access_denied",
+    "sqlstate": "38000"
+  },
+  "column_contract": {
+    "event": [
+      "id bigint",
+      "scheduled_at timestamptz",
+      "body text",
+      "metadata jsonb"
+    ],
+    "queue": [
+      "id bigint",
+      "event_id bigint",
+      "parent_scheduled_at timestamptz",
+      "scheduled_at timestamptz",
+      "body text"
+    ]
+  },
+  "copy_options": "format csv",
+  "elapsed_seconds": 25.82,
+  "independent_committed_state": {
+    "event_rows": 1,
+    "queue_rows": 1,
+    "old_parent_absent": true,
+    "old_queue_absent": true
+  }
+}
