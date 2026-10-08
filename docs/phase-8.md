@@ -46,7 +46,7 @@ Composite-key EF mapping is feasible in this bounded sample, but it does not mak
 
 The sample uses local archive tables, not S3; prior AWS export/restore receipts remain a separate evidence layer. It has two daily partitions, one sequential live writer, and an independent reader overlapping the archive transaction. It does not prove work's exact EF/provider release, full query/index inventory, high concurrency, Aurora/proxy wire behavior, workload sizing, a production migration, or automatic recovery. The source-locked copy, SQL admission, and archive retirement checks must not be combined into a claim that an online production migration is ready.
 
-No AWS infrastructure was added or changed. The October 9, 1 PM Central teardown reminder and original USD 50 lab budget are unchanged.
+No AWS infrastructure was added or changed. The owner extended the teardown reminder; see the [canonical lab lifecycle](lab-lifecycle.md) for the current schedule. The original USD 50 lab budget remains unchanged.
 
 Review regressions also commit duplicate queue IDs across expired/live partitions: full-key EF rescheduling preserves the other queue, and the archive rejects ambiguous ID-only history without changing data. The guard runs before snapshotting and again under parent access-exclusive locks before retirement, with a late-collision rollback test. History remains ID-only as supplied; the guard makes this limitation explicit rather than claiming to restore global uniqueness. The full 64-case result matrix is enforced, including positive automatic-mode outcomes. Malformed receipts and cleanup failures are tested and cannot produce a successful envelope.
 
