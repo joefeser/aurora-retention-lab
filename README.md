@@ -8,7 +8,7 @@ Only synthetic data belongs in this repository or the lab. This is an experiment
 
 ## Repository workflow
 
-The initial `main` commit contains intent and scope documentation only. All implementation, SQL, infrastructure templates, AWS commands, and experimental results reach `main` through feature/integration branches and pull requests. The first phase used `codex/retention-poc`; phase 2 used `codex/retention-scale`; phase 3 uses `codex/retention-delete-benchmark`. There is no `dev` branch.
+The initial `main` commit contains intent and scope documentation only. All implementation, SQL, infrastructure templates, AWS commands, and experimental results reach `main` through feature/integration branches and pull requests. The first phase used `codex/retention-poc`; phase 2 used `codex/retention-scale`; phase 3 used `codex/retention-delete-benchmark`; phase 4 uses `codex/retention-live-archive`. There is no `dev` branch.
 
 ## What we intend to establish
 
@@ -30,3 +30,5 @@ Results: [observed findings](docs/findings.md) and [PostgreSQL 16/17 capability 
 Phase 2: [load and concurrency results](docs/phase-2.md). Both local versions passed the cooperative migration rehearsal; Aurora 17.9 restored 128 MiB and 1 GiB datasets with exact payload matches. The results include commands, acceptance conditions, and limits on what the measurements establish.
 
 Phase 3: [archive-verified retirement comparison](docs/phase-3.md), comparing indexed cascading DELETE plus soft-history cleanup with coordinated partition retirement.
+
+Phase 4: [archival with concurrent live inserts and reads](docs/phase-4.md), testing expired-leaf write fencing and brief parent locks for retirement.

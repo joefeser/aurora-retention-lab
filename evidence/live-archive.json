@@ -1,0 +1,1468 @@
+{
+  "passed": true,
+  "runs": [
+    {
+      "passed": true,
+      "capacity": {
+        "MinCapacity": 0.5,
+        "MaxCapacity": 1.0
+      },
+      "exports": {
+        "event": {
+          "rows": 1024,
+          "bytes": 33583021,
+          "verified": true,
+          "encryption": "aws:kms"
+        },
+        "queue": {
+          "rows": 1024,
+          "bytes": 8444762,
+          "verified": true,
+          "encryption": "aws:kms"
+        },
+        "push": {
+          "rows": 2048,
+          "bytes": 131850,
+          "verified": true,
+          "encryption": "aws:kms"
+        },
+        "history": {
+          "rows": 1024,
+          "bytes": 65370,
+          "verified": true,
+          "encryption": "aws:kms"
+        }
+      },
+      "writes": [
+        {
+          "id": 100001,
+          "start_phase": "before_archive",
+          "end_phase": "before_archive",
+          "seconds": 0.508
+        },
+        {
+          "id": 100002,
+          "start_phase": "before_archive",
+          "end_phase": "before_archive",
+          "seconds": 0.529
+        },
+        {
+          "id": 100003,
+          "start_phase": "before_archive",
+          "end_phase": "before_archive",
+          "seconds": 0.45
+        },
+        {
+          "id": 100004,
+          "start_phase": "before_archive",
+          "end_phase": "before_archive",
+          "seconds": 0.452
+        },
+        {
+          "id": 100005,
+          "start_phase": "before_archive",
+          "end_phase": "before_archive",
+          "seconds": 0.444
+        },
+        {
+          "id": 100006,
+          "start_phase": "before_archive",
+          "end_phase": "before_archive",
+          "seconds": 0.43
+        },
+        {
+          "id": 100007,
+          "start_phase": "before_archive",
+          "end_phase": "before_archive",
+          "seconds": 0.469
+        },
+        {
+          "id": 100008,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.473
+        },
+        {
+          "id": 100009,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.468
+        },
+        {
+          "id": 100010,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.488
+        },
+        {
+          "id": 100011,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.506
+        },
+        {
+          "id": 100012,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.495
+        },
+        {
+          "id": 100013,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.506
+        },
+        {
+          "id": 100014,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.433
+        },
+        {
+          "id": 100015,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.437
+        },
+        {
+          "id": 100016,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.435
+        },
+        {
+          "id": 100017,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.477
+        },
+        {
+          "id": 100018,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.43
+        },
+        {
+          "id": 100019,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.436
+        },
+        {
+          "id": 100020,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.437
+        },
+        {
+          "id": 100021,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.439
+        },
+        {
+          "id": 100022,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.424
+        },
+        {
+          "id": 100023,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.47
+        },
+        {
+          "id": 100024,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.443
+        },
+        {
+          "id": 100025,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.443
+        },
+        {
+          "id": 100026,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.427
+        },
+        {
+          "id": 100027,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.432
+        },
+        {
+          "id": 100028,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.428
+        },
+        {
+          "id": 100029,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.432
+        },
+        {
+          "id": 100030,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.436
+        },
+        {
+          "id": 100031,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.444
+        },
+        {
+          "id": 100032,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.444
+        },
+        {
+          "id": 100033,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.469
+        },
+        {
+          "id": 100034,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.599
+        },
+        {
+          "id": 100035,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.586
+        },
+        {
+          "id": 100036,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.499
+        },
+        {
+          "id": 100037,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.449
+        },
+        {
+          "id": 100038,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.45
+        },
+        {
+          "id": 100039,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.44
+        },
+        {
+          "id": 100040,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.459
+        },
+        {
+          "id": 100041,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.46
+        },
+        {
+          "id": 100042,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.429
+        },
+        {
+          "id": 100043,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.435
+        },
+        {
+          "id": 100044,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.435
+        },
+        {
+          "id": 100045,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.452
+        },
+        {
+          "id": 100046,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.435
+        },
+        {
+          "id": 100047,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.445
+        },
+        {
+          "id": 100048,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.427
+        },
+        {
+          "id": 100049,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.444
+        },
+        {
+          "id": 100050,
+          "start_phase": "retire",
+          "end_phase": "retire",
+          "seconds": 1.309
+        },
+        {
+          "id": 100051,
+          "start_phase": "after_retire",
+          "end_phase": "after_retire",
+          "seconds": 0.556
+        },
+        {
+          "id": 100052,
+          "start_phase": "after_retire",
+          "end_phase": "after_retire",
+          "seconds": 0.405
+        },
+        {
+          "id": 100053,
+          "start_phase": "after_retire",
+          "end_phase": "after_retire",
+          "seconds": 0.405
+        }
+      ],
+      "reads": [
+        {
+          "start_phase": "before_archive",
+          "end_phase": "before_archive",
+          "parent_rows": 1025,
+          "seconds": 0.567
+        },
+        {
+          "start_phase": "before_archive",
+          "end_phase": "before_archive",
+          "parent_rows": 1026,
+          "seconds": 0.511
+        },
+        {
+          "start_phase": "before_archive",
+          "end_phase": "before_archive",
+          "parent_rows": 1027,
+          "seconds": 0.472
+        },
+        {
+          "start_phase": "before_archive",
+          "end_phase": "before_archive",
+          "parent_rows": 1028,
+          "seconds": 0.438
+        },
+        {
+          "start_phase": "before_archive",
+          "end_phase": "before_archive",
+          "parent_rows": 1029,
+          "seconds": 0.446
+        },
+        {
+          "start_phase": "before_archive",
+          "end_phase": "before_archive",
+          "parent_rows": 1030,
+          "seconds": 0.431
+        },
+        {
+          "start_phase": "before_archive",
+          "end_phase": "before_archive",
+          "parent_rows": 1031,
+          "seconds": 0.441
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1032,
+          "seconds": 0.461
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1032,
+          "seconds": 0.45
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1033,
+          "seconds": 0.485
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1034,
+          "seconds": 0.509
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1036,
+          "seconds": 0.497
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1036,
+          "seconds": 0.468
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1037,
+          "seconds": 0.429
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1038,
+          "seconds": 0.44
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1039,
+          "seconds": 0.439
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1040,
+          "seconds": 0.439
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1041,
+          "seconds": 0.433
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1042,
+          "seconds": 0.428
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1043,
+          "seconds": 0.443
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1044,
+          "seconds": 0.437
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1045,
+          "seconds": 0.436
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1046,
+          "seconds": 0.448
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1047,
+          "seconds": 0.441
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1048,
+          "seconds": 0.433
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1049,
+          "seconds": 0.429
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1050,
+          "seconds": 0.436
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1051,
+          "seconds": 0.428
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1052,
+          "seconds": 0.445
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1053,
+          "seconds": 0.438
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1054,
+          "seconds": 0.431
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1055,
+          "seconds": 0.435
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1056,
+          "seconds": 0.467
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1057,
+          "seconds": 0.477
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1058,
+          "seconds": 0.428
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1059,
+          "seconds": 0.469
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1060,
+          "seconds": 0.429
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1061,
+          "seconds": 0.441
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1062,
+          "seconds": 0.424
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1063,
+          "seconds": 0.458
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1064,
+          "seconds": 0.44
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1065,
+          "seconds": 0.429
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1066,
+          "seconds": 0.43
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1067,
+          "seconds": 0.429
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1068,
+          "seconds": 0.428
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1069,
+          "seconds": 0.441
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1070,
+          "seconds": 0.448
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1071,
+          "seconds": 0.442
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1072,
+          "seconds": 0.421
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1073,
+          "seconds": 0.482
+        },
+        {
+          "start_phase": "retire",
+          "end_phase": "retire",
+          "parent_rows": 49,
+          "seconds": 1.225
+        },
+        {
+          "start_phase": "after_retire",
+          "end_phase": "after_retire",
+          "parent_rows": 50,
+          "seconds": 0.478
+        },
+        {
+          "start_phase": "after_retire",
+          "end_phase": "after_retire",
+          "parent_rows": 51,
+          "seconds": 0.412
+        },
+        {
+          "start_phase": "after_retire",
+          "end_phase": "after_retire",
+          "parent_rows": 52,
+          "seconds": 0.415
+        }
+      ],
+      "errors": [],
+      "checks": [
+        "event exact restore",
+        "queue exact restore",
+        "push exact restore",
+        "history exact restore",
+        "client acknowledgements equal committed ledger",
+        "event live rows and payloads preserved",
+        "event expired partition absent",
+        "queue live rows and payloads preserved",
+        "queue expired partition absent",
+        "push live rows and payloads preserved",
+        "push expired partition absent",
+        "history live rows and payloads preserved",
+        "history expired partition absent",
+        "cascade FKs remain validated",
+        "independent post-run full-field relationship verification"
+      ],
+      "blocked_mutations": [
+        "event update",
+        "event delete",
+        "event insert",
+        "event routed insert",
+        "queue update",
+        "queue delete",
+        "queue insert",
+        "queue routed insert",
+        "push update",
+        "push delete",
+        "push insert",
+        "push routed insert",
+        "history update",
+        "history delete",
+        "history insert",
+        "history routed insert",
+        "live-to-old move"
+      ],
+      "engine": "PostgreSQL 17.9 on aarch64-unknown-linux-gnu, compiled by aarch64-unknown-linux-gnu-gcc (GCC) 10.5.0, 64-bit",
+      "leaf_lock_acquire_seconds": 0.428,
+      "archive_and_probes_seconds": 23.571,
+      "elapsed_seconds": 52.754,
+      "parent_lock_through_commit_seconds": 1.352,
+      "summary": {
+        "writes": {
+          "acknowledged": 53,
+          "maximum_client_seconds": 1.309,
+          "completed_within_phase": {
+            "before_archive": 7,
+            "archive": 42,
+            "retire": 1,
+            "after_retire": 3
+          }
+        },
+        "reads": {
+          "acknowledged": 54,
+          "maximum_client_seconds": 1.225,
+          "completed_within_phase": {
+            "before_archive": 7,
+            "archive": 43,
+            "retire": 1,
+            "after_retire": 3
+          }
+        }
+      }
+    },
+    {
+      "passed": true,
+      "capacity": {
+        "MinCapacity": 0.5,
+        "MaxCapacity": 1.0
+      },
+      "exports": {
+        "event": {
+          "rows": 1024,
+          "bytes": 33583021,
+          "verified": true,
+          "encryption": "aws:kms"
+        },
+        "queue": {
+          "rows": 1024,
+          "bytes": 8444762,
+          "verified": true,
+          "encryption": "aws:kms"
+        },
+        "push": {
+          "rows": 2048,
+          "bytes": 131850,
+          "verified": true,
+          "encryption": "aws:kms"
+        },
+        "history": {
+          "rows": 1024,
+          "bytes": 65370,
+          "verified": true,
+          "encryption": "aws:kms"
+        }
+      },
+      "writes": [
+        {
+          "id": 100001,
+          "start_phase": "before_archive",
+          "end_phase": "before_archive",
+          "seconds": 0.495
+        },
+        {
+          "id": 100002,
+          "start_phase": "before_archive",
+          "end_phase": "before_archive",
+          "seconds": 0.435
+        },
+        {
+          "id": 100003,
+          "start_phase": "before_archive",
+          "end_phase": "before_archive",
+          "seconds": 0.444
+        },
+        {
+          "id": 100004,
+          "start_phase": "before_archive",
+          "end_phase": "before_archive",
+          "seconds": 0.473
+        },
+        {
+          "id": 100005,
+          "start_phase": "before_archive",
+          "end_phase": "before_archive",
+          "seconds": 0.452
+        },
+        {
+          "id": 100006,
+          "start_phase": "before_archive",
+          "end_phase": "before_archive",
+          "seconds": 0.47
+        },
+        {
+          "id": 100007,
+          "start_phase": "before_archive",
+          "end_phase": "before_archive",
+          "seconds": 0.543
+        },
+        {
+          "id": 100008,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.491
+        },
+        {
+          "id": 100009,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.471
+        },
+        {
+          "id": 100010,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.53
+        },
+        {
+          "id": 100011,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.49
+        },
+        {
+          "id": 100012,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.51
+        },
+        {
+          "id": 100013,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.465
+        },
+        {
+          "id": 100014,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.514
+        },
+        {
+          "id": 100015,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.464
+        },
+        {
+          "id": 100016,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.504
+        },
+        {
+          "id": 100017,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.431
+        },
+        {
+          "id": 100018,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.483
+        },
+        {
+          "id": 100019,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.424
+        },
+        {
+          "id": 100020,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.462
+        },
+        {
+          "id": 100021,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.437
+        },
+        {
+          "id": 100022,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.475
+        },
+        {
+          "id": 100023,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.471
+        },
+        {
+          "id": 100024,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.475
+        },
+        {
+          "id": 100025,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.466
+        },
+        {
+          "id": 100026,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.47
+        },
+        {
+          "id": 100027,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.451
+        },
+        {
+          "id": 100028,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.477
+        },
+        {
+          "id": 100029,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.477
+        },
+        {
+          "id": 100030,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.477
+        },
+        {
+          "id": 100031,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.59
+        },
+        {
+          "id": 100032,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.504
+        },
+        {
+          "id": 100033,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.605
+        },
+        {
+          "id": 100034,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.576
+        },
+        {
+          "id": 100035,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.431
+        },
+        {
+          "id": 100036,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.421
+        },
+        {
+          "id": 100037,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.426
+        },
+        {
+          "id": 100038,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.422
+        },
+        {
+          "id": 100039,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.601
+        },
+        {
+          "id": 100040,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.486
+        },
+        {
+          "id": 100041,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.456
+        },
+        {
+          "id": 100042,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.492
+        },
+        {
+          "id": 100043,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.439
+        },
+        {
+          "id": 100044,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.448
+        },
+        {
+          "id": 100045,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.46
+        },
+        {
+          "id": 100046,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.47
+        },
+        {
+          "id": 100047,
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "seconds": 0.468
+        },
+        {
+          "id": 100048,
+          "start_phase": "retire",
+          "end_phase": "retire",
+          "seconds": 1.281
+        },
+        {
+          "id": 100049,
+          "start_phase": "after_retire",
+          "end_phase": "after_retire",
+          "seconds": 0.465
+        },
+        {
+          "id": 100050,
+          "start_phase": "after_retire",
+          "end_phase": "after_retire",
+          "seconds": 0.469
+        },
+        {
+          "id": 100051,
+          "start_phase": "after_retire",
+          "end_phase": "after_retire",
+          "seconds": 0.489
+        }
+      ],
+      "reads": [
+        {
+          "start_phase": "before_archive",
+          "end_phase": "before_archive",
+          "parent_rows": 1024,
+          "seconds": 0.454
+        },
+        {
+          "start_phase": "before_archive",
+          "end_phase": "before_archive",
+          "parent_rows": 1025,
+          "seconds": 0.446
+        },
+        {
+          "start_phase": "before_archive",
+          "end_phase": "before_archive",
+          "parent_rows": 1026,
+          "seconds": 0.466
+        },
+        {
+          "start_phase": "before_archive",
+          "end_phase": "before_archive",
+          "parent_rows": 1028,
+          "seconds": 0.476
+        },
+        {
+          "start_phase": "before_archive",
+          "end_phase": "before_archive",
+          "parent_rows": 1028,
+          "seconds": 0.445
+        },
+        {
+          "start_phase": "before_archive",
+          "end_phase": "before_archive",
+          "parent_rows": 1029,
+          "seconds": 0.471
+        },
+        {
+          "start_phase": "before_archive",
+          "end_phase": "before_archive",
+          "parent_rows": 1031,
+          "seconds": 0.542
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1031,
+          "seconds": 0.492
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1032,
+          "seconds": 0.468
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1033,
+          "seconds": 0.533
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1035,
+          "seconds": 0.489
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1036,
+          "seconds": 0.516
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1036,
+          "seconds": 0.465
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1038,
+          "seconds": 0.516
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1039,
+          "seconds": 0.463
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1039,
+          "seconds": 0.47
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1040,
+          "seconds": 0.447
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1041,
+          "seconds": 0.471
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1042,
+          "seconds": 0.433
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1043,
+          "seconds": 0.443
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1044,
+          "seconds": 0.482
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1046,
+          "seconds": 0.477
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1046,
+          "seconds": 0.471
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1047,
+          "seconds": 0.474
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1048,
+          "seconds": 0.465
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1049,
+          "seconds": 0.465
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1050,
+          "seconds": 0.453
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1051,
+          "seconds": 0.475
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1052,
+          "seconds": 0.475
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1053,
+          "seconds": 0.47
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1054,
+          "seconds": 0.495
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1055,
+          "seconds": 0.497
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1056,
+          "seconds": 0.412
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1057,
+          "seconds": 0.468
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1058,
+          "seconds": 0.418
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1059,
+          "seconds": 0.417
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1060,
+          "seconds": 0.468
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1061,
+          "seconds": 0.426
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1062,
+          "seconds": 0.437
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1062,
+          "seconds": 0.431
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1064,
+          "seconds": 0.493
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1064,
+          "seconds": 0.457
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1065,
+          "seconds": 0.447
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1066,
+          "seconds": 0.485
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1067,
+          "seconds": 0.45
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1068,
+          "seconds": 0.461
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1069,
+          "seconds": 0.47
+        },
+        {
+          "start_phase": "archive",
+          "end_phase": "archive",
+          "parent_rows": 1070,
+          "seconds": 0.467
+        },
+        {
+          "start_phase": "retire",
+          "end_phase": "retire",
+          "parent_rows": 48,
+          "seconds": 1.281
+        },
+        {
+          "start_phase": "after_retire",
+          "end_phase": "after_retire",
+          "parent_rows": 48,
+          "seconds": 0.466
+        },
+        {
+          "start_phase": "after_retire",
+          "end_phase": "after_retire",
+          "parent_rows": 49,
+          "seconds": 0.469
+        },
+        {
+          "start_phase": "after_retire",
+          "end_phase": "after_retire",
+          "parent_rows": 50,
+          "seconds": 0.492
+        }
+      ],
+      "errors": [],
+      "checks": [
+        "event exact restore",
+        "queue exact restore",
+        "push exact restore",
+        "history exact restore",
+        "client acknowledgements equal committed ledger",
+        "event live rows and payloads preserved",
+        "event expired partition absent",
+        "queue live rows and payloads preserved",
+        "queue expired partition absent",
+        "push live rows and payloads preserved",
+        "push expired partition absent",
+        "history live rows and payloads preserved",
+        "history expired partition absent",
+        "every acknowledged relationship and field matches",
+        "cascade FKs remain validated",
+        "independent post-run full-field relationship verification"
+      ],
+      "blocked_mutations": [
+        "event update",
+        "event delete",
+        "event insert",
+        "event routed insert",
+        "queue update",
+        "queue delete",
+        "queue insert",
+        "queue routed insert",
+        "push update",
+        "push delete",
+        "push insert",
+        "push routed insert",
+        "history update",
+        "history delete",
+        "history insert",
+        "history routed insert",
+        "live-to-old move"
+      ],
+      "engine": "PostgreSQL 17.9 on aarch64-unknown-linux-gnu, compiled by aarch64-unknown-linux-gnu-gcc (GCC) 10.5.0, 64-bit",
+      "leaf_lock_acquire_seconds": 0.542,
+      "archive_and_probes_seconds": 23.462,
+      "elapsed_seconds": 52.695,
+      "parent_lock_through_commit_seconds": 1.322,
+      "summary": {
+        "writes": {
+          "acknowledged": 51,
+          "maximum_client_seconds": 1.281,
+          "completed_within_phase": {
+            "before_archive": 7,
+            "archive": 40,
+            "retire": 1,
+            "after_retire": 3
+          }
+        },
+        "reads": {
+          "acknowledged": 52,
+          "maximum_client_seconds": 1.281,
+          "completed_within_phase": {
+            "before_archive": 7,
+            "archive": 41,
+            "retire": 1,
+            "after_retire": 3
+          }
+        }
+      }
+    }
+  ]
+}

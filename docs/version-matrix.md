@@ -39,6 +39,8 @@ Phase 2's [cooperative migration rehearsal](phase-2.md) also passed seven assert
 
 Phase 3's [archive-verified retirement comparison](phase-3.md) passed two trials each of indexed cascade deletion and coordinated partition retirement on Aurora 17.9. Aurora 16 was not run; these small timings do not establish a version or production performance advantage.
 
+Phase 4's [live archival fixture](phase-4.md) passed twice on Aurora 17.9: live inserts and reads progressed under expired-leaf SHARE locks, mutation probes were blocked, and acknowledged relationships survived retirement. Aurora 16 and general live UPDATE/DELETE behavior remain untested.
+
 ## References
 
 - [PostgreSQL 16 CREATE TABLE](https://www.postgresql.org/docs/16/sql-createtable.html)
