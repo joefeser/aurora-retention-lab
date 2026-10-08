@@ -37,6 +37,8 @@ Concurrent detach, EF mappings, RDS Proxy, production throughput, and direct-lea
 
 Phase 2's [cooperative migration rehearsal](phase-2.md) also passed seven assertions on both local 16.15 and 17.11. The 128 MiB and 1 GiB S3 baselines ran only on Aurora 17.9; there is no Aurora 16 performance comparison.
 
+Phase 3's [archive-verified retirement comparison](phase-3.md) passed two trials each of indexed cascade deletion and coordinated partition retirement on Aurora 17.9. Aurora 16 was not run; these small timings do not establish a version or production performance advantage.
+
 ## References
 
 - [PostgreSQL 16 CREATE TABLE](https://www.postgresql.org/docs/16/sql-createtable.html)
