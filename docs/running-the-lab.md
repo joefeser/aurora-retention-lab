@@ -46,7 +46,7 @@ Wait for `DELETE_COMPLETE`. The deletion command verifies the authenticated acco
 ## Explicitly unproved
 
 - Production throughput, WAL volume, costs at terabyte scale, and migration duration.
-- RDS Proxy, EF Core integration, external writers, and concurrent cutover/rollback.
+- RDS Proxy, EF Core integration, external writers, and production concurrent cutover/rollback. Phase 2 covers only a cooperating local writer.
 - Seven-year durability/compliance, schema evolution, archive querying, or large multi-object exports.
 - Automated scheduled maintenance and recovery from uncertain transaction outcomes.
 - Production retirement policy, event/history retention, and payload/identity split performance.

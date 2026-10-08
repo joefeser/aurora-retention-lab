@@ -1,0 +1,36 @@
+[
+  {
+    "passed": true,
+    "image": "postgres:16",
+    "checks": [
+      "uncoordinated copy misses committed writes",
+      "client acknowledgements match committed ledger",
+      "all acknowledged writes preserved across cutover",
+      "initial keepers preserved exactly",
+      "expired rows excluded from active tables",
+      "new queue FK targets active parent",
+      "old copy cannot support lossless rollback after resume"
+    ],
+    "engine": "PostgreSQL 16.15 (Debian 16.15-1.pgdg13+2) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+    "writes_before_cutover": 8,
+    "quiesce_and_copy_seconds": 0.0679,
+    "writes_after_cutover": 4
+  },
+  {
+    "passed": true,
+    "image": "postgres:17",
+    "checks": [
+      "uncoordinated copy misses committed writes",
+      "client acknowledgements match committed ledger",
+      "all acknowledged writes preserved across cutover",
+      "initial keepers preserved exactly",
+      "expired rows excluded from active tables",
+      "new queue FK targets active parent",
+      "old copy cannot support lossless rollback after resume"
+    ],
+    "engine": "PostgreSQL 17.11 (Debian 17.11-1.pgdg13+2) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+    "writes_before_cutover": 8,
+    "quiesce_and_copy_seconds": 0.0682,
+    "writes_after_cutover": 4
+  }
+]
