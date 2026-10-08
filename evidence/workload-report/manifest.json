@@ -186,5 +186,17 @@
       "receipt_sha256": "e1301d62266379d000a19a3af3a39680c3d1bf38e48c43eb374189ba568fd087",
       "archive_sha256": "f98f11c8f08585ec515fb7cc58ad21a67145d5e7d43948bf386064e8ae128a40"
     }
-  ]
+  ],
+  "tables": {
+    "cloud-datapoints.csv": "a7345d1afd50cc8caf724beb4cf1838d1a48b4df651e116f21fa537dab95edac",
+    "cloud-observation.csv": "5095309d83cc61982da62ca29d8fcd610e5a1dd6ada99dab97f17db69cb26e72",
+    "dataset-profiles.csv": "d66806aa7051a03d70c63a9ea129939edf6074bd968eb6ebedf451d776f2f460",
+    "dotnet.csv": "177034efb6198c2dc26d4dea11f6d6cd5f4e602fd32436e8dbe13ef2bd1dbcdb",
+    "fidelity.csv": "d7849df24b7021a3226e12888560e1ebeee7d46172c029afee9f5ba07b2760b2",
+    "migration.csv": "080831f887823c9caed463e97c8f4c70ea4c6af740748ad368b2097c4fddd327",
+    "query-matrix.csv": "fa31f05b5387eaa1a82d29e4d046b11de6e8b1e6964874b2e6b8bd2c995b1449",
+    "retirement-summary.csv": "8506a312b85450d92330250f7ad3c6cfdff35fcbabe8267624a5b5019263ba33",
+    "retirement-trials.csv": "a80b60bdb8dd435930865ccde3cb596253c3bc88db3fb413e4d9db7b6b56a606",
+    "scheduling.csv": "593b695814fa21872e6bbee93d3eb259f8311bd82e984d12e4a3549f7482022f"
+  }
 }

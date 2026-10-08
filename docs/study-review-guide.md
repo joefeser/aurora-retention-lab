@@ -33,11 +33,12 @@ This is not a copy of production data or a production migration runbook. The sup
 | `dotnet.csv` | `benchmark_results[]` | Mean/stddev milliseconds and allocated bytes per operation; raw BDN time statistics use nanoseconds |
 | `migration.csv`, `scheduling.csv` | `backfills[]`, `scheduling[]` | Server seconds and local statement WAL bytes; absent Aurora WAL is not zero |
 | `fidelity.csv` | `checks[]`, `archives` | Full-schema 10 MiB/Unicode/NULL/empty round-trip and corruption rejection |
-| `cloud-observation.csv` | `metrics[]` | Four-hour mixed-activity context with returned units, not per-arm attribution or a bill |
+| `cloud-observation.csv` | `metrics[]` | Four-hour window summaries with returned units, not per-arm attribution or a bill |
+| `cloud-datapoints.csv` | `metrics[].points[]` | Every recorded timestamp and period minimum/average/maximum |
 
 The raw receipts retain more detail than the tables: query plans, individual retirement batches, archive transport receipts, distribution/age information, actual engine versions and relevant settings. Full-row snapshots use exact comparisons in the database. The public JSON is recorded evidence of those checks, not an export of every generated row. Regenerate the synthetic database when row-level reinspection is needed.
 
-`manifest.json` binds compressed and uncompressed receipt bytes with SHA-256. It is an integrity index, not signed provenance or proof that the historical process ran a specific final commit. The full report explicitly identifies the exploratory runs excluded from publication and the working-tree execution boundary. No hash can recover omitted production inputs or establish production representativeness.
+`manifest.json` binds compressed and uncompressed receipt bytes and generated CSV tables with SHA-256. It is an integrity index, not signed provenance or proof that the historical process ran a specific final commit. The full report explicitly identifies the exploratory runs excluded from publication and the working-tree execution boundary. No hash can recover omitted production inputs or establish production representativeness.
 
 ## Offline validation: no database or credentials needed
 
@@ -49,7 +50,7 @@ python3 benchmarks/publish_report.py
 git diff --exit-code -- docs/report evidence/workload-report
 ```
 
-`publish_report.py` reads the manifest, verifies hashes, checks successful/complete receipts, and regenerates Markdown/CSV tables. It does not rerun SQL, regenerate the narrative report, or regenerate plots. A changed output should be investigated; do not overwrite it and call the findings verified. Compression-library differences can change compressed bytes even when the uncompressed receipt hash is unchanged—distinguish that from changed measurements.
+`publish_report.py` rejects unsupported manifest versions before reading runs, verifies hashes, validates receipts against the explicit version 1 [field contract](../benchmarks/receipt-fields-v1.json) and numeric/coverage rules, and regenerates Markdown/CSV tables. It preflights the whole selection before changing public files. Selective publication removes omitted tables and invalidates plots; plotting requires current manifest-bound tables and complete caption coverage. It does not rerun SQL, regenerate the narrative report, or regenerate plots. A changed output should be investigated; do not overwrite it and call the findings verified. Compression-library differences can change compressed bytes even when the uncompressed receipt hash is unchanged—distinguish that from changed measurements.
 
 To inspect one raw receipt:
 
@@ -144,3 +145,5 @@ For each important claim, record the exact evidence label, engine, row shape/cou
 - A passing published receipt is evidence of the recorded fixture, not broad production readiness.
 
 Report contradictions and unsupported claims precisely. Do not weaken assertions, silently exclude slow trials, substitute NULL metrics with zero, or rewrite receipts to make a conclusion pass. Keep new runs separate from historical evidence unless an explicitly reviewed update explains why one supersedes another.
+
+Failed Aurora runs have an [explicit owned-resource recovery path](../benchmarks/README.md#publication-contract-and-failed-run-recovery). Historical receipts predate the new ownership markers and remain unchanged; whole-lab teardown still covers those older resources.

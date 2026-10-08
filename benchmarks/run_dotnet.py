@@ -8,6 +8,7 @@ import subprocess
 import time
 import uuid
 import workload as w
+from receipt_contract import benchmark_case
 from run_workload import Database, ROOT, exact, profile
 
 
@@ -103,9 +104,7 @@ def main():
             raise RuntimeError("Expected one complete BenchmarkDotNet JSON report")
         report = json.loads(reports[0].read_text())
         for b in report["Benchmarks"]:
-            stats = b.get("Statistics")
-            if not stats or stats.get("N", 0) < 1:
-                raise RuntimeError("Benchmark case did not produce measurements")
+            benchmark_case(b)
             record["benchmark_results"].append(
                 {k: b.get(k) for k in ("Method", "Parameters", "Statistics", "Memory")}
             )

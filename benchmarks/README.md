@@ -54,6 +54,8 @@ These experiments do not certify production throughput, a 100M-row completion ti
 ```sh
 python3 -m unittest discover -s tests
 .lab/perf-venv/bin/python benchmarks/test_harness.py
+# Optional real SQL ownership/recovery test; creates and removes its own PG17 container.
+.lab/perf-venv/bin/python benchmarks/check_recovery_local.py
 dotnet restore samples/Retention.Workload --locked-mode
 dotnet build samples/Retention.Workload -c Release --no-restore
 python3 benchmarks/publish_report.py
@@ -62,3 +64,62 @@ python3 benchmarks/publish_report.py
 The larger full-schema scale sensitivity uses `--rows 32768 --profiles typical --trials 3` on local PostgreSQL 17 under the same resource limits; the earlier tail sensitivity uses 16,384 parents. These remain distinct from the two-million-row narrow-key query matrix. `observe_cloud.py` optionally records read-only CloudWatch context over four hours; its aggregate window cannot attribute I/O or CPU to an individual arm.
 
 The optional static plots use `plot-requirements.txt` in a separate environment, then `python benchmarks/plot_report.py`. Plot values come exclusively from the generated CSV tables; SVG and PNG outputs are committed with the report.
+
+## Publication contract and failed-run recovery
+
+Public receipts use the explicit version 1 field contract in
+[`receipt-fields-v1.json`](receipt-fields-v1.json), with numeric/coverage checks in
+`receipt_contract.py` and `publish_report.py`. The field grammar is a reviewed,
+committed allowlist of object paths; it is not learned from incoming receipts.
+New collector fields or EXPLAIN node shapes require an explicit contract update.
+This rejects unexpected metadata and credential-shaped keys, but does not replace
+human sanitization of arbitrary text in otherwise approved fields.
+
+Publication first verifies and derives the entire selection in a temporary directory.
+Unsupported manifest versions, malformed BDN statistics/Memory, unapproved fields,
+and conversion failures leave public outputs untouched. An interrupted final file
+replacement can leave files partially replaced, but the manifest is invalidated first
+and written last; plots fail closed without that binding. Re-run from the original
+selection after such an interruption. Empty tables from omitted runs are removed.
+A changed selection invalidates old generated plots. The plotter verifies table hashes,
+evidence labels and the complete configurations described by its captions.
+Narrative documents are authored separately and must be revised before publishing a
+subset as a new study.
+
+CloudWatch keeps valid datapoints when a metric has malformed entries or an API
+failure, continues collecting subsequent metrics, and marks the receipt incomplete.
+Incomplete observations cannot support publication. `cloud-observation.csv` contains
+window summaries; `cloud-datapoints.csv` contains each timestamp, unit and period's
+minimum/average/maximum.
+
+New Aurora benchmark runs write an ignored `.lab/recovery-<token>.json` inventory
+**before** schema or S3 side effects. Exact schema names carry a run ownership comment
+created atomically with the schema; rename destinations are also inventoried.
+Archives use one random prefix per run, including any unexpected export suffixes.
+The inventory is bound to the checked lab's cluster and bucket without recording their
+identifiers. Keep the local inventory until cleanup is confirmed. Existing historical
+runs predate this inventory and remain covered by whole-lab teardown.
+
+`Database.close()` still rolls back and preserves the original failure. It prints the
+inventory path and records retained-resource status; it does not delete archives while
+an unacknowledged export might still be running. After stopping the runner and checking
+that in-flight SQL/exports have finished, inspect and recover that exact inventory:
+
+```sh
+.lab/perf-venv/bin/python benchmarks/cloud_recovery.py .lab/recovery-<token>.json
+.lab/perf-venv/bin/python benchmarks/cloud_recovery.py .lab/recovery-<token>.json --execute --confirm-run-stopped
+```
+
+Recovery rechecks the lab binding, refuses to drop schemas without the matching marker,
+and lists/deletes only that inventory's exact archive prefix. It has a two-minute
+between-operation budget, per-statement/lock limits, bounded SDK calls and a ten-batch
+S3 ceiling. A call already in flight can finish after the between-operation deadline.
+Cleanup failures retain typed results in the inventory without overwriting experiment
+failure evidence; rerun after resolving the cause. A versioned bucket is refused rather
+than treating delete markers as removal of archive bytes. Successful-run archives remain
+available until explicit recovery or the scheduled whole-lab teardown.
+
+The ownership COMMENT adds one DDL statement to future Aurora schema creation,
+including copy-keepers timing. Published historical measurements are unchanged and
+predate this recovery instrumentation; new timings should not be represented as exact
+replays of those historical bytes.

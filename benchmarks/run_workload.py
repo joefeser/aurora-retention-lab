@@ -9,6 +9,7 @@ import math
 import os
 from pathlib import Path
 import secrets
+import re
 import subprocess
 import sys
 import time
@@ -19,12 +20,14 @@ from psycopg.rows import dict_row
 import boto3
 from botocore.config import Config
 import workload as w
+from cloud_recovery import Inventory
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 class Database:
     def __init__(self, target, name, record):
+        self.inventory = None
         self.created = False
         self.connection = None
         self.transaction = None
@@ -61,7 +64,15 @@ class Database:
                 region_name=self.region,
                 config=Config(read_timeout=60, retries={"total_max_attempts": 1}),
             )
-            self.s3 = boto3.client("s3", region_name=self.region)
+            self.s3 = boto3.client(
+                "s3",
+                region_name=self.region,
+                config=Config(
+                    connect_timeout=5,
+                    read_timeout=15,
+                    retries={"total_max_attempts": 1},
+                ),
+            )
             self.rds = boto3.client("rds", region_name=self.region)
             cluster = self.rds.describe_db_clusters(
                 DBClusterIdentifier=self.outputs["ClusterArn"]
@@ -153,6 +164,8 @@ class Database:
                 text=True,
                 capture_output=True,
             ).stdout.strip()
+        if target == "aurora":
+            self.inventory = Inventory(ROOT / ".lab", self.outputs)
         self.execute("SET statement_timeout='35s'") if target != "aurora" else None
         self.wal_function = None
         for function in ("pg_current_wal_insert_lsn", "pg_current_wal_lsn"):
@@ -164,7 +177,12 @@ class Database:
                 pass
         record["wal_counter"] = self.wal_function or "unavailable"
 
+    def prepare(self, statements):
+        return self.inventory.prepare(statements) if self.inventory else statements
+
     def execute(self, sql):
+        if self.inventory and re.fullmatch(r"CREATE SCHEMA [a-z][a-z0-9_]{0,62}", sql):
+            return self.batch([sql])
         if time.monotonic() - self.started > 7200:
             raise RuntimeError("Two-hour run guard")
         if self.target == "aurora":
@@ -181,6 +199,7 @@ class Database:
         return next(iter(self.execute(sql)[0].values()))
 
     def batch(self, statements):
+        statements = self.prepare(statements)
         # One API request, with the caller's existing transaction semantics.
         self.execute(
             "DO $batch$ BEGIN "
@@ -230,6 +249,17 @@ class Database:
             self.record["passed"] = False
             self.record["rollback_cleanup_error"] = type(exc).__name__
         finally:
+            inventory = getattr(self, "inventory", None)
+            if inventory and inventory.path.exists():
+                # Retain archive evidence until explicit recovery/teardown. Never race
+                # an unacknowledged server-side export with automatic deletion.
+                self.record["recovery"] = {
+                    "state": "retained_until_explicit_recovery",
+                    "schemas_tracked": len(inventory.data["schemas"]),
+                    "archive_prefix_tracked": inventory.data["archive_prefix"]
+                    is not None,
+                }
+                print("Owned-resource recovery inventory:", inventory.path, flush=True)
             if self.connection:
                 try:
                     self.connection.close()
@@ -293,6 +323,7 @@ def profile(db, s):
 
 
 def timed(db, root, label, statements):
+    statements = db.prepare(statements)
     label = label.replace("'", "''")
     tick = time.monotonic()
     wal_start = f"wal_start pg_lsn := {db.wal_function}();" if db.wal_function else ""
@@ -349,7 +380,7 @@ def archive(db, s, mode, root, run, arm):
                 expected = db.scalar(f"SELECT count(*) FROM ({subset}) q")
                 if not expected:
                     continue
-                key = f"runs/{run}/workload/{arm}/{table}-{lo}.csv"
+                key = db.inventory.archive_prefix() + f"workload/{arm}/{table}-{lo}.csv"
                 uri = f"aws_commons.create_s3_uri('{db.outputs['Bucket']}','{key}','{db.region}')"
                 t = time.monotonic()
                 export = db.execute(

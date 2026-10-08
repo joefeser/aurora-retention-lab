@@ -288,4 +288,4 @@ Read-only four-hour context, not attribution to an individual arm. Mean is the m
 | VolumeWriteIOPs | 45 | Count | 925.000 | 14643.689 | 44806.000 |
 | VolumeReadIOPs | 45 | Count | 0.000 | 8467.133 | 27216.000 |
 
-[Full metric window and values](cloud-observation.csv)
+[Metric window summaries](cloud-observation.csv) · [Every timestamp and period value](cloud-datapoints.csv)

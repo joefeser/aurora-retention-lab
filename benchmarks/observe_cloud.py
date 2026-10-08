@@ -7,6 +7,7 @@ import time
 import uuid
 import boto3
 from run_workload import Database, ROOT
+from receipt_contract import cloud_metric
 
 
 def main():
@@ -43,21 +44,28 @@ def main():
             ("VolumeWriteIOPs", "DBClusterIdentifier", cluster["DBClusterIdentifier"]),
             ("VolumeReadIOPs", "DBClusterIdentifier", cluster["DBClusterIdentifier"]),
         ]:
-            result = cw.get_metric_statistics(
-                Namespace="AWS/RDS",
-                MetricName=metric,
-                Dimensions=[{"Name": dimension, "Value": value}],
-                StartTime=start,
-                EndTime=end,
-                Period=300,
-                Statistics=["Average", "Minimum", "Maximum"],
-            )
-            points = sorted(result["Datapoints"], key=lambda p: p["Timestamp"])
-            record["metrics"].append(
-                {"name": metric, "points": points, "available": bool(points)}
-            )
+            try:
+                result = cw.get_metric_statistics(
+                    Namespace="AWS/RDS",
+                    MetricName=metric,
+                    Dimensions=[{"Name": dimension, "Value": value}],
+                    StartTime=start,
+                    EndTime=end,
+                    Period=300,
+                    Statistics=["Average", "Minimum", "Maximum"],
+                )
+                observation = cloud_metric(metric, result)
+            except Exception as exc:
+                observation = {
+                    "name": metric,
+                    "points": [],
+                    "available": False,
+                    "complete": False,
+                    "collection_error": type(exc).__name__,
+                }
+            record["metrics"].append(observation)
         record["engine"] = db.scalar("SELECT version()")
-        record["passed"] = True
+        record["passed"] = all(m["complete"] for m in record["metrics"])
     finally:
         if db:
             db.close()

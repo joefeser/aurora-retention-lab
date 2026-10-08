@@ -10,6 +10,13 @@ import math
 from pathlib import Path
 import re
 import statistics
+import tempfile
+
+# Works both as a direct script and when imported from the repository root.
+try:
+    from benchmarks.receipt_contract import public_fields, benchmark_case, cloud_point
+except ModuleNotFoundError:
+    from receipt_contract import public_fields, benchmark_case, cloud_point
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "docs/report"
@@ -23,7 +30,8 @@ TABLES = (
 )
 
 
-def validate(kind, data):
+def validate(kind, data, version=1):
+    public_fields(kind, data, version)
     if data.get("passed") is not True:
         raise ValueError("Only completed passing receipts can support this report")
     if data.get("target") not in ("postgres:16", "postgres:17", "aurora"):
@@ -104,6 +112,8 @@ def validate(kind, data):
             or data.get("all_rows_unchanged") is not True
         ):
             raise ValueError("Incomplete EF benchmark or changed rows")
+        for result in results:
+            benchmark_case(result)
     elif kind == "migration":
         if len(data.get("backfills", [])) != 3 or any(
             b.get("passed") is not True for b in data["backfills"]
@@ -120,6 +130,16 @@ def validate(kind, data):
             m.get("available") is True for m in data["metrics"]
         ):
             raise ValueError("No cloud metrics available")
+        for metric in data["metrics"]:
+            if (
+                metric.get("complete", True) is not True
+                or metric.get("rejected_points", 0) != 0
+            ):
+                raise ValueError("Incomplete cloud metric")
+            if metric.get("available") is not bool(metric["points"]):
+                raise ValueError("Inconsistent metric availability")
+            for point in metric["points"]:
+                cloud_point(point)
     elif kind == "fidelity":
         if len(data.get("checks", [])) != 3 or set(data.get("archives", {})) != set(
             TABLES
@@ -138,6 +158,7 @@ def validate(kind, data):
 
 def write_table(name, rows):
     if not rows:
+        (OUT / (name + ".csv")).unlink(missing_ok=True)
         return
     with (OUT / (name + ".csv")).open("w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=list(rows[0]), lineterminator="\n")
@@ -163,7 +184,7 @@ def markdown(headers, rows):
     )
 
 
-def build(entries):
+def _build(entries):
     OUT.mkdir(exist_ok=True)
     EVIDENCE.mkdir(exist_ok=True)
     manifest = []
@@ -175,6 +196,7 @@ def build(entries):
     scheduling = []
     fidelity = []
     cloud = []
+    datapoints = []
     for entry in entries:
         label, kind = entry["label"], entry["kind"]
         if not re.fullmatch("[a-z0-9-]+", label):
@@ -323,6 +345,19 @@ def build(entries):
         elif kind == "cloud-observation":
             for metric in data["metrics"]:
                 points = metric["points"]
+                for point in points:
+                    datapoints.append(
+                        {
+                            **base,
+                            "metric": metric["name"],
+                            "timestamp": point["Timestamp"],
+                            "period_seconds": data["period_seconds"],
+                            "unit": point["Unit"],
+                            "minimum": point["Minimum"],
+                            "average": point["Average"],
+                            "maximum": point["Maximum"],
+                        }
+                    )
                 cloud.append(
                     {
                         **base,
@@ -367,6 +402,7 @@ def build(entries):
         ("scheduling", scheduling),
         ("fidelity", fidelity),
         ("cloud-observation", cloud),
+        ("cloud-datapoints", datapoints),
     ]:
         write_table(name, rows)
     groups = {}
@@ -675,9 +711,176 @@ def build(entries):
                 ],
             )
         )
-        sections.append("[Full metric window and values](cloud-observation.csv)")
+        sections.append(
+            "[Metric window summaries](cloud-observation.csv) · [Every timestamp and period value](cloud-datapoints.csv)"
+        )
     (OUT / "performance-tables.md").write_text("\n\n".join(sections) + "\n")
     return aggregate
+
+
+GENERATED_TABLES = (
+    "retirement-trials",
+    "dataset-profiles",
+    "query-matrix",
+    "dotnet",
+    "migration",
+    "scheduling",
+    "fidelity",
+    "cloud-observation",
+    "cloud-datapoints",
+    "retirement-summary",
+)
+CHARTS = (
+    "retirement-comparison.png",
+    "retirement-comparison.svg",
+    "query-sensitivity.png",
+    "query-sensitivity.svg",
+)
+
+
+def manifest_runs(manifest):
+    if (
+        not isinstance(manifest, dict)
+        or type(manifest.get("schema_version")) is not int
+        or manifest["schema_version"] != 1
+    ):
+        raise ValueError("Unsupported manifest schema version")
+    if not isinstance(manifest.get("runs"), list):
+        raise ValueError("Manifest requires runs")
+    return manifest["runs"]
+
+
+def build(entries):
+    """Preflight every input and derived value before modifying the publication."""
+    global OUT, EVIDENCE
+    if not isinstance(entries, list) or not entries:
+        raise ValueError("An explicit nonempty selection is required")
+    if any(not isinstance(entry, dict) for entry in entries):
+        raise ValueError("Selection entries must be objects")
+    labels = [entry.get("label") for entry in entries]
+    if any(
+        not isinstance(label, str) or not re.fullmatch("[a-z0-9-]+", label)
+        for label in labels
+    ) or len(set(labels)) != len(labels):
+        raise ValueError("Invalid or duplicate report label")
+    original_out, original_evidence = OUT, EVIDENCE
+    with tempfile.TemporaryDirectory() as scratch:
+        stage_out, stage_evidence = Path(scratch) / "report", Path(scratch) / "evidence"
+        stage_evidence.mkdir()
+        # Only exact label filenames are eligible; never follow arbitrary manifest paths.
+        for entry in entries:
+            if "source" not in entry:
+                if entry.get("file") != entry["label"] + ".json.gz":
+                    raise ValueError("Invalid receipt filename")
+                (stage_evidence / entry["file"]).write_bytes(
+                    (original_evidence / entry["file"]).read_bytes()
+                )
+        try:
+            OUT, EVIDENCE = stage_out, stage_evidence
+            try:
+                result = _build(entries)
+            except (KeyError, TypeError, IndexError, OverflowError) as exc:
+                raise ValueError("Malformed version 1 receipt") from exc
+        finally:
+            OUT, EVIDENCE = original_out, original_evidence
+        manifest = json.loads((stage_evidence / "manifest.json").read_text())
+        manifest["tables"] = {
+            p.name: hashlib.sha256(p.read_bytes()).hexdigest()
+            for p in sorted(stage_out.glob("*.csv"))
+        }
+        old_manifest = (
+            json.loads((EVIDENCE / "manifest.json").read_text())
+            if (EVIDENCE / "manifest.json").exists()
+            else None
+        )
+        unchanged = old_manifest == manifest and all(
+            (OUT / name).exists()
+            and hashlib.sha256((OUT / name).read_bytes()).hexdigest() == digest
+            for name, digest in manifest["tables"].items()
+        )
+        (stage_evidence / "manifest.json").write_text(
+            json.dumps(manifest, indent=2) + "\n"
+        )
+        OUT.mkdir(parents=True, exist_ok=True)
+        EVIDENCE.mkdir(parents=True, exist_ok=True)
+        # Invalidate the old manifest before replacing files: interruptions fail closed.
+        (EVIDENCE / "manifest.json").unlink(missing_ok=True)
+        if not unchanged:
+            for name in CHARTS:
+                (OUT / name).unlink(missing_ok=True)
+        for name in GENERATED_TABLES:
+            if not (stage_out / (name + ".csv")).exists():
+                (OUT / (name + ".csv")).unlink(missing_ok=True)
+        for directory, destination in ((stage_out, OUT), (stage_evidence, EVIDENCE)):
+            for path in directory.iterdir():
+                if path.name != "manifest.json":
+                    (destination / path.name).write_bytes(path.read_bytes())
+        # Publish the binding only after every artifact is present.
+        (EVIDENCE / "manifest.json").write_bytes(
+            (stage_evidence / "manifest.json").read_bytes()
+        )
+        return result
+
+
+def verify_plot_inputs():
+    manifest = json.loads((EVIDENCE / "manifest.json").read_text())
+    labels = {entry["label"] for entry in manifest_runs(manifest)}
+    tables = manifest.get("tables", {})
+    result = {}
+    for name in ("retirement-summary.csv", "query-matrix.csv"):
+        path = OUT / name
+        if not path.exists() or hashlib.sha256(
+            path.read_bytes()
+        ).hexdigest() != tables.get(name):
+            raise ValueError(
+                "Plot table is absent or not bound to the current manifest"
+            )
+        with path.open() as stream:
+            rows = list(csv.DictReader(stream))
+        if any("evidence" in row and row["evidence"] not in labels for row in rows):
+            raise ValueError("Plot row references unselected evidence")
+        result[name] = rows
+    for target, count in (
+        ("postgres:17", "4096"),
+        ("postgres:17", "32768"),
+        ("aurora", "4096"),
+    ):
+        selected = [
+            r
+            for r in result["retirement-summary.csv"]
+            if r["target"] == target
+            and r["parent_rows"] == count
+            and r["profile"] == "typical"
+            and r["batch_size"] == "256"
+            and r["fk_indexes"] == "True"
+            and r["mode"] in ("delete", "partition", "split_daily", "copy")
+        ]
+        if (
+            len(selected) != 4
+            or len({r["mode"] for r in selected}) != 4
+            or any(r["trials"] != "3" for r in selected)
+        ):
+            raise ValueError("Incomplete three-trial retirement plot coverage")
+    for target in ("postgres:16", "postgres:17"):
+        for shape in (
+            "id",
+            "id_timestamp",
+            "id_timestamp_expression",
+            "external_indexed",
+        ):
+            selected = [
+                r
+                for r in result["query-matrix.csv"]
+                if r["target"] == target and r["shape"] == shape
+            ]
+            if (
+                len(selected) != 5
+                or {r["partitions"] for r in selected}
+                != {"0", "10", "40", "120", "400"}
+                or any(r["rows"] != "2000000" or r["n"] != "30" for r in selected)
+            ):
+                raise ValueError("Incomplete narrow query plot coverage")
+    return result
 
 
 def main():
@@ -687,7 +890,7 @@ def main():
     entries = (
         json.loads(args.selection.read_text())
         if args.selection
-        else json.loads((EVIDENCE / "manifest.json").read_text())["runs"]
+        else manifest_runs(json.loads((EVIDENCE / "manifest.json").read_text()))
     )
     build(entries)
 

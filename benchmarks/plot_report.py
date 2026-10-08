@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Static scientific plots derived only from the published CSV performance tables."""
 
-import csv
 from pathlib import Path
 import matplotlib
+from publish_report import verify_plot_inputs
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -23,7 +23,8 @@ COLORS = ["#245A81", "#138580", "#BA6C21", "#7C589B"]
 
 
 def main():
-    rows = list(csv.DictReader((OUT / "retirement-summary.csv").open()))
+    tables = verify_plot_inputs()
+    rows = tables["retirement-summary.csv"]
     fig, axes = plt.subplots(1, 3, figsize=(13, 4.7), sharey=True)
     configurations = [
         ("postgres:17", 4096, "Local PG 17 · 4,096 parents"),
@@ -97,7 +98,7 @@ def main():
     fig.savefig(OUT / "retirement-comparison.png")
     fig.savefig(OUT / "retirement-comparison.svg", metadata={"Date": None})
     plt.close(fig)
-    rows = list(csv.DictReader((OUT / "query-matrix.csv").open()))
+    rows = tables["query-matrix.csv"]
     fig, axes = plt.subplots(1, 2, figsize=(12, 4.5), sharey=True)
     shapes = [
         ("id", "ID only"),
