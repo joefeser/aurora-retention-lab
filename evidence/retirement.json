@@ -1,0 +1,212 @@
+{
+  "passed": true,
+  "capacity": {
+    "MinCapacity": 0.5,
+    "MaxCapacity": 1.0
+  },
+  "expired_parents_per_arm": 1024,
+  "live_parents_per_arm": 32,
+  "trials": [
+    {
+      "trial": 1,
+      "mode": "delete",
+      "exports": {
+        "event": {
+          "rows": 1024,
+          "bytes": 33583021,
+          "verified": true,
+          "export_seconds": 1.19,
+          "import_seconds": 2.759,
+          "encryption": "aws:kms"
+        },
+        "queue": {
+          "rows": 1024,
+          "bytes": 8444762,
+          "verified": true,
+          "export_seconds": 0.702,
+          "import_seconds": 1.02,
+          "encryption": "aws:kms"
+        },
+        "push": {
+          "rows": 2048,
+          "bytes": 178954,
+          "verified": true,
+          "export_seconds": 0.659,
+          "import_seconds": 0.472,
+          "encryption": "aws:kms"
+        },
+        "history": {
+          "rows": 1024,
+          "bytes": 65370,
+          "verified": true,
+          "export_seconds": 0.703,
+          "import_seconds": 0.482,
+          "encryption": "aws:kms"
+        }
+      },
+      "passed": true,
+      "lock_acquire_client_seconds": 0.42,
+      "archive_verify_client_seconds": 15.642,
+      "retire_client_seconds": 0.584,
+      "retire_server_seconds": 0.11996,
+      "lock_through_commit_client_seconds": 19.532,
+      "independent_committed_checks": [
+        "both cascade FKs remain validated on active parent",
+        "all keeper columns match after commit",
+        "archived contents identical across both trials and designs"
+      ]
+    },
+    {
+      "trial": 1,
+      "mode": "partition",
+      "exports": {
+        "event": {
+          "rows": 1024,
+          "bytes": 33583021,
+          "verified": true,
+          "export_seconds": 1.126,
+          "import_seconds": 2.694,
+          "encryption": "aws:kms"
+        },
+        "queue": {
+          "rows": 1024,
+          "bytes": 8444762,
+          "verified": true,
+          "export_seconds": 0.706,
+          "import_seconds": 0.826,
+          "encryption": "aws:kms"
+        },
+        "push": {
+          "rows": 2048,
+          "bytes": 178954,
+          "verified": true,
+          "export_seconds": 0.686,
+          "import_seconds": 0.476,
+          "encryption": "aws:kms"
+        },
+        "history": {
+          "rows": 1024,
+          "bytes": 65370,
+          "verified": true,
+          "export_seconds": 0.727,
+          "import_seconds": 0.551,
+          "encryption": "aws:kms"
+        }
+      },
+      "passed": true,
+      "lock_acquire_client_seconds": 0.42,
+      "archive_verify_client_seconds": 15.26,
+      "retire_client_seconds": 0.657,
+      "retire_server_seconds": 0.182231,
+      "lock_through_commit_client_seconds": 19.592,
+      "independent_committed_checks": [
+        "both cascade FKs remain validated on active parent",
+        "all keeper columns match after commit",
+        "archived contents identical across both trials and designs",
+        "all expired partition relations absent"
+      ]
+    },
+    {
+      "trial": 2,
+      "mode": "partition",
+      "exports": {
+        "event": {
+          "rows": 1024,
+          "bytes": 33583021,
+          "verified": true,
+          "export_seconds": 1.08,
+          "import_seconds": 2.479,
+          "encryption": "aws:kms"
+        },
+        "queue": {
+          "rows": 1024,
+          "bytes": 8444762,
+          "verified": true,
+          "export_seconds": 0.754,
+          "import_seconds": 1.108,
+          "encryption": "aws:kms"
+        },
+        "push": {
+          "rows": 2048,
+          "bytes": 178954,
+          "verified": true,
+          "export_seconds": 0.632,
+          "import_seconds": 0.475,
+          "encryption": "aws:kms"
+        },
+        "history": {
+          "rows": 1024,
+          "bytes": 65370,
+          "verified": true,
+          "export_seconds": 0.648,
+          "import_seconds": 0.467,
+          "encryption": "aws:kms"
+        }
+      },
+      "passed": true,
+      "lock_acquire_client_seconds": 0.408,
+      "archive_verify_client_seconds": 16.863,
+      "retire_client_seconds": 0.418,
+      "retire_server_seconds": 0.021803,
+      "lock_through_commit_client_seconds": 20.622,
+      "independent_committed_checks": [
+        "both cascade FKs remain validated on active parent",
+        "all keeper columns match after commit",
+        "archived contents identical across both trials and designs",
+        "all expired partition relations absent"
+      ]
+    },
+    {
+      "trial": 2,
+      "mode": "delete",
+      "exports": {
+        "event": {
+          "rows": 1024,
+          "bytes": 33583021,
+          "verified": true,
+          "export_seconds": 1.062,
+          "import_seconds": 2.697,
+          "encryption": "aws:kms"
+        },
+        "queue": {
+          "rows": 1024,
+          "bytes": 8444762,
+          "verified": true,
+          "export_seconds": 0.737,
+          "import_seconds": 0.738,
+          "encryption": "aws:kms"
+        },
+        "push": {
+          "rows": 2048,
+          "bytes": 178954,
+          "verified": true,
+          "export_seconds": 0.633,
+          "import_seconds": 0.478,
+          "encryption": "aws:kms"
+        },
+        "history": {
+          "rows": 1024,
+          "bytes": 65370,
+          "verified": true,
+          "export_seconds": 0.653,
+          "import_seconds": 0.498,
+          "encryption": "aws:kms"
+        }
+      },
+      "passed": true,
+      "lock_acquire_client_seconds": 0.434,
+      "archive_verify_client_seconds": 15.261,
+      "retire_client_seconds": 0.543,
+      "retire_server_seconds": 0.080282,
+      "lock_through_commit_client_seconds": 19.199,
+      "independent_committed_checks": [
+        "both cascade FKs remain validated on active parent",
+        "all keeper columns match after commit",
+        "archived contents identical across both trials and designs"
+      ]
+    }
+  ],
+  "scope": "Quiescent synthetic comparison; two trials with reversed order; no concurrent writers",
+  "engine": "PostgreSQL 17.9 on aarch64-unknown-linux-gnu, compiled by aarch64-unknown-linux-gnu-gcc (GCC) 10.5.0, 64-bit",
+  "elapsed_seconds": 159.115
+}
