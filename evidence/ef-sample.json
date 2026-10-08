@@ -15,6 +15,7 @@
         "checks": [
           "refuse to modify a previously populated sample database",
           "baseline: EF loads complete graph with correct IDs and FKs",
+          "baseline: canonical snapshots ignore reversed input order",
           "baseline: tracked queue rescheduling crosses midnight",
           "baseline: parent delete cascades queue/push and leaves soft history",
           "baseline: template delete cascades both parent and queue paths; history remains",
@@ -27,6 +28,7 @@
           "migration preserves all original columns: send_history",
           "partitioned: EF loads complete graph with correct IDs and FKs",
           "all migrated identity sequences generate IDs above copied rows",
+          "partitioned: canonical snapshots ignore reversed input order",
           "partitioned: tracked queue rescheduling crosses midnight",
           "queue delivery change leaves parent-aligned partition unchanged",
           "partitioned: parent delete cascades queue/push and leaves soft history",
@@ -35,13 +37,19 @@
           "partitioned: rollback restores every fixture column",
           "database rejects changing parent retention timestamp",
           "composite key permits duplicate bare IDs across partition timestamps",
+          "canonical snapshots ignore reversed input with colliding parent and push IDs",
           "delivery_queue: database rejects child retention timestamp reassignment even with valid alternate parent",
           "push_delivery: database rejects child retention timestamp reassignment even with valid alternate parent",
           "full-key EF reschedule leaves committed colliding live queue unchanged",
+          "canonical snapshots ignore reversed input with colliding queue IDs",
           "archive guard rejects committed duplicate queue IDs without changing source or history",
           "collision regression cleanup preserves complete original fixture",
           "collision introduced after snapshot aborts archive transaction before retirement",
           "late-collision rejection preserves all original rows and soft history",
+          "live-only duplicate admission fixture has no soft history",
+          "global archive admission rejects live-only duplicates without history and preserves contents",
+          "global pre-retirement guard rejects live-only duplicates without history and preserves contents",
+          "global policy regression cleanup preserves original fixture",
           "all 64 fenced EF probes and unfenced controls preserve complete fixture contents",
           "independent reader observes committed live graph 1 while expired fence held",
           "independent reader observes committed live graph 2 while expired fence held",
@@ -1360,7 +1368,7 @@
         ]
       },
       "container_removed": true,
-      "elapsed_seconds": 25.46
+      "elapsed_seconds": 26.157
     },
     {
       "passed": true,
@@ -1376,6 +1384,7 @@
         "checks": [
           "refuse to modify a previously populated sample database",
           "baseline: EF loads complete graph with correct IDs and FKs",
+          "baseline: canonical snapshots ignore reversed input order",
           "baseline: tracked queue rescheduling crosses midnight",
           "baseline: parent delete cascades queue/push and leaves soft history",
           "baseline: template delete cascades both parent and queue paths; history remains",
@@ -1388,6 +1397,7 @@
           "migration preserves all original columns: send_history",
           "partitioned: EF loads complete graph with correct IDs and FKs",
           "all migrated identity sequences generate IDs above copied rows",
+          "partitioned: canonical snapshots ignore reversed input order",
           "partitioned: tracked queue rescheduling crosses midnight",
           "queue delivery change leaves parent-aligned partition unchanged",
           "partitioned: parent delete cascades queue/push and leaves soft history",
@@ -1396,13 +1406,19 @@
           "partitioned: rollback restores every fixture column",
           "database rejects changing parent retention timestamp",
           "composite key permits duplicate bare IDs across partition timestamps",
+          "canonical snapshots ignore reversed input with colliding parent and push IDs",
           "delivery_queue: database rejects child retention timestamp reassignment even with valid alternate parent",
           "push_delivery: database rejects child retention timestamp reassignment even with valid alternate parent",
           "full-key EF reschedule leaves committed colliding live queue unchanged",
+          "canonical snapshots ignore reversed input with colliding queue IDs",
           "archive guard rejects committed duplicate queue IDs without changing source or history",
           "collision regression cleanup preserves complete original fixture",
           "collision introduced after snapshot aborts archive transaction before retirement",
           "late-collision rejection preserves all original rows and soft history",
+          "live-only duplicate admission fixture has no soft history",
+          "global archive admission rejects live-only duplicates without history and preserves contents",
+          "global pre-retirement guard rejects live-only duplicates without history and preserves contents",
+          "global policy regression cleanup preserves original fixture",
           "all 64 fenced EF probes and unfenced controls preserve complete fixture contents",
           "independent reader observes committed live graph 1 while expired fence held",
           "independent reader observes committed live graph 2 while expired fence held",
@@ -2721,7 +2737,7 @@
         ]
       },
       "container_removed": true,
-      "elapsed_seconds": 24.633
+      "elapsed_seconds": 24.759
     }
   ]
 }
