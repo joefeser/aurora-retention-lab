@@ -1,0 +1,8 @@
+evidence,target,metric,available,points,unit,minimum,mean_of_period_averages,maximum,window_start_utc,window_end_utc
+aurora-cloud-context,aurora,CPUUtilization,True,48,Percent,4.2105263157894735,53.81943072711725,100.0,2026-10-08T12:33:59.662315+00:00,2026-10-08T16:33:59.662315+00:00
+aurora-cloud-context,aurora,ServerlessDatabaseCapacity,True,48,None,0.5,0.624375,1.0,2026-10-08T12:33:59.662315+00:00,2026-10-08T16:33:59.662315+00:00
+aurora-cloud-context,aurora,ACUUtilization,True,48,Percent,50.0,62.4375,100.0,2026-10-08T12:33:59.662315+00:00,2026-10-08T16:33:59.662315+00:00
+aurora-cloud-context,aurora,FreeableMemory,True,48,Bytes,235950080.0,726005053.7244445,860606464.0,2026-10-08T12:33:59.662315+00:00,2026-10-08T16:33:59.662315+00:00
+aurora-cloud-context,aurora,BufferCacheHitRatio,True,48,Percent,94.47533312658382,99.3775133348562,100.0,2026-10-08T12:33:59.662315+00:00,2026-10-08T16:33:59.662315+00:00
+aurora-cloud-context,aurora,VolumeWriteIOPs,True,45,Count,925.0,14643.68888888889,44806.0,2026-10-08T12:33:59.662315+00:00,2026-10-08T16:33:59.662315+00:00
+aurora-cloud-context,aurora,VolumeReadIOPs,True,45,Count,0.0,8467.133333333333,27216.0,2026-10-08T12:33:59.662315+00:00,2026-10-08T16:33:59.662315+00:00

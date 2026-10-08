@@ -1,0 +1,202 @@
+{
+  "schema_version": 1,
+  "description": "Explicit successful experiment receipts; source attachments, credentials and raw host reports excluded. SHA256 binds bytes, not runtime attestation.",
+  "runs": [
+    {
+      "label": "pg17-main",
+      "kind": "workload",
+      "file": "pg17-main.json.gz",
+      "target": "postgres:17",
+      "receipt_sha256": "00b566357f411822360835e865804335cc1752c8afc951e2a8a365ed49e0897a",
+      "archive_sha256": "6fc7637e0a75e310daddc264fe506abf90b03288d087b3c007d85725e69ef15f"
+    },
+    {
+      "label": "pg16-main",
+      "kind": "workload",
+      "file": "pg16-main.json.gz",
+      "target": "postgres:16",
+      "receipt_sha256": "ca3db0da4dfbe9b91011c027835584a5a01d1ff3dd574e5cc4e41c08e8b41b16",
+      "archive_sha256": "7fc4a671bfe40b863ebed20b58e71f33b79a9bcb4142ecb0ece5eb6709ef63b0"
+    },
+    {
+      "label": "pg17-larger-tail",
+      "kind": "workload",
+      "file": "pg17-larger-tail.json.gz",
+      "target": "postgres:17",
+      "receipt_sha256": "156ad4911724858dc7b5d98fe516022507ad76a8562a86d9f41827425764c0dc",
+      "archive_sha256": "0578d27c86cd6ac101196afc27956a9080b9193ae9c777e29fc1a3ef5e4c8af8"
+    },
+    {
+      "label": "pg17-daily-payload",
+      "kind": "workload",
+      "file": "pg17-daily-payload.json.gz",
+      "target": "postgres:17",
+      "receipt_sha256": "4b3fda30b24feb5ca64097daa6acd072b0aac4428b854194502ff1948dd7e8be",
+      "archive_sha256": "0b67138e07cb95adde8e4f990bac632d4d9ac51fc7593093b422f098b8946c2f"
+    },
+    {
+      "label": "pg16-daily-payload",
+      "kind": "workload",
+      "file": "pg16-daily-payload.json.gz",
+      "target": "postgres:16",
+      "receipt_sha256": "b7f0de380f1dbef71dcc7711036f528bd30976ec896497181127712a7da8634d",
+      "archive_sha256": "953f0698dfbfc409aaf37af94ee86a9eeb068b8cb4a0ad25e0c1c2e28b3e6621"
+    },
+    {
+      "label": "pg17-batch64",
+      "kind": "workload",
+      "file": "pg17-batch64.json.gz",
+      "target": "postgres:17",
+      "receipt_sha256": "8ebb4edba8f8a8ba506795581a3bd41aea6564842e916ce8fa7539eb50d792aa",
+      "archive_sha256": "cca734b29553dc6952e659802c252d98706647324981e731d87965851bac51ff"
+    },
+    {
+      "label": "pg17-batch1024",
+      "kind": "workload",
+      "file": "pg17-batch1024.json.gz",
+      "target": "postgres:17",
+      "receipt_sha256": "b3a94a54546ab50162df514d132855a09257c9c944d6c2a3e40bc84c3aec4be2",
+      "archive_sha256": "d1c1d755c050e90fa64485a2f2a5c9997c8d4eef1c1c1e0a5b25253e0c671861"
+    },
+    {
+      "label": "pg17-no-fk-index",
+      "kind": "workload",
+      "file": "pg17-no-fk-index.json.gz",
+      "target": "postgres:17",
+      "receipt_sha256": "9c53c4bb365712ac8b2f4a2024af8928d8308df740e316edaf5b6af57230ffda",
+      "archive_sha256": "8cb81fe72cc5dc38f3022ef3f5b328030b6ab1ec77e5ddc3665951bb5bedd031"
+    },
+    {
+      "label": "pg17-queries",
+      "kind": "queries",
+      "file": "pg17-queries.json.gz",
+      "target": "postgres:17",
+      "receipt_sha256": "2b55288d43bfad12440d8740d9b164aa07a3af925646583bed7342b048a90b5d",
+      "archive_sha256": "11ed738eda9919f373996e77a5331c370099d644a59a30908af5233608d9d457"
+    },
+    {
+      "label": "pg16-queries",
+      "kind": "queries",
+      "file": "pg16-queries.json.gz",
+      "target": "postgres:16",
+      "receipt_sha256": "d0843e5fbe3f7bace2a3e9d012dad8c601f6cf1172bbf355c1c4e270093b33d9",
+      "archive_sha256": "a38465a85ea0ad51b2567e6155bce75a65418a6700709299a68d6ceb0a5cd12b"
+    },
+    {
+      "label": "pg17-dotnet",
+      "kind": "dotnet",
+      "file": "pg17-dotnet.json.gz",
+      "target": "postgres:17",
+      "receipt_sha256": "4ff9ab46ef0b7ed2a174fde60def8b5e0d1d4eaf23ba28574a3e29f223eb2b64",
+      "archive_sha256": "1608254c17011ae87d53941372650e1209940519861a21a4b60b7fdd022d06a8"
+    },
+    {
+      "label": "pg16-dotnet",
+      "kind": "dotnet",
+      "file": "pg16-dotnet.json.gz",
+      "target": "postgres:16",
+      "receipt_sha256": "95bdd7097739551dde4895b5b7f2c7b3a80ecaeede2d76b7edc246e5dccd392c",
+      "archive_sha256": "7f9431a3a492cb903b339e805df38c03bfab41a898febaf2811015742b01b979"
+    },
+    {
+      "label": "pg17-migration",
+      "kind": "migration",
+      "file": "pg17-migration.json.gz",
+      "target": "postgres:17",
+      "receipt_sha256": "79c005dadc9f6bf29600998818c8457bb365d419c075e52cb25df3bd3be932b0",
+      "archive_sha256": "d2ea60f14f46f31a39328d6f5322fc1a91bd4238c2c0fb6d7cbe5b0ed25fa28c"
+    },
+    {
+      "label": "pg16-migration",
+      "kind": "migration",
+      "file": "pg16-migration.json.gz",
+      "target": "postgres:16",
+      "receipt_sha256": "94e4383d626ab47cb7758cb541a7da2f79e90d7e2bfdf7a901cc026859db6b62",
+      "archive_sha256": "2a934f5808e63bd36f6e7e03c2a6d79feaee31553d46a10aca39250ae1801556"
+    },
+    {
+      "label": "pg17-fidelity",
+      "kind": "fidelity",
+      "file": "pg17-fidelity.json.gz",
+      "target": "postgres:17",
+      "receipt_sha256": "4e9f8ec8854741cb31020e1a901302a67d2ef66345fbfbc5d12152ccd0ab120c",
+      "archive_sha256": "e8e153d71b5365e51c993fb26db1416164a9b38b4b48f4b11afff93632dd0934"
+    },
+    {
+      "label": "pg16-fidelity",
+      "kind": "fidelity",
+      "file": "pg16-fidelity.json.gz",
+      "target": "postgres:16",
+      "receipt_sha256": "71317d71071647dcb3f6495e13ac2a53261c2e7496ace511fe96a14367143ebc",
+      "archive_sha256": "a07af95297735166821fad2deb27531fac016f6ecdfaf83bb5c79f4588197068"
+    },
+    {
+      "label": "aurora-main",
+      "kind": "workload",
+      "file": "aurora-main.json.gz",
+      "target": "aurora",
+      "receipt_sha256": "ebdaa81a3129a8f739c4154dc8685efa31072ccef005dc47122d73487dfd555d",
+      "archive_sha256": "ec58e22cfae4d711abead0c94c15a6df9a1bf956770336c67603327e01cef0b5"
+    },
+    {
+      "label": "pg17-larger-typical",
+      "kind": "workload",
+      "file": "pg17-larger-typical.json.gz",
+      "target": "postgres:17",
+      "receipt_sha256": "675238fd769cf5c884c50eeaa8aadb90d3bd4371c458e570e645dcd350f14886",
+      "archive_sha256": "b7731ceaef6632d8fd9fdbc48744c775c6fe764bc61e8078a8119ab0d5cc709b"
+    },
+    {
+      "label": "aurora-daily-payload",
+      "kind": "workload",
+      "file": "aurora-daily-payload.json.gz",
+      "target": "aurora",
+      "receipt_sha256": "d80821718621410067a5326a3d6cb37695364edbddc1e2ead93986ac8b8720a6",
+      "archive_sha256": "d76a8b95f4b486002ee07311a4d9fe06d04c6b44a4c934af70e1b14f699113a4"
+    },
+    {
+      "label": "aurora-queries",
+      "kind": "queries",
+      "file": "aurora-queries.json.gz",
+      "target": "aurora",
+      "receipt_sha256": "a733134b2a219117818cb68c0ade6695995cbcc16769c481c033669ef3e04302",
+      "archive_sha256": "b5ba2d4a79d16b251296bef77dabbb954c77a202370721dadd717ed43a10f6eb"
+    },
+    {
+      "label": "aurora-migration",
+      "kind": "migration",
+      "file": "aurora-migration.json.gz",
+      "target": "aurora",
+      "receipt_sha256": "3059fc47fc75064a0ab1a3e454e104c47fc9e5176c2786ef6d707e8b6e4ef440",
+      "archive_sha256": "f98307f3438b8760fd0136f14fffa1ef124915c5c188564a8b7cae5a901d246e"
+    },
+    {
+      "label": "aurora-fidelity",
+      "kind": "fidelity",
+      "file": "aurora-fidelity.json.gz",
+      "target": "aurora",
+      "receipt_sha256": "e02725d0dd92dca05333f6698f77cb9ddf9a3056b39dd4faebebe2b27feabfe0",
+      "archive_sha256": "bb877609f61544b1357cfe3926b7049bd5ae9303bd351c41dcb2b13dc32a19d0"
+    },
+    {
+      "label": "aurora-cloud-context",
+      "kind": "cloud-observation",
+      "file": "aurora-cloud-context.json.gz",
+      "target": "aurora",
+      "receipt_sha256": "e1301d62266379d000a19a3af3a39680c3d1bf38e48c43eb374189ba568fd087",
+      "archive_sha256": "f98f11c8f08585ec515fb7cc58ad21a67145d5e7d43948bf386064e8ae128a40"
+    }
+  ],
+  "tables": {
+    "cloud-datapoints.csv": "a7345d1afd50cc8caf724beb4cf1838d1a48b4df651e116f21fa537dab95edac",
+    "cloud-observation.csv": "5095309d83cc61982da62ca29d8fcd610e5a1dd6ada99dab97f17db69cb26e72",
+    "dataset-profiles.csv": "d66806aa7051a03d70c63a9ea129939edf6074bd968eb6ebedf451d776f2f460",
+    "dotnet.csv": "177034efb6198c2dc26d4dea11f6d6cd5f4e602fd32436e8dbe13ef2bd1dbcdb",
+    "fidelity.csv": "d7849df24b7021a3226e12888560e1ebeee7d46172c029afee9f5ba07b2760b2",
+    "migration.csv": "080831f887823c9caed463e97c8f4c70ea4c6af740748ad368b2097c4fddd327",
+    "query-matrix.csv": "fa31f05b5387eaa1a82d29e4d046b11de6e8b1e6964874b2e6b8bd2c995b1449",
+    "retirement-summary.csv": "8506a312b85450d92330250f7ad3c6cfdff35fcbabe8267624a5b5019263ba33",
+    "retirement-trials.csv": "a80b60bdb8dd435930865ccde3cb596253c3bc88db3fb413e4d9db7b6b56a606",
+    "scheduling.csv": "593b695814fa21872e6bbee93d3eb259f8311bd82e984d12e4a3549f7482022f"
+  }
+}

@@ -1,0 +1,785 @@
+{
+  "workload": {
+    "$": [
+      "arms",
+      "batch_size",
+      "capacity",
+      "container_removed",
+      "elapsed_seconds",
+      "engine",
+      "expired_fraction",
+      "image_id",
+      "parent_rows",
+      "passed",
+      "profiles",
+      "run_id",
+      "scope",
+      "settings",
+      "started_utc",
+      "supporting_fk_indexes",
+      "target",
+      "trials_per_design",
+      "wal_counter",
+      "recovery"
+    ],
+    "$.arms[]": [
+      "archive_transaction_client_seconds",
+      "archives",
+      "batch_size",
+      "commit_state",
+      "copy_into_design",
+      "lock_acquisition_client_seconds",
+      "mode",
+      "old_copy_retained_until_verified",
+      "order",
+      "passed",
+      "payload_drop",
+      "profile",
+      "retirement_batches",
+      "retirement_client_seconds",
+      "retirement_server_seconds",
+      "stage",
+      "storage_after_bytes",
+      "storage_before_bytes",
+      "survivors_verified",
+      "trial"
+    ],
+    "$.arms[].archives": [
+      "delivery_queue",
+      "notification_event",
+      "notification_template",
+      "push_delivery",
+      "send_history"
+    ],
+    "$.arms[].archives.delivery_queue": [
+      "batches",
+      "elapsed_seconds",
+      "rows",
+      "verified"
+    ],
+    "$.arms[].archives.delivery_queue.batches[]": [
+      "bytes",
+      "encryption",
+      "export_seconds",
+      "import_seconds",
+      "rows",
+      "transport"
+    ],
+    "$.arms[].archives.notification_event": [
+      "batches",
+      "elapsed_seconds",
+      "rows",
+      "verified"
+    ],
+    "$.arms[].archives.notification_event.batches[]": [
+      "bytes",
+      "encryption",
+      "export_seconds",
+      "import_seconds",
+      "rows",
+      "transport"
+    ],
+    "$.arms[].archives.notification_template": [
+      "batches",
+      "elapsed_seconds",
+      "rows",
+      "verified"
+    ],
+    "$.arms[].archives.notification_template.batches[]": [
+      "bytes",
+      "encryption",
+      "export_seconds",
+      "import_seconds",
+      "rows",
+      "transport"
+    ],
+    "$.arms[].archives.push_delivery": [
+      "batches",
+      "elapsed_seconds",
+      "rows",
+      "verified"
+    ],
+    "$.arms[].archives.push_delivery.batches[]": [
+      "bytes",
+      "encryption",
+      "export_seconds",
+      "import_seconds",
+      "rows",
+      "transport"
+    ],
+    "$.arms[].archives.send_history": [
+      "batches",
+      "elapsed_seconds",
+      "rows",
+      "verified"
+    ],
+    "$.arms[].archives.send_history.batches[]": [
+      "bytes",
+      "encryption",
+      "export_seconds",
+      "import_seconds",
+      "rows",
+      "transport"
+    ],
+    "$.arms[].copy_into_design": [
+      "client_seconds",
+      "server_seconds",
+      "wal_bytes"
+    ],
+    "$.arms[].payload_drop": [
+      "client_seconds",
+      "server_seconds",
+      "wal_bytes"
+    ],
+    "$.arms[].retirement_batches[]": [
+      "client_seconds",
+      "commit_client_seconds",
+      "parents",
+      "server_seconds",
+      "wal_bytes"
+    ],
+    "$.capacity": [
+      "MaxCapacity",
+      "MinCapacity"
+    ],
+    "$.profiles[]": [
+      "age_days",
+      "columns",
+      "definition",
+      "delivery_queue",
+      "fanout",
+      "generation_client_seconds",
+      "name",
+      "notification_event",
+      "notification_template",
+      "push_delivery",
+      "send_history"
+    ],
+    "$.profiles[].age_days[]": [
+      "parents",
+      "scheduled_day"
+    ],
+    "$.profiles[].columns[]": [
+      "character_maximum_length",
+      "column_name",
+      "data_type",
+      "is_nullable",
+      "table_name"
+    ],
+    "$.profiles[].definition": [
+      "parent_sizes",
+      "queue_sizes",
+      "skew",
+      "tail"
+    ],
+    "$.profiles[].delivery_queue": [
+      "payload",
+      "rows",
+      "storage_bytes"
+    ],
+    "$.profiles[].delivery_queue.payload": [
+      "empty_strings",
+      "logical_body_bytes",
+      "max_bytes",
+      "mean_bytes",
+      "min_bytes",
+      "nulls",
+      "p50_bytes",
+      "p95_bytes",
+      "p99_bytes"
+    ],
+    "$.profiles[].fanout": [
+      "max_push",
+      "mean_push",
+      "min_push",
+      "p95_push"
+    ],
+    "$.profiles[].notification_event": [
+      "payload",
+      "rows",
+      "storage_bytes"
+    ],
+    "$.profiles[].notification_event.payload": [
+      "empty_strings",
+      "logical_body_bytes",
+      "max_bytes",
+      "mean_bytes",
+      "min_bytes",
+      "nulls",
+      "p50_bytes",
+      "p95_bytes",
+      "p99_bytes"
+    ],
+    "$.profiles[].notification_template": [
+      "rows",
+      "storage_bytes"
+    ],
+    "$.profiles[].push_delivery": [
+      "rows",
+      "storage_bytes"
+    ],
+    "$.profiles[].send_history": [
+      "rows",
+      "storage_bytes"
+    ],
+    "$.settings[]": [
+      "name",
+      "setting",
+      "unit"
+    ],
+    "$.recovery": [
+      "state",
+      "schemas_tracked",
+      "archive_prefix_tracked"
+    ]
+  },
+  "queries": {
+    "$": [
+      "capacity",
+      "container_removed",
+      "elapsed_seconds",
+      "engine",
+      "image_id",
+      "passed",
+      "results",
+      "rows",
+      "samples",
+      "scope",
+      "started_utc",
+      "target",
+      "wal_counter",
+      "recovery"
+    ],
+    "$.capacity": [
+      "MaxCapacity",
+      "MinCapacity"
+    ],
+    "$.results[]": [
+      "client",
+      "load_seconds",
+      "node_counts",
+      "partitions",
+      "plan",
+      "shape"
+    ],
+    "$.results[].client": [
+      "max_ms",
+      "mean_ms",
+      "median_ms",
+      "min_ms",
+      "n",
+      "p95_ms"
+    ],
+    "$.results[].node_counts": [
+      "Append",
+      "Gather",
+      "Index Only Scan",
+      "Index Scan",
+      "Seq Scan"
+    ],
+    "$.results[].plan[]": [
+      "Execution Time",
+      "Plan",
+      "Planning",
+      "Planning Time",
+      "Triggers"
+    ],
+    "$.results[].plan[].Plan": [
+      "Actual Loops",
+      "Actual Rows",
+      "Alias",
+      "Async Capable",
+      "Filter",
+      "Heap Fetches",
+      "Index Cond",
+      "Index Name",
+      "Local Dirtied Blocks",
+      "Local Hit Blocks",
+      "Local I/O Read Time",
+      "Local I/O Write Time",
+      "Local Read Blocks",
+      "Local Written Blocks",
+      "Node Type",
+      "Parallel Aware",
+      "Plan Rows",
+      "Plan Width",
+      "Plans",
+      "Relation Name",
+      "Rows Removed by Filter",
+      "Rows Removed by Index Recheck",
+      "Scan Direction",
+      "Shared Dirtied Blocks",
+      "Shared Hit Blocks",
+      "Shared I/O Read Time",
+      "Shared I/O Write Time",
+      "Shared Read Blocks",
+      "Shared Written Blocks",
+      "Single Copy",
+      "Startup Cost",
+      "Subplans Removed",
+      "Temp I/O Read Time",
+      "Temp I/O Write Time",
+      "Temp Read Blocks",
+      "Temp Written Blocks",
+      "Total Cost",
+      "WAL Bytes",
+      "WAL FPI",
+      "WAL Records",
+      "Workers Launched",
+      "Workers Planned"
+    ],
+    "$.results[].plan[].Plan.Plans[]": [
+      "Actual Loops",
+      "Actual Rows",
+      "Alias",
+      "Async Capable",
+      "Filter",
+      "Heap Fetches",
+      "Index Cond",
+      "Index Name",
+      "Local Dirtied Blocks",
+      "Local Hit Blocks",
+      "Local I/O Read Time",
+      "Local I/O Write Time",
+      "Local Read Blocks",
+      "Local Written Blocks",
+      "Node Type",
+      "Parallel Aware",
+      "Parent Relationship",
+      "Plan Rows",
+      "Plan Width",
+      "Plans",
+      "Relation Name",
+      "Rows Removed by Filter",
+      "Rows Removed by Index Recheck",
+      "Scan Direction",
+      "Shared Dirtied Blocks",
+      "Shared Hit Blocks",
+      "Shared I/O Read Time",
+      "Shared I/O Write Time",
+      "Shared Read Blocks",
+      "Shared Written Blocks",
+      "Startup Cost",
+      "Subplans Removed",
+      "Temp I/O Read Time",
+      "Temp I/O Write Time",
+      "Temp Read Blocks",
+      "Temp Written Blocks",
+      "Total Cost",
+      "WAL Bytes",
+      "WAL FPI",
+      "WAL Records",
+      "Workers"
+    ],
+    "$.results[].plan[].Plan.Plans[].Plans[]": [
+      "Actual Loops",
+      "Actual Rows",
+      "Alias",
+      "Async Capable",
+      "Filter",
+      "Local Dirtied Blocks",
+      "Local Hit Blocks",
+      "Local I/O Read Time",
+      "Local I/O Write Time",
+      "Local Read Blocks",
+      "Local Written Blocks",
+      "Node Type",
+      "Parallel Aware",
+      "Parent Relationship",
+      "Plan Rows",
+      "Plan Width",
+      "Relation Name",
+      "Rows Removed by Filter",
+      "Shared Dirtied Blocks",
+      "Shared Hit Blocks",
+      "Shared I/O Read Time",
+      "Shared I/O Write Time",
+      "Shared Read Blocks",
+      "Shared Written Blocks",
+      "Startup Cost",
+      "Temp I/O Read Time",
+      "Temp I/O Write Time",
+      "Temp Read Blocks",
+      "Temp Written Blocks",
+      "Total Cost",
+      "WAL Bytes",
+      "WAL FPI",
+      "WAL Records",
+      "Workers"
+    ],
+    "$.results[].plan[].Planning": [
+      "Local Dirtied Blocks",
+      "Local Hit Blocks",
+      "Local I/O Read Time",
+      "Local I/O Write Time",
+      "Local Read Blocks",
+      "Local Written Blocks",
+      "Shared Dirtied Blocks",
+      "Shared Hit Blocks",
+      "Shared I/O Read Time",
+      "Shared I/O Write Time",
+      "Shared Read Blocks",
+      "Shared Written Blocks",
+      "Temp I/O Read Time",
+      "Temp I/O Write Time",
+      "Temp Read Blocks",
+      "Temp Written Blocks"
+    ],
+    "$.recovery": [
+      "state",
+      "schemas_tracked",
+      "archive_prefix_tracked"
+    ]
+  },
+  "dotnet": {
+    "$": [
+      "all_rows_unchanged",
+      "benchmark_results",
+      "container_removed",
+      "dataset",
+      "elapsed_seconds",
+      "engine",
+      "image_id",
+      "passed",
+      "profile",
+      "rows",
+      "target",
+      "wal_counter"
+    ],
+    "$.benchmark_results[]": [
+      "Memory",
+      "Method",
+      "Parameters",
+      "Statistics"
+    ],
+    "$.benchmark_results[].Memory": [
+      "BytesAllocatedPerOperation",
+      "Gen0Collections",
+      "Gen1Collections",
+      "Gen2Collections",
+      "TotalOperations"
+    ],
+    "$.benchmark_results[].Statistics": [
+      "AllOutliers",
+      "ConfidenceInterval",
+      "InterquartileRange",
+      "Kurtosis",
+      "LowerFence",
+      "LowerOutliers",
+      "Max",
+      "Mean",
+      "Median",
+      "Min",
+      "N",
+      "OriginalValues",
+      "Percentiles",
+      "Q1",
+      "Q3",
+      "Skewness",
+      "StandardDeviation",
+      "StandardError",
+      "UpperFence",
+      "UpperOutliers",
+      "Variance"
+    ],
+    "$.benchmark_results[].Statistics.ConfidenceInterval": [
+      "Level",
+      "Lower",
+      "Margin",
+      "Mean",
+      "N",
+      "StandardError",
+      "Upper"
+    ],
+    "$.benchmark_results[].Statistics.Percentiles": [
+      "P0",
+      "P100",
+      "P25",
+      "P50",
+      "P67",
+      "P80",
+      "P85",
+      "P90",
+      "P95"
+    ],
+    "$.dataset": [
+      "age_days",
+      "columns",
+      "delivery_queue",
+      "fanout",
+      "notification_event",
+      "notification_template",
+      "push_delivery",
+      "send_history"
+    ],
+    "$.dataset.age_days[]": [
+      "parents",
+      "scheduled_day"
+    ],
+    "$.dataset.columns[]": [
+      "character_maximum_length",
+      "column_name",
+      "data_type",
+      "is_nullable",
+      "table_name"
+    ],
+    "$.dataset.delivery_queue": [
+      "payload",
+      "rows",
+      "storage_bytes"
+    ],
+    "$.dataset.delivery_queue.payload": [
+      "empty_strings",
+      "logical_body_bytes",
+      "max_bytes",
+      "mean_bytes",
+      "min_bytes",
+      "nulls",
+      "p50_bytes",
+      "p95_bytes",
+      "p99_bytes"
+    ],
+    "$.dataset.fanout": [
+      "max_push",
+      "mean_push",
+      "min_push",
+      "p95_push"
+    ],
+    "$.dataset.notification_event": [
+      "payload",
+      "rows",
+      "storage_bytes"
+    ],
+    "$.dataset.notification_event.payload": [
+      "empty_strings",
+      "logical_body_bytes",
+      "max_bytes",
+      "mean_bytes",
+      "min_bytes",
+      "nulls",
+      "p50_bytes",
+      "p95_bytes",
+      "p99_bytes"
+    ],
+    "$.dataset.notification_template": [
+      "rows",
+      "storage_bytes"
+    ],
+    "$.dataset.push_delivery": [
+      "rows",
+      "storage_bytes"
+    ],
+    "$.dataset.send_history": [
+      "rows",
+      "storage_bytes"
+    ]
+  },
+  "migration": {
+    "$": [
+      "backfills",
+      "capacity",
+      "concurrent_move",
+      "container_removed",
+      "elapsed_seconds",
+      "engine",
+      "image_id",
+      "initial_counts",
+      "passed",
+      "rows",
+      "scheduling",
+      "started_utc",
+      "target",
+      "wal_counter",
+      "recovery"
+    ],
+    "$.backfills[]": [
+      "add_columns",
+      "batches",
+      "child_rows",
+      "constraints",
+      "passed",
+      "trial"
+    ],
+    "$.backfills[].add_columns": [
+      "client_seconds",
+      "server_seconds",
+      "wal_bytes"
+    ],
+    "$.backfills[].batches[]": [
+      "client_seconds",
+      "server_seconds",
+      "wal_bytes"
+    ],
+    "$.backfills[].constraints": [
+      "client_seconds",
+      "server_seconds",
+      "wal_bytes"
+    ],
+    "$.capacity": [
+      "MaxCapacity",
+      "MinCapacity"
+    ],
+    "$.concurrent_move": [
+      "isolation",
+      "reason",
+      "retry_new_transaction_passed",
+      "sqlstate",
+      "tested"
+    ],
+    "$.initial_counts": [
+      "delivery_queue",
+      "notification_event",
+      "notification_template",
+      "push_delivery",
+      "send_history"
+    ],
+    "$.scheduling[]": [
+      "client_seconds",
+      "design",
+      "rows_crossing_partition",
+      "selected_rows",
+      "server_seconds",
+      "wal_bytes"
+    ],
+    "$.recovery": [
+      "state",
+      "schemas_tracked",
+      "archive_prefix_tracked"
+    ]
+  },
+  "fidelity": {
+    "$": [
+      "archives",
+      "capacity",
+      "checks",
+      "container_removed",
+      "elapsed_seconds",
+      "engine",
+      "image_id",
+      "passed",
+      "target",
+      "wal_counter",
+      "recovery"
+    ],
+    "$.archives": [
+      "delivery_queue",
+      "notification_event",
+      "notification_template",
+      "push_delivery",
+      "send_history"
+    ],
+    "$.archives.delivery_queue": [
+      "batches",
+      "elapsed_seconds",
+      "rows",
+      "verified"
+    ],
+    "$.archives.delivery_queue.batches[]": [
+      "bytes",
+      "encryption",
+      "export_seconds",
+      "import_seconds",
+      "rows",
+      "transport"
+    ],
+    "$.archives.notification_event": [
+      "batches",
+      "elapsed_seconds",
+      "rows",
+      "verified"
+    ],
+    "$.archives.notification_event.batches[]": [
+      "bytes",
+      "encryption",
+      "export_seconds",
+      "import_seconds",
+      "rows",
+      "transport"
+    ],
+    "$.archives.notification_template": [
+      "batches",
+      "elapsed_seconds",
+      "rows",
+      "verified"
+    ],
+    "$.archives.notification_template.batches[]": [
+      "bytes",
+      "encryption",
+      "export_seconds",
+      "import_seconds",
+      "rows",
+      "transport"
+    ],
+    "$.archives.push_delivery": [
+      "batches",
+      "elapsed_seconds",
+      "rows",
+      "verified"
+    ],
+    "$.archives.push_delivery.batches[]": [
+      "bytes",
+      "encryption",
+      "export_seconds",
+      "import_seconds",
+      "rows",
+      "transport"
+    ],
+    "$.archives.send_history": [
+      "batches",
+      "elapsed_seconds",
+      "rows",
+      "verified"
+    ],
+    "$.archives.send_history.batches[]": [
+      "bytes",
+      "encryption",
+      "export_seconds",
+      "import_seconds",
+      "rows",
+      "transport"
+    ],
+    "$.capacity": [
+      "MaxCapacity",
+      "MinCapacity"
+    ],
+    "$.recovery": [
+      "state",
+      "schemas_tracked",
+      "archive_prefix_tracked"
+    ]
+  },
+  "cloud-observation": {
+    "$": [
+      "capacity",
+      "elapsed_seconds",
+      "engine",
+      "metrics",
+      "passed",
+      "period_seconds",
+      "scope",
+      "target",
+      "wal_counter",
+      "window_end_utc",
+      "window_start_utc"
+    ],
+    "$.capacity": [
+      "MaxCapacity",
+      "MinCapacity"
+    ],
+    "$.metrics[]": [
+      "available",
+      "name",
+      "points",
+      "complete",
+      "rejected_points",
+      "collection_error"
+    ],
+    "$.metrics[].points[]": [
+      "Average",
+      "Maximum",
+      "Minimum",
+      "Timestamp",
+      "Unit"
+    ]
+  }
+}

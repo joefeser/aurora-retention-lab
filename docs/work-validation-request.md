@@ -2,7 +2,7 @@
 
 The sanitized brief and both work-agent responses were already supplied. Do not request the entire schema/workload package again. They supplied the ID-only keys, queue ORM/database mismatch, push and template cascades, soft history, mutable queue scheduling, payload characteristics, and backlog/retention context used in this POC.
 
-[Phase 8](phase-8.md) implements a runnable EF sample of that relationship contract. Its source is intentionally a minimal synthetic reconstruction, not a claim to contain every work table, column, index, or query. The following checklist distinguishes inputs from tests and decisions.
+[Phase 9](report/full-report.md) now reconstructs every supplied parent/queue column and measures declared synthetic payload/fanout profiles, with full-row EF benchmarks and a two-million-row narrow query matrix. Push/history/template payloads remain explicitly minimal where full definitions were not supplied. [Phase 8](phase-8.md) implements the separate EF relationship and fencing compatibility contract. Its source is intentionally a minimal synthetic reconstruction, not a claim to contain every work table, column, index, or query. The following checklist distinguishes inputs from tests and decisions.
 
 | Topic | Already supplied / implemented | Remaining specific validation or decision |
 | --- | --- | --- |

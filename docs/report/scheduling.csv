@@ -1,0 +1,7 @@
+evidence,target,design,selected_rows,rows_crossing_partition,server_seconds,wal_bytes,client_seconds
+pg17-migration,postgres:17,mutable_delivery_key,410,328,0.003388,1085400,0.00384974991902709
+pg17-migration,postgres:17,immutable_parent_key,410,0,0.001795,430128,0.0021132081747055054
+pg16-migration,postgres:16,mutable_delivery_key,410,328,0.003493,1085424,0.003884000238031149
+pg16-migration,postgres:16,immutable_parent_key,410,0,0.001831,430128,0.0021212087012827396
+aurora-migration,aurora,mutable_delivery_key,410,328,0.106793,,0.3226495422422886
+aurora-migration,aurora,immutable_parent_key,410,0,0.009278,,0.06279133399948478
