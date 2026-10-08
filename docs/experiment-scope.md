@@ -2,7 +2,7 @@
 
 ## Starting assumptions
 
-The reference workload contains a request table and a delivery queue, each currently identified by a single bigint primary key. Queue records refer to request records through a cascading foreign key. A third related table is mentioned but its definition and exact foreign-key direction are not yet available.
+The reference workload contains a request table and a delivery queue, each currently identified by a single bigint primary key. Queue records refer to request records through a cascading foreign key. The subsequent sanitized work-side responses describe push rows cascading from the parent, soft queue-history links, and template cascades. The queue is mapped one-to-one in EF but lacks a matching database unique constraint. [Phase 8](phase-8.md) models these supplied facts.
 
 The source brief estimates roughly 100 million expired request rows, HTML-heavy row content, and a delete backlog constrained by write throughput. These are workload inputs supplied for design, not measurements made by this lab.
 
@@ -22,4 +22,4 @@ Use a small synthetic dataset to demonstrate successful paths and failures. Reco
 
 ## Boundaries
 
-Do not use production data, change existing databases, import credentials into the repository, or claim seven-year compliance from a short-lived S3 experiment. Production identity compatibility, the unspecified third table, retention policy, and migration cutover require separate review.
+Do not use production data, change existing databases, import credentials into the repository, or claim seven-year compliance from a short-lived S3 experiment. Production identity compatibility, business retention policy, full application query coverage, and migration cutover require separate validation. Supplied relationship facts are already incorporated into the sample.

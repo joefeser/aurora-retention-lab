@@ -1,0 +1,2711 @@
+{
+  "scope": "Synthetic local EF relationship, copy/backfill, plan reuse, and local archive-retirement fixture; not S3 or production validation",
+  "runs": [
+    {
+      "passed": true,
+      "image": "postgres:16",
+      "image_id": "sha256:c319f2a8182bcdcbb3297d568e2a9cc9e7da3a624438e14b63921c719817e1b6",
+      "application": {
+        "passed": true,
+        "engine": "PostgreSQL 16.15 (Debian 16.15-1.pgdg13+2) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+        "framework": ".NET 10.0.10",
+        "efVersion": "10.0.4.0",
+        "npgsqlVersion": "10.0.3.0",
+        "providerVersion": "10.0.2.0",
+        "checks": [
+          "refuse to modify a previously populated sample database",
+          "baseline: EF loads complete graph with correct IDs and FKs",
+          "baseline: tracked queue rescheduling crosses midnight",
+          "baseline: parent delete cascades queue/push and leaves soft history",
+          "baseline: template delete cascades both parent and queue paths; history remains",
+          "baseline: database permits duplicate queues despite ORM WithOne",
+          "baseline: rollback restores every fixture column",
+          "migration preserves all original columns: notification_template",
+          "migration preserves all original columns: notification_event",
+          "migration preserves all original columns: delivery_queue",
+          "migration preserves all original columns: push_delivery",
+          "migration preserves all original columns: send_history",
+          "partitioned: EF loads complete graph with correct IDs and FKs",
+          "all migrated identity sequences generate IDs above copied rows",
+          "partitioned: tracked queue rescheduling crosses midnight",
+          "queue delivery change leaves parent-aligned partition unchanged",
+          "partitioned: parent delete cascades queue/push and leaves soft history",
+          "partitioned: template delete cascades both parent and queue paths; history remains",
+          "partitioned: database permits duplicate queues despite ORM WithOne",
+          "partitioned: rollback restores every fixture column",
+          "database rejects changing parent retention timestamp",
+          "composite key permits duplicate bare IDs across partition timestamps",
+          "all 64 fenced EF probes and unfenced controls preserve complete fixture contents",
+          "independent reader observes committed live graph 1 while expired fence held",
+          "independent reader observes committed live graph 2 while expired fence held",
+          "independent reader observes committed live graph 3 while expired fence held",
+          "independent reader observes committed live graph 4 while expired fence held",
+          "independent reader observes committed live graph 5 while expired fence held",
+          "independent reader observes committed live graph 6 while expired fence held",
+          "independent reader observes committed live graph 7 while expired fence held",
+          "independent reader observes committed live graph 8 while expired fence held",
+          "independent reader observes committed live graph 9 while expired fence held",
+          "independent reader observes committed live graph 10 while expired fence held",
+          "local archive snapshot still matches expired notification_event after live commits",
+          "local archive snapshot still matches expired delivery_queue after live commits",
+          "local archive snapshot still matches expired push_delivery after live commits",
+          "local archive snapshot preserves expired soft history",
+          "fresh EF reads after committed retirement preserve all live rows and clean expired soft history",
+          "all ten acknowledged graphs survive committed retirement with exact body/reference/state and children"
+        ],
+        "probes": [
+          {
+            "mode": "unprepared",
+            "warmth": "cold",
+            "candidate": "parent_id_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "unprepared",
+            "warmth": "cold",
+            "candidate": "parent_qualified_update",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "unprepared",
+            "warmth": "cold",
+            "candidate": "tracked_parent_update",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "unprepared",
+            "warmth": "cold",
+            "candidate": "queue_reschedule",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "unprepared",
+            "warmth": "cold",
+            "candidate": "parent_id_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "unprepared",
+            "warmth": "cold",
+            "candidate": "parent_qualified_delete",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "unprepared",
+            "warmth": "cold",
+            "candidate": "template_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "unprepared",
+            "warmth": "cold",
+            "candidate": "expired_qualified_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "unprepared",
+            "warmth": "warm",
+            "candidate": "parent_id_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "unprepared",
+            "warmth": "warm",
+            "candidate": "parent_qualified_update",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "unprepared",
+            "warmth": "warm",
+            "candidate": "tracked_parent_update",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "unprepared",
+            "warmth": "warm",
+            "candidate": "queue_reschedule",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "unprepared",
+            "warmth": "warm",
+            "candidate": "parent_id_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "unprepared",
+            "warmth": "warm",
+            "candidate": "parent_qualified_delete",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "unprepared",
+            "warmth": "warm",
+            "candidate": "template_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "unprepared",
+            "warmth": "warm",
+            "candidate": "expired_qualified_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "cold",
+            "candidate": "parent_id_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "cold",
+            "candidate": "parent_qualified_update",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "cold",
+            "candidate": "tracked_parent_update",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "cold",
+            "candidate": "queue_reschedule",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "cold",
+            "candidate": "parent_id_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "cold",
+            "candidate": "parent_qualified_delete",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "cold",
+            "candidate": "template_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "cold",
+            "candidate": "expired_qualified_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "warm",
+            "candidate": "parent_id_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2",
+                "custom": 7,
+                "generic": 0
+              }
+            ],
+            "after": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2",
+                "custom": 7,
+                "generic": 0
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "warm",
+            "candidate": "parent_qualified_update",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2 AND n.scheduled_at = $3",
+                "custom": 7,
+                "generic": 0
+              }
+            ],
+            "after": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2 AND n.scheduled_at = $3",
+                "custom": 8,
+                "generic": 0
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "warm",
+            "candidate": "tracked_parent_update",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "SAVEPOINT \"__EFSavePoint\"",
+                "custom": 0,
+                "generic": 7
+              },
+              {
+                "sql": "RELEASE SAVEPOINT \"__EFSavePoint\"",
+                "custom": 0,
+                "generic": 7
+              },
+              {
+                "sql": "UPDATE partitioned.notification_event SET content_body = $1\nWHERE id = $2 AND scheduled_at = $3",
+                "custom": 7,
+                "generic": 0
+              }
+            ],
+            "after": [
+              {
+                "sql": "SAVEPOINT \"__EFSavePoint\"",
+                "custom": 0,
+                "generic": 8
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              },
+              {
+                "sql": "RELEASE SAVEPOINT \"__EFSavePoint\"",
+                "custom": 0,
+                "generic": 8
+              },
+              {
+                "sql": "UPDATE partitioned.notification_event SET content_body = $1\nWHERE id = $2 AND scheduled_at = $3",
+                "custom": 8,
+                "generic": 0
+              }
+            ]
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "warm",
+            "candidate": "queue_reschedule",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "UPDATE partitioned.delivery_queue AS d\nSET scheduled_at = $1\nWHERE d.id = $2 AND d.parent_scheduled_at = $3",
+                "custom": 7,
+                "generic": 0
+              }
+            ],
+            "after": [
+              {
+                "sql": "UPDATE partitioned.delivery_queue AS d\nSET scheduled_at = $1\nWHERE d.id = $2 AND d.parent_scheduled_at = $3",
+                "custom": 8,
+                "generic": 0
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "warm",
+            "candidate": "parent_id_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "DELETE FROM partitioned.notification_event AS n\nWHERE n.id = $1",
+                "custom": 7,
+                "generic": 0
+              }
+            ],
+            "after": [
+              {
+                "sql": "DELETE FROM partitioned.notification_event AS n\nWHERE n.id = $1",
+                "custom": 7,
+                "generic": 0
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "warm",
+            "candidate": "parent_qualified_delete",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "DELETE FROM partitioned.notification_event AS n\nWHERE n.id = $1 AND n.scheduled_at = $2",
+                "custom": 7,
+                "generic": 0
+              }
+            ],
+            "after": [
+              {
+                "sql": "DELETE FROM partitioned.notification_event AS n\nWHERE n.id = $1 AND n.scheduled_at = $2",
+                "custom": 8,
+                "generic": 0
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "warm",
+            "candidate": "template_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "DELETE FROM partitioned.notification_template AS n\nWHERE n.id = 1",
+                "custom": 0,
+                "generic": 7
+              }
+            ],
+            "after": [
+              {
+                "sql": "DELETE FROM partitioned.notification_template AS n\nWHERE n.id = 1",
+                "custom": 0,
+                "generic": 8
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "warm",
+            "candidate": "expired_qualified_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2 AND n.scheduled_at = $3",
+                "custom": 7,
+                "generic": 0
+              }
+            ],
+            "after": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2 AND n.scheduled_at = $3",
+                "custom": 7,
+                "generic": 0
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "cold",
+            "candidate": "parent_id_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "cold",
+            "candidate": "parent_qualified_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "cold",
+            "candidate": "tracked_parent_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "cold",
+            "candidate": "queue_reschedule",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "cold",
+            "candidate": "parent_id_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "cold",
+            "candidate": "parent_qualified_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "cold",
+            "candidate": "template_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "cold",
+            "candidate": "expired_qualified_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "warm",
+            "candidate": "parent_id_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2",
+                "custom": 0,
+                "generic": 7
+              }
+            ],
+            "after": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2",
+                "custom": 0,
+                "generic": 7
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "warm",
+            "candidate": "parent_qualified_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2 AND n.scheduled_at = $3",
+                "custom": 0,
+                "generic": 7
+              }
+            ],
+            "after": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2 AND n.scheduled_at = $3",
+                "custom": 0,
+                "generic": 7
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "warm",
+            "candidate": "tracked_parent_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "SAVEPOINT \"__EFSavePoint\"",
+                "custom": 0,
+                "generic": 7
+              },
+              {
+                "sql": "RELEASE SAVEPOINT \"__EFSavePoint\"",
+                "custom": 0,
+                "generic": 7
+              },
+              {
+                "sql": "UPDATE partitioned.notification_event SET content_body = $1\nWHERE id = $2 AND scheduled_at = $3",
+                "custom": 0,
+                "generic": 7
+              }
+            ],
+            "after": [
+              {
+                "sql": "SAVEPOINT \"__EFSavePoint\"",
+                "custom": 0,
+                "generic": 8
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              },
+              {
+                "sql": "RELEASE SAVEPOINT \"__EFSavePoint\"",
+                "custom": 0,
+                "generic": 8
+              },
+              {
+                "sql": "UPDATE partitioned.notification_event SET content_body = $1\nWHERE id = $2 AND scheduled_at = $3",
+                "custom": 0,
+                "generic": 7
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "warm",
+            "candidate": "queue_reschedule",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "UPDATE partitioned.delivery_queue AS d\nSET scheduled_at = $1\nWHERE d.id = $2 AND d.parent_scheduled_at = $3",
+                "custom": 0,
+                "generic": 7
+              }
+            ],
+            "after": [
+              {
+                "sql": "UPDATE partitioned.delivery_queue AS d\nSET scheduled_at = $1\nWHERE d.id = $2 AND d.parent_scheduled_at = $3",
+                "custom": 0,
+                "generic": 7
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "warm",
+            "candidate": "parent_id_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "DELETE FROM partitioned.notification_event AS n\nWHERE n.id = $1",
+                "custom": 0,
+                "generic": 7
+              }
+            ],
+            "after": [
+              {
+                "sql": "DELETE FROM partitioned.notification_event AS n\nWHERE n.id = $1",
+                "custom": 0,
+                "generic": 7
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "warm",
+            "candidate": "parent_qualified_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "DELETE FROM partitioned.notification_event AS n\nWHERE n.id = $1 AND n.scheduled_at = $2",
+                "custom": 0,
+                "generic": 7
+              }
+            ],
+            "after": [
+              {
+                "sql": "DELETE FROM partitioned.notification_event AS n\nWHERE n.id = $1 AND n.scheduled_at = $2",
+                "custom": 0,
+                "generic": 7
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "warm",
+            "candidate": "template_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "DELETE FROM partitioned.notification_template AS n\nWHERE n.id = 1",
+                "custom": 0,
+                "generic": 7
+              }
+            ],
+            "after": [
+              {
+                "sql": "DELETE FROM partitioned.notification_template AS n\nWHERE n.id = 1",
+                "custom": 0,
+                "generic": 8
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "warm",
+            "candidate": "expired_qualified_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2 AND n.scheduled_at = $3",
+                "custom": 0,
+                "generic": 7
+              }
+            ],
+            "after": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2 AND n.scheduled_at = $3",
+                "custom": 0,
+                "generic": 7
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "cold",
+            "candidate": "parent_id_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "cold",
+            "candidate": "parent_qualified_update",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "cold",
+            "candidate": "tracked_parent_update",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "cold",
+            "candidate": "queue_reschedule",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "cold",
+            "candidate": "parent_id_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "cold",
+            "candidate": "parent_qualified_delete",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "cold",
+            "candidate": "template_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "cold",
+            "candidate": "expired_qualified_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "warm",
+            "candidate": "parent_id_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2",
+                "custom": 5,
+                "generic": 2
+              }
+            ],
+            "after": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2",
+                "custom": 5,
+                "generic": 2
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "warm",
+            "candidate": "parent_qualified_update",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2 AND n.scheduled_at = $3",
+                "custom": 7,
+                "generic": 0
+              }
+            ],
+            "after": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2 AND n.scheduled_at = $3",
+                "custom": 8,
+                "generic": 0
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "warm",
+            "candidate": "tracked_parent_update",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "SAVEPOINT \"__EFSavePoint\"",
+                "custom": 0,
+                "generic": 7
+              },
+              {
+                "sql": "RELEASE SAVEPOINT \"__EFSavePoint\"",
+                "custom": 0,
+                "generic": 7
+              },
+              {
+                "sql": "UPDATE partitioned.notification_event SET content_body = $1\nWHERE id = $2 AND scheduled_at = $3",
+                "custom": 7,
+                "generic": 0
+              }
+            ],
+            "after": [
+              {
+                "sql": "SAVEPOINT \"__EFSavePoint\"",
+                "custom": 0,
+                "generic": 8
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              },
+              {
+                "sql": "RELEASE SAVEPOINT \"__EFSavePoint\"",
+                "custom": 0,
+                "generic": 8
+              },
+              {
+                "sql": "UPDATE partitioned.notification_event SET content_body = $1\nWHERE id = $2 AND scheduled_at = $3",
+                "custom": 8,
+                "generic": 0
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "warm",
+            "candidate": "queue_reschedule",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "UPDATE partitioned.delivery_queue AS d\nSET scheduled_at = $1\nWHERE d.id = $2 AND d.parent_scheduled_at = $3",
+                "custom": 7,
+                "generic": 0
+              }
+            ],
+            "after": [
+              {
+                "sql": "UPDATE partitioned.delivery_queue AS d\nSET scheduled_at = $1\nWHERE d.id = $2 AND d.parent_scheduled_at = $3",
+                "custom": 8,
+                "generic": 0
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "warm",
+            "candidate": "parent_id_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "DELETE FROM partitioned.notification_event AS n\nWHERE n.id = $1",
+                "custom": 5,
+                "generic": 2
+              }
+            ],
+            "after": [
+              {
+                "sql": "DELETE FROM partitioned.notification_event AS n\nWHERE n.id = $1",
+                "custom": 5,
+                "generic": 2
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "warm",
+            "candidate": "parent_qualified_delete",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "DELETE FROM partitioned.notification_event AS n\nWHERE n.id = $1 AND n.scheduled_at = $2",
+                "custom": 7,
+                "generic": 0
+              }
+            ],
+            "after": [
+              {
+                "sql": "DELETE FROM partitioned.notification_event AS n\nWHERE n.id = $1 AND n.scheduled_at = $2",
+                "custom": 8,
+                "generic": 0
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "warm",
+            "candidate": "template_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "DELETE FROM partitioned.notification_template AS n\nWHERE n.id = 1",
+                "custom": 0,
+                "generic": 7
+              }
+            ],
+            "after": [
+              {
+                "sql": "DELETE FROM partitioned.notification_template AS n\nWHERE n.id = 1",
+                "custom": 0,
+                "generic": 8
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "warm",
+            "candidate": "expired_qualified_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2 AND n.scheduled_at = $3",
+                "custom": 7,
+                "generic": 0
+              }
+            ],
+            "after": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2 AND n.scheduled_at = $3",
+                "custom": 7,
+                "generic": 0
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          }
+        ],
+        "sql": [
+          "DELETE FROM baseline.notification_event AS n\nWHERE n.id = 1",
+          "DELETE FROM baseline.notification_template AS n",
+          "DELETE FROM partitioned.notification_event AS n\nWHERE n.id = @id",
+          "DELETE FROM partitioned.notification_event AS n\nWHERE n.id = @id AND n.scheduled_at = @stamp",
+          "DELETE FROM partitioned.notification_event AS n\nWHERE n.id = 1",
+          "DELETE FROM partitioned.notification_template AS n",
+          "DELETE FROM partitioned.notification_template AS n\nWHERE n.id = 1",
+          "INSERT INTO baseline.delivery_queue (notification_event_id, scheduled_at, send_state, template_id)\nVALUES (@p9, @p10, @p11, @p12)\nRETURNING id;\nINSERT INTO baseline.delivery_queue (notification_event_id, scheduled_at, send_state, template_id)\nVALUES (@p13, @p14, @p15, @p16)\nRETURNING id;\nINSERT INTO baseline.push_delivery (notification_event_id)\nVALUES (@p17)\nRETURNING id;\nINSERT INTO baseline.push_delivery (notification_event_id)\nVALUES (@p18)\nRETURNING id;\nINSERT INTO baseline.push_delivery (notification_event_id)\nVALUES (@p19)\nRETURNING id;\nINSERT INTO baseline.push_delivery (notification_event_id)\nVALUES (@p20)\nRETURNING id;\n",
+          "INSERT INTO baseline.notification_event (content_body, external_ref_id, scheduled_at, template_id)\nVALUES (@p1, @p2, @p3, @p4)\nRETURNING id;\nINSERT INTO baseline.notification_event (content_body, external_ref_id, scheduled_at, template_id)\nVALUES (@p5, @p6, @p7, @p8)\nRETURNING id;\n",
+          "INSERT INTO baseline.notification_template (name)\nVALUES (@p0)\nRETURNING id;\n",
+          "INSERT INTO baseline.send_history (delivery_queue_id, detail)\nVALUES (@p0, @p1)\nRETURNING id;\nINSERT INTO baseline.send_history (delivery_queue_id, detail)\nVALUES (@p2, @p3)\nRETURNING id;\n",
+          "INSERT INTO partitioned.delivery_queue (parent_scheduled_at, notification_event_id, scheduled_at, send_state, template_id)\nVALUES (@p4, @p5, @p6, @p7, @p8)\nRETURNING id;\nINSERT INTO partitioned.push_delivery (parent_scheduled_at, notification_event_id)\nVALUES (@p9, @p10)\nRETURNING id;\nINSERT INTO partitioned.push_delivery (parent_scheduled_at, notification_event_id)\nVALUES (@p11, @p12)\nRETURNING id;\n",
+          "INSERT INTO partitioned.delivery_queue (parent_scheduled_at, notification_event_id, scheduled_at, send_state, template_id)\nVALUES (@p5, @p6, @p7, @p8, @p9)\nRETURNING id;\nINSERT INTO partitioned.push_delivery (parent_scheduled_at, notification_event_id)\nVALUES (@p10, @p11)\nRETURNING id;\nINSERT INTO partitioned.push_delivery (parent_scheduled_at, notification_event_id)\nVALUES (@p12, @p13)\nRETURNING id;\n",
+          "INSERT INTO partitioned.notification_event (scheduled_at, content_body, external_ref_id, template_id)\nVALUES (@p0, @p1, @p2, @p3)\nRETURNING id;\n",
+          "INSERT INTO partitioned.notification_event (scheduled_at, content_body, external_ref_id, template_id)\nVALUES (@p1, @p2, @p3, @p4)\nRETURNING id;\n",
+          "INSERT INTO partitioned.notification_template (name)\nVALUES (@p0)\nRETURNING id;\n",
+          "INSERT INTO partitioned.send_history (delivery_queue_id, detail)\nVALUES (@p0, @p1)\nRETURNING id;\n",
+          "SELECT count(*)::int\nFROM baseline.delivery_queue AS d",
+          "SELECT count(*)::int\nFROM baseline.notification_event AS n",
+          "SELECT count(*)::int\nFROM baseline.push_delivery AS p",
+          "SELECT count(*)::int\nFROM baseline.send_history AS s",
+          "SELECT count(*)::int\nFROM partitioned.delivery_queue AS d",
+          "SELECT count(*)::int\nFROM partitioned.notification_event AS n",
+          "SELECT count(*)::int\nFROM partitioned.push_delivery AS p",
+          "SELECT count(*)::int\nFROM partitioned.send_history AS s",
+          "SELECT d.id, d.notification_event_id, d.scheduled_at, d.send_state, d.template_id\nFROM baseline.delivery_queue AS d\nORDER BY d.id",
+          "SELECT d.id, d.notification_event_id, d.scheduled_at, d.send_state, d.template_id\nFROM baseline.delivery_queue AS d\nWHERE d.id = 1\nLIMIT 2",
+          "SELECT d.id, d.parent_scheduled_at, d.notification_event_id, d.scheduled_at, d.send_state, d.template_id\nFROM partitioned.delivery_queue AS d\nWHERE d.id = 1\nLIMIT 2",
+          "SELECT d.scheduled_at\nFROM baseline.delivery_queue AS d\nWHERE d.id = 1\nLIMIT 2",
+          "SELECT d.scheduled_at\nFROM partitioned.delivery_queue AS d\nWHERE d.id = 1\nLIMIT 2",
+          "SELECT EXISTS (\n    SELECT 1\n    FROM partitioned.notification_event AS n\n    WHERE n.id = @ack_Item1 AND n.scheduled_at = @ack_Item2 AND n.external_ref_id = @ack_Item3)",
+          "SELECT n.id, n.content_body, n.external_ref_id, n.scheduled_at, n.template_id, d.id, d.notification_event_id, d.scheduled_at, d.send_state, d.template_id, p.id, p.notification_event_id\nFROM baseline.notification_event AS n\nLEFT JOIN baseline.delivery_queue AS d ON n.id = d.notification_event_id\nLEFT JOIN baseline.push_delivery AS p ON n.id = p.notification_event_id\nORDER BY n.id, d.id",
+          "SELECT n.id, n.name\nFROM partitioned.notification_template AS n\nLIMIT 2",
+          "SELECT n.id, n.scheduled_at, n.content_body, n.external_ref_id, n.template_id, d.id, d.parent_scheduled_at, d.notification_event_id, d.scheduled_at, d.send_state, d.template_id, p.id, p.parent_scheduled_at, p.notification_event_id\nFROM partitioned.notification_event AS n\nLEFT JOIN partitioned.delivery_queue AS d ON n.id = d.notification_event_id AND n.scheduled_at = d.parent_scheduled_at\nLEFT JOIN partitioned.push_delivery AS p ON n.id = p.notification_event_id AND n.scheduled_at = p.parent_scheduled_at\nORDER BY n.id, n.scheduled_at, d.id, d.parent_scheduled_at, p.id",
+          "SELECT s.id, s.scheduled_at, s.content_body, s.external_ref_id, s.template_id, s.id0, s.parent_scheduled_at, s.notification_event_id, s.scheduled_at0, s.send_state, s.template_id0, p.id, p.parent_scheduled_at, p.notification_event_id\nFROM (\n    SELECT n.id, n.scheduled_at, n.content_body, n.external_ref_id, n.template_id, d.id AS id0, d.parent_scheduled_at, d.notification_event_id, d.scheduled_at AS scheduled_at0, d.send_state, d.template_id AS template_id0\n    FROM partitioned.notification_event AS n\n    LEFT JOIN partitioned.delivery_queue AS d ON n.id = d.notification_event_id AND n.scheduled_at = d.parent_scheduled_at\n    WHERE n.id = @ack_Item1 AND n.scheduled_at = @ack_Item2\n    LIMIT 2\n) AS s\nLEFT JOIN partitioned.push_delivery AS p ON s.id = p.notification_event_id AND s.scheduled_at = p.parent_scheduled_at\nORDER BY s.id, s.scheduled_at, s.id0, s.parent_scheduled_at, p.id",
+          "UPDATE baseline.delivery_queue SET scheduled_at = @p0\nWHERE id = @p1;\n",
+          "UPDATE partitioned.delivery_queue AS d\nSET scheduled_at = @p\nWHERE d.id = @id AND d.parent_scheduled_at = @stamp",
+          "UPDATE partitioned.delivery_queue SET scheduled_at = @p0\nWHERE id = @p1 AND parent_scheduled_at = @p2;\n",
+          "UPDATE partitioned.notification_event AS n\nSET content_body = @p\nWHERE n.id = @id",
+          "UPDATE partitioned.notification_event AS n\nSET content_body = @p\nWHERE n.id = @id AND n.scheduled_at = @stamp",
+          "UPDATE partitioned.notification_event SET content_body = @p0\nWHERE id = @p1 AND scheduled_at = @p2;\n"
+        ]
+      },
+      "container_removed": true,
+      "elapsed_seconds": 25.86
+    },
+    {
+      "passed": true,
+      "image": "postgres:17",
+      "image_id": "sha256:a470461db3d4079fb4cb545328a6ef7c7d1ffc33e6981f5d3e2cfda1634d297e",
+      "application": {
+        "passed": true,
+        "engine": "PostgreSQL 17.11 (Debian 17.11-1.pgdg13+2) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+        "framework": ".NET 10.0.10",
+        "efVersion": "10.0.4.0",
+        "npgsqlVersion": "10.0.3.0",
+        "providerVersion": "10.0.2.0",
+        "checks": [
+          "refuse to modify a previously populated sample database",
+          "baseline: EF loads complete graph with correct IDs and FKs",
+          "baseline: tracked queue rescheduling crosses midnight",
+          "baseline: parent delete cascades queue/push and leaves soft history",
+          "baseline: template delete cascades both parent and queue paths; history remains",
+          "baseline: database permits duplicate queues despite ORM WithOne",
+          "baseline: rollback restores every fixture column",
+          "migration preserves all original columns: notification_template",
+          "migration preserves all original columns: notification_event",
+          "migration preserves all original columns: delivery_queue",
+          "migration preserves all original columns: push_delivery",
+          "migration preserves all original columns: send_history",
+          "partitioned: EF loads complete graph with correct IDs and FKs",
+          "all migrated identity sequences generate IDs above copied rows",
+          "partitioned: tracked queue rescheduling crosses midnight",
+          "queue delivery change leaves parent-aligned partition unchanged",
+          "partitioned: parent delete cascades queue/push and leaves soft history",
+          "partitioned: template delete cascades both parent and queue paths; history remains",
+          "partitioned: database permits duplicate queues despite ORM WithOne",
+          "partitioned: rollback restores every fixture column",
+          "database rejects changing parent retention timestamp",
+          "composite key permits duplicate bare IDs across partition timestamps",
+          "all 64 fenced EF probes and unfenced controls preserve complete fixture contents",
+          "independent reader observes committed live graph 1 while expired fence held",
+          "independent reader observes committed live graph 2 while expired fence held",
+          "independent reader observes committed live graph 3 while expired fence held",
+          "independent reader observes committed live graph 4 while expired fence held",
+          "independent reader observes committed live graph 5 while expired fence held",
+          "independent reader observes committed live graph 6 while expired fence held",
+          "independent reader observes committed live graph 7 while expired fence held",
+          "independent reader observes committed live graph 8 while expired fence held",
+          "independent reader observes committed live graph 9 while expired fence held",
+          "independent reader observes committed live graph 10 while expired fence held",
+          "local archive snapshot still matches expired notification_event after live commits",
+          "local archive snapshot still matches expired delivery_queue after live commits",
+          "local archive snapshot still matches expired push_delivery after live commits",
+          "local archive snapshot preserves expired soft history",
+          "fresh EF reads after committed retirement preserve all live rows and clean expired soft history",
+          "all ten acknowledged graphs survive committed retirement with exact body/reference/state and children"
+        ],
+        "probes": [
+          {
+            "mode": "unprepared",
+            "warmth": "cold",
+            "candidate": "parent_id_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "unprepared",
+            "warmth": "cold",
+            "candidate": "parent_qualified_update",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "unprepared",
+            "warmth": "cold",
+            "candidate": "tracked_parent_update",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "unprepared",
+            "warmth": "cold",
+            "candidate": "queue_reschedule",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "unprepared",
+            "warmth": "cold",
+            "candidate": "parent_id_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "unprepared",
+            "warmth": "cold",
+            "candidate": "parent_qualified_delete",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "unprepared",
+            "warmth": "cold",
+            "candidate": "template_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "unprepared",
+            "warmth": "cold",
+            "candidate": "expired_qualified_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "unprepared",
+            "warmth": "warm",
+            "candidate": "parent_id_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "unprepared",
+            "warmth": "warm",
+            "candidate": "parent_qualified_update",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "unprepared",
+            "warmth": "warm",
+            "candidate": "tracked_parent_update",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "unprepared",
+            "warmth": "warm",
+            "candidate": "queue_reschedule",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "unprepared",
+            "warmth": "warm",
+            "candidate": "parent_id_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "unprepared",
+            "warmth": "warm",
+            "candidate": "parent_qualified_delete",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "unprepared",
+            "warmth": "warm",
+            "candidate": "template_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "unprepared",
+            "warmth": "warm",
+            "candidate": "expired_qualified_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [],
+            "after": []
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "cold",
+            "candidate": "parent_id_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "cold",
+            "candidate": "parent_qualified_update",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "cold",
+            "candidate": "tracked_parent_update",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "cold",
+            "candidate": "queue_reschedule",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "cold",
+            "candidate": "parent_id_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "cold",
+            "candidate": "parent_qualified_delete",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "cold",
+            "candidate": "template_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "cold",
+            "candidate": "expired_qualified_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "warm",
+            "candidate": "parent_id_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2",
+                "custom": 7,
+                "generic": 0
+              }
+            ],
+            "after": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2",
+                "custom": 7,
+                "generic": 0
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "warm",
+            "candidate": "parent_qualified_update",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2 AND n.scheduled_at = $3",
+                "custom": 7,
+                "generic": 0
+              }
+            ],
+            "after": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2 AND n.scheduled_at = $3",
+                "custom": 8,
+                "generic": 0
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "warm",
+            "candidate": "tracked_parent_update",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "SAVEPOINT \"__EFSavePoint\"",
+                "custom": 0,
+                "generic": 7
+              },
+              {
+                "sql": "RELEASE SAVEPOINT \"__EFSavePoint\"",
+                "custom": 0,
+                "generic": 7
+              },
+              {
+                "sql": "UPDATE partitioned.notification_event SET content_body = $1\nWHERE id = $2 AND scheduled_at = $3",
+                "custom": 7,
+                "generic": 0
+              }
+            ],
+            "after": [
+              {
+                "sql": "SAVEPOINT \"__EFSavePoint\"",
+                "custom": 0,
+                "generic": 8
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              },
+              {
+                "sql": "RELEASE SAVEPOINT \"__EFSavePoint\"",
+                "custom": 0,
+                "generic": 8
+              },
+              {
+                "sql": "UPDATE partitioned.notification_event SET content_body = $1\nWHERE id = $2 AND scheduled_at = $3",
+                "custom": 8,
+                "generic": 0
+              }
+            ]
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "warm",
+            "candidate": "queue_reschedule",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "UPDATE partitioned.delivery_queue AS d\nSET scheduled_at = $1\nWHERE d.id = $2 AND d.parent_scheduled_at = $3",
+                "custom": 7,
+                "generic": 0
+              }
+            ],
+            "after": [
+              {
+                "sql": "UPDATE partitioned.delivery_queue AS d\nSET scheduled_at = $1\nWHERE d.id = $2 AND d.parent_scheduled_at = $3",
+                "custom": 8,
+                "generic": 0
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "warm",
+            "candidate": "parent_id_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "DELETE FROM partitioned.notification_event AS n\nWHERE n.id = $1",
+                "custom": 7,
+                "generic": 0
+              }
+            ],
+            "after": [
+              {
+                "sql": "DELETE FROM partitioned.notification_event AS n\nWHERE n.id = $1",
+                "custom": 7,
+                "generic": 0
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "warm",
+            "candidate": "parent_qualified_delete",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "DELETE FROM partitioned.notification_event AS n\nWHERE n.id = $1 AND n.scheduled_at = $2",
+                "custom": 7,
+                "generic": 0
+              }
+            ],
+            "after": [
+              {
+                "sql": "DELETE FROM partitioned.notification_event AS n\nWHERE n.id = $1 AND n.scheduled_at = $2",
+                "custom": 8,
+                "generic": 0
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "warm",
+            "candidate": "template_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "DELETE FROM partitioned.notification_template AS n\nWHERE n.id = 1",
+                "custom": 0,
+                "generic": 7
+              }
+            ],
+            "after": [
+              {
+                "sql": "DELETE FROM partitioned.notification_template AS n\nWHERE n.id = 1",
+                "custom": 0,
+                "generic": 8
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_custom_plan",
+            "warmth": "warm",
+            "candidate": "expired_qualified_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2 AND n.scheduled_at = $3",
+                "custom": 7,
+                "generic": 0
+              }
+            ],
+            "after": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2 AND n.scheduled_at = $3",
+                "custom": 7,
+                "generic": 0
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "cold",
+            "candidate": "parent_id_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "cold",
+            "candidate": "parent_qualified_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "cold",
+            "candidate": "tracked_parent_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "cold",
+            "candidate": "queue_reschedule",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "cold",
+            "candidate": "parent_id_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "cold",
+            "candidate": "parent_qualified_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "cold",
+            "candidate": "template_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "cold",
+            "candidate": "expired_qualified_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "warm",
+            "candidate": "parent_id_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2",
+                "custom": 0,
+                "generic": 7
+              }
+            ],
+            "after": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2",
+                "custom": 0,
+                "generic": 7
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "warm",
+            "candidate": "parent_qualified_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2 AND n.scheduled_at = $3",
+                "custom": 0,
+                "generic": 7
+              }
+            ],
+            "after": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2 AND n.scheduled_at = $3",
+                "custom": 0,
+                "generic": 7
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "warm",
+            "candidate": "tracked_parent_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "SAVEPOINT \"__EFSavePoint\"",
+                "custom": 0,
+                "generic": 7
+              },
+              {
+                "sql": "RELEASE SAVEPOINT \"__EFSavePoint\"",
+                "custom": 0,
+                "generic": 7
+              },
+              {
+                "sql": "UPDATE partitioned.notification_event SET content_body = $1\nWHERE id = $2 AND scheduled_at = $3",
+                "custom": 0,
+                "generic": 7
+              }
+            ],
+            "after": [
+              {
+                "sql": "SAVEPOINT \"__EFSavePoint\"",
+                "custom": 0,
+                "generic": 8
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              },
+              {
+                "sql": "RELEASE SAVEPOINT \"__EFSavePoint\"",
+                "custom": 0,
+                "generic": 8
+              },
+              {
+                "sql": "UPDATE partitioned.notification_event SET content_body = $1\nWHERE id = $2 AND scheduled_at = $3",
+                "custom": 0,
+                "generic": 7
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "warm",
+            "candidate": "queue_reschedule",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "UPDATE partitioned.delivery_queue AS d\nSET scheduled_at = $1\nWHERE d.id = $2 AND d.parent_scheduled_at = $3",
+                "custom": 0,
+                "generic": 7
+              }
+            ],
+            "after": [
+              {
+                "sql": "UPDATE partitioned.delivery_queue AS d\nSET scheduled_at = $1\nWHERE d.id = $2 AND d.parent_scheduled_at = $3",
+                "custom": 0,
+                "generic": 7
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "warm",
+            "candidate": "parent_id_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "DELETE FROM partitioned.notification_event AS n\nWHERE n.id = $1",
+                "custom": 0,
+                "generic": 7
+              }
+            ],
+            "after": [
+              {
+                "sql": "DELETE FROM partitioned.notification_event AS n\nWHERE n.id = $1",
+                "custom": 0,
+                "generic": 7
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "warm",
+            "candidate": "parent_qualified_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "DELETE FROM partitioned.notification_event AS n\nWHERE n.id = $1 AND n.scheduled_at = $2",
+                "custom": 0,
+                "generic": 7
+              }
+            ],
+            "after": [
+              {
+                "sql": "DELETE FROM partitioned.notification_event AS n\nWHERE n.id = $1 AND n.scheduled_at = $2",
+                "custom": 0,
+                "generic": 7
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "warm",
+            "candidate": "template_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "DELETE FROM partitioned.notification_template AS n\nWHERE n.id = 1",
+                "custom": 0,
+                "generic": 7
+              }
+            ],
+            "after": [
+              {
+                "sql": "DELETE FROM partitioned.notification_template AS n\nWHERE n.id = 1",
+                "custom": 0,
+                "generic": 8
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "force_generic_plan",
+            "warmth": "warm",
+            "candidate": "expired_qualified_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2 AND n.scheduled_at = $3",
+                "custom": 0,
+                "generic": 7
+              }
+            ],
+            "after": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2 AND n.scheduled_at = $3",
+                "custom": 0,
+                "generic": 7
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "cold",
+            "candidate": "parent_id_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "cold",
+            "candidate": "parent_qualified_update",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "cold",
+            "candidate": "tracked_parent_update",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "cold",
+            "candidate": "queue_reschedule",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "cold",
+            "candidate": "parent_id_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "cold",
+            "candidate": "parent_qualified_delete",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "cold",
+            "candidate": "template_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "cold",
+            "candidate": "expired_qualified_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 0,
+            "reusedPhysicalConnection": false,
+            "before": [],
+            "after": [
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "warm",
+            "candidate": "parent_id_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2",
+                "custom": 5,
+                "generic": 2
+              }
+            ],
+            "after": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2",
+                "custom": 5,
+                "generic": 2
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "warm",
+            "candidate": "parent_qualified_update",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2 AND n.scheduled_at = $3",
+                "custom": 7,
+                "generic": 0
+              }
+            ],
+            "after": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2 AND n.scheduled_at = $3",
+                "custom": 8,
+                "generic": 0
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "warm",
+            "candidate": "tracked_parent_update",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "SAVEPOINT \"__EFSavePoint\"",
+                "custom": 0,
+                "generic": 7
+              },
+              {
+                "sql": "RELEASE SAVEPOINT \"__EFSavePoint\"",
+                "custom": 0,
+                "generic": 7
+              },
+              {
+                "sql": "UPDATE partitioned.notification_event SET content_body = $1\nWHERE id = $2 AND scheduled_at = $3",
+                "custom": 7,
+                "generic": 0
+              }
+            ],
+            "after": [
+              {
+                "sql": "SAVEPOINT \"__EFSavePoint\"",
+                "custom": 0,
+                "generic": 8
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              },
+              {
+                "sql": "RELEASE SAVEPOINT \"__EFSavePoint\"",
+                "custom": 0,
+                "generic": 8
+              },
+              {
+                "sql": "UPDATE partitioned.notification_event SET content_body = $1\nWHERE id = $2 AND scheduled_at = $3",
+                "custom": 8,
+                "generic": 0
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "warm",
+            "candidate": "queue_reschedule",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "UPDATE partitioned.delivery_queue AS d\nSET scheduled_at = $1\nWHERE d.id = $2 AND d.parent_scheduled_at = $3",
+                "custom": 7,
+                "generic": 0
+              }
+            ],
+            "after": [
+              {
+                "sql": "UPDATE partitioned.delivery_queue AS d\nSET scheduled_at = $1\nWHERE d.id = $2 AND d.parent_scheduled_at = $3",
+                "custom": 8,
+                "generic": 0
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "warm",
+            "candidate": "parent_id_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "DELETE FROM partitioned.notification_event AS n\nWHERE n.id = $1",
+                "custom": 5,
+                "generic": 2
+              }
+            ],
+            "after": [
+              {
+                "sql": "DELETE FROM partitioned.notification_event AS n\nWHERE n.id = $1",
+                "custom": 5,
+                "generic": 2
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "warm",
+            "candidate": "parent_qualified_delete",
+            "outcome": "admitted_rolled_back",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "DELETE FROM partitioned.notification_event AS n\nWHERE n.id = $1 AND n.scheduled_at = $2",
+                "custom": 7,
+                "generic": 0
+              }
+            ],
+            "after": [
+              {
+                "sql": "DELETE FROM partitioned.notification_event AS n\nWHERE n.id = $1 AND n.scheduled_at = $2",
+                "custom": 8,
+                "generic": 0
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "warm",
+            "candidate": "template_delete",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "DELETE FROM partitioned.notification_template AS n\nWHERE n.id = 1",
+                "custom": 0,
+                "generic": 7
+              }
+            ],
+            "after": [
+              {
+                "sql": "DELETE FROM partitioned.notification_template AS n\nWHERE n.id = 1",
+                "custom": 0,
+                "generic": 8
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          },
+          {
+            "mode": "auto",
+            "warmth": "warm",
+            "candidate": "expired_qualified_update",
+            "outcome": "blocked_55P03",
+            "warmExecutions": 8,
+            "reusedPhysicalConnection": true,
+            "before": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2 AND n.scheduled_at = $3",
+                "custom": 7,
+                "generic": 0
+              }
+            ],
+            "after": [
+              {
+                "sql": "UPDATE partitioned.notification_event AS n\nSET content_body = $1\nWHERE n.id = $2 AND n.scheduled_at = $3",
+                "custom": 7,
+                "generic": 0
+              },
+              {
+                "sql": "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements",
+                "custom": 0,
+                "generic": 1
+              }
+            ]
+          }
+        ],
+        "sql": [
+          "DELETE FROM baseline.notification_event AS n\nWHERE n.id = 1",
+          "DELETE FROM baseline.notification_template AS n",
+          "DELETE FROM partitioned.notification_event AS n\nWHERE n.id = @id",
+          "DELETE FROM partitioned.notification_event AS n\nWHERE n.id = @id AND n.scheduled_at = @stamp",
+          "DELETE FROM partitioned.notification_event AS n\nWHERE n.id = 1",
+          "DELETE FROM partitioned.notification_template AS n",
+          "DELETE FROM partitioned.notification_template AS n\nWHERE n.id = 1",
+          "INSERT INTO baseline.delivery_queue (notification_event_id, scheduled_at, send_state, template_id)\nVALUES (@p9, @p10, @p11, @p12)\nRETURNING id;\nINSERT INTO baseline.delivery_queue (notification_event_id, scheduled_at, send_state, template_id)\nVALUES (@p13, @p14, @p15, @p16)\nRETURNING id;\nINSERT INTO baseline.push_delivery (notification_event_id)\nVALUES (@p17)\nRETURNING id;\nINSERT INTO baseline.push_delivery (notification_event_id)\nVALUES (@p18)\nRETURNING id;\nINSERT INTO baseline.push_delivery (notification_event_id)\nVALUES (@p19)\nRETURNING id;\nINSERT INTO baseline.push_delivery (notification_event_id)\nVALUES (@p20)\nRETURNING id;\n",
+          "INSERT INTO baseline.notification_event (content_body, external_ref_id, scheduled_at, template_id)\nVALUES (@p1, @p2, @p3, @p4)\nRETURNING id;\nINSERT INTO baseline.notification_event (content_body, external_ref_id, scheduled_at, template_id)\nVALUES (@p5, @p6, @p7, @p8)\nRETURNING id;\n",
+          "INSERT INTO baseline.notification_template (name)\nVALUES (@p0)\nRETURNING id;\n",
+          "INSERT INTO baseline.send_history (delivery_queue_id, detail)\nVALUES (@p0, @p1)\nRETURNING id;\nINSERT INTO baseline.send_history (delivery_queue_id, detail)\nVALUES (@p2, @p3)\nRETURNING id;\n",
+          "INSERT INTO partitioned.delivery_queue (parent_scheduled_at, notification_event_id, scheduled_at, send_state, template_id)\nVALUES (@p4, @p5, @p6, @p7, @p8)\nRETURNING id;\nINSERT INTO partitioned.push_delivery (parent_scheduled_at, notification_event_id)\nVALUES (@p9, @p10)\nRETURNING id;\nINSERT INTO partitioned.push_delivery (parent_scheduled_at, notification_event_id)\nVALUES (@p11, @p12)\nRETURNING id;\n",
+          "INSERT INTO partitioned.delivery_queue (parent_scheduled_at, notification_event_id, scheduled_at, send_state, template_id)\nVALUES (@p5, @p6, @p7, @p8, @p9)\nRETURNING id;\nINSERT INTO partitioned.push_delivery (parent_scheduled_at, notification_event_id)\nVALUES (@p10, @p11)\nRETURNING id;\nINSERT INTO partitioned.push_delivery (parent_scheduled_at, notification_event_id)\nVALUES (@p12, @p13)\nRETURNING id;\n",
+          "INSERT INTO partitioned.notification_event (scheduled_at, content_body, external_ref_id, template_id)\nVALUES (@p0, @p1, @p2, @p3)\nRETURNING id;\n",
+          "INSERT INTO partitioned.notification_event (scheduled_at, content_body, external_ref_id, template_id)\nVALUES (@p1, @p2, @p3, @p4)\nRETURNING id;\n",
+          "INSERT INTO partitioned.notification_template (name)\nVALUES (@p0)\nRETURNING id;\n",
+          "INSERT INTO partitioned.send_history (delivery_queue_id, detail)\nVALUES (@p0, @p1)\nRETURNING id;\n",
+          "SELECT count(*)::int\nFROM baseline.delivery_queue AS d",
+          "SELECT count(*)::int\nFROM baseline.notification_event AS n",
+          "SELECT count(*)::int\nFROM baseline.push_delivery AS p",
+          "SELECT count(*)::int\nFROM baseline.send_history AS s",
+          "SELECT count(*)::int\nFROM partitioned.delivery_queue AS d",
+          "SELECT count(*)::int\nFROM partitioned.notification_event AS n",
+          "SELECT count(*)::int\nFROM partitioned.push_delivery AS p",
+          "SELECT count(*)::int\nFROM partitioned.send_history AS s",
+          "SELECT d.id, d.notification_event_id, d.scheduled_at, d.send_state, d.template_id\nFROM baseline.delivery_queue AS d\nORDER BY d.id",
+          "SELECT d.id, d.notification_event_id, d.scheduled_at, d.send_state, d.template_id\nFROM baseline.delivery_queue AS d\nWHERE d.id = 1\nLIMIT 2",
+          "SELECT d.id, d.parent_scheduled_at, d.notification_event_id, d.scheduled_at, d.send_state, d.template_id\nFROM partitioned.delivery_queue AS d\nWHERE d.id = 1\nLIMIT 2",
+          "SELECT d.scheduled_at\nFROM baseline.delivery_queue AS d\nWHERE d.id = 1\nLIMIT 2",
+          "SELECT d.scheduled_at\nFROM partitioned.delivery_queue AS d\nWHERE d.id = 1\nLIMIT 2",
+          "SELECT EXISTS (\n    SELECT 1\n    FROM partitioned.notification_event AS n\n    WHERE n.id = @ack_Item1 AND n.scheduled_at = @ack_Item2 AND n.external_ref_id = @ack_Item3)",
+          "SELECT n.id, n.content_body, n.external_ref_id, n.scheduled_at, n.template_id, d.id, d.notification_event_id, d.scheduled_at, d.send_state, d.template_id, p.id, p.notification_event_id\nFROM baseline.notification_event AS n\nLEFT JOIN baseline.delivery_queue AS d ON n.id = d.notification_event_id\nLEFT JOIN baseline.push_delivery AS p ON n.id = p.notification_event_id\nORDER BY n.id, d.id",
+          "SELECT n.id, n.name\nFROM partitioned.notification_template AS n\nLIMIT 2",
+          "SELECT n.id, n.scheduled_at, n.content_body, n.external_ref_id, n.template_id, d.id, d.parent_scheduled_at, d.notification_event_id, d.scheduled_at, d.send_state, d.template_id, p.id, p.parent_scheduled_at, p.notification_event_id\nFROM partitioned.notification_event AS n\nLEFT JOIN partitioned.delivery_queue AS d ON n.id = d.notification_event_id AND n.scheduled_at = d.parent_scheduled_at\nLEFT JOIN partitioned.push_delivery AS p ON n.id = p.notification_event_id AND n.scheduled_at = p.parent_scheduled_at\nORDER BY n.id, n.scheduled_at, d.id, d.parent_scheduled_at, p.id",
+          "SELECT s.id, s.scheduled_at, s.content_body, s.external_ref_id, s.template_id, s.id0, s.parent_scheduled_at, s.notification_event_id, s.scheduled_at0, s.send_state, s.template_id0, p.id, p.parent_scheduled_at, p.notification_event_id\nFROM (\n    SELECT n.id, n.scheduled_at, n.content_body, n.external_ref_id, n.template_id, d.id AS id0, d.parent_scheduled_at, d.notification_event_id, d.scheduled_at AS scheduled_at0, d.send_state, d.template_id AS template_id0\n    FROM partitioned.notification_event AS n\n    LEFT JOIN partitioned.delivery_queue AS d ON n.id = d.notification_event_id AND n.scheduled_at = d.parent_scheduled_at\n    WHERE n.id = @ack_Item1 AND n.scheduled_at = @ack_Item2\n    LIMIT 2\n) AS s\nLEFT JOIN partitioned.push_delivery AS p ON s.id = p.notification_event_id AND s.scheduled_at = p.parent_scheduled_at\nORDER BY s.id, s.scheduled_at, s.id0, s.parent_scheduled_at, p.id",
+          "UPDATE baseline.delivery_queue SET scheduled_at = @p0\nWHERE id = @p1;\n",
+          "UPDATE partitioned.delivery_queue AS d\nSET scheduled_at = @p\nWHERE d.id = @id AND d.parent_scheduled_at = @stamp",
+          "UPDATE partitioned.delivery_queue SET scheduled_at = @p0\nWHERE id = @p1 AND parent_scheduled_at = @p2;\n",
+          "UPDATE partitioned.notification_event AS n\nSET content_body = @p\nWHERE n.id = @id",
+          "UPDATE partitioned.notification_event AS n\nSET content_body = @p\nWHERE n.id = @id AND n.scheduled_at = @stamp",
+          "UPDATE partitioned.notification_event SET content_body = @p0\nWHERE id = @p1 AND scheduled_at = @p2;\n"
+        ]
+      },
+      "container_removed": true,
+      "elapsed_seconds": 24.838
+    }
+  ]
+}

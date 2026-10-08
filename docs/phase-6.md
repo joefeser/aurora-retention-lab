@@ -58,7 +58,7 @@ Evidence files and each phase's method distinguish these claims. They do not est
 
 ## Recommended next work with the work team
 
-Use [the sanitized validation request](work-validation-request.md) to obtain schema/query facts and dataset profiles. Then run an application compatibility and representative migration rehearsal. Do not spend further lab capacity producing increasingly large arbitrary synthetic tables in place of those inputs.
+The sanitized work-side responses already supplied the relationship model and workload estimates. [Phase 8](phase-8.md) now exercises those inputs through a local EF sample and a bounded copy/backfill rehearsal. Use [the validation coverage checklist](work-validation-request.md) to distinguish supplied facts from untested behavior and specific unresolved inputs. Larger arbitrary synthetic tables do not substitute for representative query and workload coverage.
 
 A production archive controller would need a durable attempt/manifest state model, independent verification, fenced ownership, retry and commit reconciliation, and explicit restore/cutover/rollback procedures. Those are implementation projects beyond these disposable runners. A retained old table is not a lossless rollback once writes resume elsewhere.
 
