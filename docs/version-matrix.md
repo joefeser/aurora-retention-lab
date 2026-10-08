@@ -43,6 +43,8 @@ Phase 4's [live archival fixture](phase-4.md) passed twice on Aurora 17.9: live 
 
 Phase 5 [query-shape probes](phase-5.md) on Aurora 17.9 found that ID-only live UPDATE/cascading DELETE blocked behind the expired-leaf fence, while the tested constant partition-key forms were admitted. This has not been tested on Aurora 16 or with prepared/generic plans.
 
+Phase 7 [prepared-plan admission](phase-7.md) produced the same outcomes on local 16.15 and 17.11: the tested timestamp-qualified live writes were admitted in forced custom mode but blocked on first execution in forced generic mode. Blocked attempts did not increment plan counters. Aurora and warmed/prepared pool behavior remain untested.
+
 ## References
 
 - [PostgreSQL 16 CREATE TABLE](https://www.postgresql.org/docs/16/sql-createtable.html)
