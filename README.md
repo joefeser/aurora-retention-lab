@@ -2,15 +2,36 @@
 
 A disposable proof of concept for archiving Aurora PostgreSQL messaging data to S3 before retiring it from operational storage.
 
-The lab will evaluate range partitioning with `pg_partman`, partition export with `aws_s3`, related-table integrity, and migration from existing non-partitioned tables. The motivating workload has a 30-day operational retention requirement and a seven-year archive requirement, with a large historical backlog and expensive cascading deletes.
+The repository records a completed, bounded synthetic study of range partitioning with `pg_partman`, partition export with `aws_s3`, related-table integrity, and migration from existing non-partitioned tables. The motivating workload has a 30-day operational retention requirement and a seven-year archive requirement, with a large historical backlog and expensive cascading deletes.
 
 Only synthetic data belongs in this repository or the lab. This is an experiment, not a production migration or a compliance certification.
 
+## Start here: humans and AI reviewers
+
+1. Read the [full study and conclusions](docs/report/full-report.md), including its acceptance matrix, assumptions and limits.
+2. Use the [review and validation guide](docs/study-review-guide.md) to trace a claim from the report to CSV rows, raw receipts and the code that produced it.
+3. Inspect the [complete performance tables](docs/report/performance-tables.md) and [receipt manifest](evidence/workload-report/manifest.json). The manifest identifies 23 successful runs: 168 retirement trials, 75 query cases, 48 EF benchmark cases, plus migration and archival boundary evidence.
+4. Read the [PostgreSQL 16/17 capability matrix](docs/version-matrix.md) for version claims, and the [benchmark methods](benchmarks/README.md) before rerunning experiments.
+
+The study is complete for the recorded fixtures, not a production readiness certification. It does not prove a 100M-row completion time or a 10× payload-split improvement. The two-million-row tests use a narrow key projection; the full-schema datasets are smaller. Original work attachments and real data are not included: deterministic synthetic data can be regenerated from the supplied schema shapes and declared assumptions.
+
+### Validate the published study without AWS or Docker
+
+From the repository root, using Python 3:
+
+```sh
+python3 -m unittest discover -s tests
+python3 benchmarks/publish_report.py
+git diff --exit-code -- docs/report evidence/workload-report
+```
+
+The first command tests validation logic; the second verifies compressed/uncompressed receipt hashes and rebuilds the tables. The last detects changes relative to the checked-out commit. This checks the published evidence and computations; it does **not** rerun PostgreSQL, authenticate the historical execution, or independently reproduce timings. Work in a clean checkout so unrelated edits do not obscure the comparison. See the guide for raw-receipt inspection, independent median recomputation, local experiment replay and optional chart generation.
+
 ## Repository workflow
 
-The initial `main` commit contains intent and scope documentation only. All implementation, SQL, infrastructure templates, AWS commands, and experimental results reach `main` through feature/integration branches and pull requests. The first phase used `codex/retention-poc`; phase 2 used `codex/retention-scale`; phase 3 used `codex/retention-delete-benchmark`; phase 4 uses `codex/retention-live-archive`. There is no `dev` branch.
+Implementation, scripts, infrastructure and evidence reach `main` through feature/integration PRs and human review. There is no `dev` branch. The initial `main` commit contained intent and scope documentation only. For the current experiment window and teardown procedure, use the [canonical lab lifecycle](docs/lab-lifecycle.md).
 
-## What we intend to establish
+## Questions investigated
 
 - Whether time partitioning can meet operational retention while preserving the required relationships and identity semantics.
 - Whether archived exports can be verified and restored before a partition is retired.
@@ -20,7 +41,7 @@ The initial `main` commit contains intent and scope documentation only. All impl
 
 See [the experiment scope](docs/experiment-scope.md) and [the lab lifecycle](docs/lab-lifecycle.md).
 
-## Run the POC
+## Earlier phases and correctness proofs
 
 Start with `python3 scripts/run-local.py` (Python 3 and Docker required).
 See [running and tearing down the lab](docs/running-the-lab.md) for the AWS experiment, commands, costs, and evidence limits.

@@ -54,6 +54,7 @@ These experiments do not certify production throughput, a 100M-row completion ti
 ```sh
 python3 -m unittest discover -s tests
 .lab/perf-venv/bin/python benchmarks/test_harness.py
+dotnet restore samples/Retention.Workload --locked-mode
 dotnet build samples/Retention.Workload -c Release --no-restore
 python3 benchmarks/publish_report.py
 ```
