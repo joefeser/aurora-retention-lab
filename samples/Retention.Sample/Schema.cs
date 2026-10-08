@@ -1,5 +1,12 @@
 public static class Schema
 {
+    public const string HistoryIdentityGuard = """
+        DO $$ BEGIN
+          IF EXISTS (SELECT id FROM partitioned.delivery_queue GROUP BY id HAVING count(*) > 1) THEN
+            RAISE EXCEPTION 'bare queue IDs are ambiguous for soft history; refuse archival' USING ERRCODE='23505';
+          END IF;
+        END $$;
+        """;
     public const string CopyBaseline = """
         INSERT INTO partitioned.notification_template OVERRIDING SYSTEM VALUE SELECT * FROM baseline.notification_template;
         INSERT INTO partitioned.notification_event OVERRIDING SYSTEM VALUE SELECT * FROM baseline.notification_event;
@@ -58,6 +65,17 @@ public static class Schema
                 END $$;
                 CREATE TRIGGER retention_immutable BEFORE UPDATE ON partitioned.notification_event
                   FOR EACH ROW EXECUTE FUNCTION partitioned.reject_retention_change();
+                CREATE FUNCTION partitioned.reject_child_retention_change() RETURNS trigger LANGUAGE plpgsql AS $$
+                BEGIN
+                  IF NEW.parent_scheduled_at IS DISTINCT FROM OLD.parent_scheduled_at THEN
+                    RAISE EXCEPTION 'child retention timestamp is immutable' USING ERRCODE='23514';
+                  END IF;
+                  RETURN NEW;
+                END $$;
+                CREATE TRIGGER retention_immutable BEFORE UPDATE ON partitioned.delivery_queue
+                  FOR EACH ROW EXECUTE FUNCTION partitioned.reject_child_retention_change();
+                CREATE TRIGGER retention_immutable BEFORE UPDATE ON partitioned.push_delivery
+                  FOR EACH ROW EXECUTE FUNCTION partitioned.reject_child_retention_change();
                 """;
         }
         return ddl;

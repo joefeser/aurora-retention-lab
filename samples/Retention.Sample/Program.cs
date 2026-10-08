@@ -116,14 +116,19 @@ try
         await using (var db = Context(partitioned, source))
         {
             await using var tx = await db.Database.BeginTransactionAsync();
-            var q = await db.Queues.SingleAsync(x => x.Id == 1);
+            var oldStamp = Stamp(true);
+            var q = partitioned
+                ? await db.Queues.SingleAsync(x => x.Id == 1 && x.ParentScheduledAt == oldStamp)
+                : await db.Queues.SingleAsync(x => x.Id == 1);
             q.ScheduledAt = Stamp(false).AddDays(3);
             await db.SaveChangesAsync();
-            Require(await db.Queues.Where(x => x.Id == 1).Select(x => x.ScheduledAt).SingleAsync() == q.ScheduledAt,
+            Require((partitioned
+                ? await db.Queues.Where(x => x.Id == 1 && x.ParentScheduledAt == oldStamp).Select(x => x.ScheduledAt).SingleAsync()
+                : await db.Queues.Where(x => x.Id == 1).Select(x => x.ScheduledAt).SingleAsync()) == q.ScheduledAt,
                 schema + ": tracked queue rescheduling crosses midnight");
             if (partitioned)
                 Require((string)(await Scalar((NpgsqlConnection)db.Database.GetDbConnection(),
-                    "SELECT tableoid::regclass::text FROM partitioned.delivery_queue WHERE id=1"))! == "partitioned.delivery_queue_old",
+                    "SELECT tableoid::regclass::text FROM partitioned.delivery_queue WHERE id=1 AND parent_scheduled_at='2026-09-01 12:00Z'"))! == "partitioned.delivery_queue_old",
                     "queue delivery change leaves parent-aligned partition unchanged");
             await tx.RollbackAsync();
         }
@@ -163,6 +168,57 @@ try
             "composite key permits duplicate bare IDs across partition timestamps");
         await tx.RollbackAsync();
     }
+
+    foreach (var table in new[] { "delivery_queue", "push_delivery" })
+    {
+        await using var tx = await admin.BeginTransactionAsync();
+        await Sql(admin, "INSERT INTO partitioned.notification_event(id,scheduled_at,content_body,external_ref_id,template_id) OVERRIDING SYSTEM VALUE SELECT id,'2026-10-01 12:00Z',content_body,external_ref_id,template_id FROM partitioned.notification_event WHERE id=1");
+        // A valid alternate referenced key exists; the rejection must come from immutability, not a missing FK target.
+        await ExpectState("23514", () => Sql(admin, $"UPDATE partitioned.{table} SET parent_scheduled_at='2026-10-01 12:00Z' WHERE id=1 AND parent_scheduled_at='2026-09-01 12:00Z'"));
+        await tx.RollbackAsync();
+        checks.Add(table + ": database rejects child retention timestamp reassignment even with valid alternate parent");
+    }
+    var beforeCollision = await Snapshot("partitioned");
+    // Commit a legal duplicate bare queue ID to exercise fresh contexts, not just a rollback-only insertion.
+    await Sql(admin, "INSERT INTO partitioned.delivery_queue(id,notification_event_id,parent_scheduled_at,scheduled_at,send_state,template_id) OVERRIDING SYSTEM VALUE SELECT 1,notification_event_id,parent_scheduled_at,scheduled_at,send_state,template_id FROM partitioned.delivery_queue WHERE id=2 AND parent_scheduled_at='2026-10-01 12:00Z'");
+    var historyId = (long)(await Scalar(admin, "INSERT INTO partitioned.send_history(delivery_queue_id,detail) VALUES(1,'ambiguous live history') RETURNING id"))!;
+    await using (var source = Source())
+    await using (var db = Context(true, source))
+    {
+        await using var tx = await db.Database.BeginTransactionAsync();
+        var oldStamp = Stamp(true);
+        var liveStamp = Stamp(false);
+        var q = await db.Queues.SingleAsync(x => x.Id == 1 && x.ParentScheduledAt == oldStamp);
+        q.ScheduledAt = liveStamp.AddDays(3);
+        await db.SaveChangesAsync();
+        Require(await db.Queues.Where(x => x.Id == 1 && x.ParentScheduledAt == liveStamp).Select(x => x.ScheduledAt).SingleAsync() == liveStamp,
+            "full-key EF reschedule leaves committed colliding live queue unchanged");
+        await tx.RollbackAsync();
+    }
+    var collided = await Snapshot("partitioned");
+    await ExpectState("23505", () => Sql(admin, Schema.HistoryIdentityGuard));
+    Require(await Snapshot("partitioned") == collided, "archive guard rejects committed duplicate queue IDs without changing source or history");
+    await Sql(admin, $"DELETE FROM partitioned.send_history WHERE id={historyId}; DELETE FROM partitioned.delivery_queue WHERE id=1 AND parent_scheduled_at='2026-10-01 12:00Z'");
+    Require(await Snapshot("partitioned") == beforeCollision, "collision regression cleanup preserves complete original fixture");
+
+    await using (var archiveAttempt = await admin.BeginTransactionAsync())
+    {
+        await Sql(admin, "LOCK TABLE partitioned.delivery_queue_old,partitioned.send_history IN SHARE MODE");
+        await Sql(admin, Schema.HistoryIdentityGuard);
+        await Sql(admin, "CREATE TABLE partitioned.guard_test AS TABLE partitioned.delivery_queue_old");
+        await using (var writer = new NpgsqlConnection(connectionString))
+        {
+            await writer.OpenAsync();
+            await Sql(writer, "INSERT INTO partitioned.delivery_queue(id,notification_event_id,parent_scheduled_at,scheduled_at,send_state,template_id) OVERRIDING SYSTEM VALUE SELECT 1,notification_event_id,parent_scheduled_at,scheduled_at,send_state,template_id FROM partitioned.delivery_queue WHERE id=2 AND parent_scheduled_at='2026-10-01 12:00Z'");
+        }
+        await Sql(admin, "LOCK TABLE partitioned.delivery_queue IN ACCESS EXCLUSIVE MODE");
+        await ExpectState("23505", () => Sql(admin, Schema.HistoryIdentityGuard));
+        await archiveAttempt.RollbackAsync();
+    }
+    Require((bool)(await Scalar(admin, "SELECT to_regclass('partitioned.guard_test') IS NULL"))!,
+        "collision introduced after snapshot aborts archive transaction before retirement");
+    await Sql(admin, "DELETE FROM partitioned.delivery_queue WHERE id=1 AND parent_scheduled_at='2026-10-01 12:00Z'");
+    Require(await Snapshot("partitioned") == beforeCollision, "late-collision rejection preserves all original rows and soft history");
 
     // Each candidate gets its own pool so warming one query cannot accidentally warm another.
     var original = await Snapshot("partitioned");
@@ -239,13 +295,8 @@ try
         }
         var qualifiedLive = candidate is "parent_qualified_update" or "tracked_parent_update" or "queue_reschedule" or "parent_qualified_delete";
         // Forced generic mode also applies to unnamed extended-protocol execution before auto-prepare.
-        if (mode != "auto" || warmth == "cold")
-        {
-            var genericPrepared = mode == "force_generic_plan";
-            var expected = qualifiedLive && !genericPrepared ? "admitted_rolled_back" : "blocked_55P03";
-            if (outcome != expected) throw new Exception($"{mode}/{warmth}/{candidate}: expected {expected}, got {outcome}");
-        }
-        else if (!qualifiedLive && outcome != "blocked_55P03") throw new Exception("Unsafe mutation admitted under fence");
+        var expected = qualifiedLive && mode != "force_generic_plan" ? "admitted_rolled_back" : "blocked_55P03";
+        if (outcome != expected) throw new Exception($"{mode}/{warmth}/{candidate}: expected {expected}, got {outcome}");
         var countersAfter = (string)(await Scalar(conn, "SELECT coalesce(jsonb_agg(jsonb_build_object('sql',statement,'custom',custom_plans,'generic',generic_plans))::text,'[]') FROM pg_prepared_statements"))!;
         probes.Add(new { mode, warmth, candidate, outcome, warmExecutions = warmth == "warm" ? iterations : 0,
             reusedPhysicalConnection = warmth == "warm", before = JsonSerializer.Deserialize<JsonElement>(countersBefore), after = JsonSerializer.Deserialize<JsonElement>(countersAfter) });
@@ -257,7 +308,9 @@ try
     await using (var fence = await admin.BeginTransactionAsync())
     {
         await Sql(admin, "LOCK TABLE partitioned.notification_event_old,partitioned.delivery_queue_old,partitioned.push_delivery_old IN SHARE MODE");
-        await Sql(admin, "LOCK TABLE partitioned.send_history IN SHARE MODE; CREATE SCHEMA sample_archive");
+        await Sql(admin, "LOCK TABLE partitioned.send_history IN SHARE MODE");
+        await Sql(admin, Schema.HistoryIdentityGuard);
+        await Sql(admin, "CREATE SCHEMA sample_archive");
         foreach (var table in new[] { "notification_event", "delivery_queue", "push_delivery" })
             await Sql(admin, $"CREATE TABLE sample_archive.{table} AS TABLE partitioned.{table}_old");
         await Sql(admin, "CREATE TABLE sample_archive.send_history AS SELECT h.* FROM partitioned.send_history h JOIN partitioned.delivery_queue_old q ON q.id=h.delivery_queue_id");
@@ -286,6 +339,8 @@ try
             "local archive snapshot preserves expired soft history");
         // Probe connections and transactions have been released before this parent lock upgrade.
         await Sql(admin, "SET LOCAL lock_timeout='2s'; LOCK TABLE partitioned.notification_event,partitioned.delivery_queue,partitioned.push_delivery IN ACCESS EXCLUSIVE MODE");
+        // Recheck under parent locks: a live writer could introduce a collision after the initial snapshot.
+        await Sql(admin, Schema.HistoryIdentityGuard);
         await Sql(admin, """
             DELETE FROM partitioned.send_history h USING partitioned.delivery_queue_old q WHERE h.delivery_queue_id=q.id;
             DROP TABLE partitioned.push_delivery_old;

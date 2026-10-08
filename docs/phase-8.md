@@ -2,7 +2,7 @@
 
 The work-side sanitized review already supplied the relationship and workload design inputs used by this lab. This phase turns those inputs into a runnable [.NET/EF sample](../samples/Retention.Sample/README.md). The remaining work is validation coverage and business decisions; it is not a blanket request to supply the schema again.
 
-The sample compares the current ID-only relationship model with parent-aligned composite keys, preserving the supplied ORM/database uniqueness mismatch, push cascades, soft history, template cascades, and mutable delivery scheduling. It deliberately adds a database immutability trigger only to the proposed composite model. Exact work SDK/provider versions were not established by the supplied review, so the sample pins and records its own versions.
+The sample compares the current ID-only relationship model with parent-aligned composite keys, preserving the supplied ORM/database uniqueness mismatch, push cascades, soft history, template cascades, and mutable delivery scheduling. It deliberately adds database immutability triggers for the parent and child retention keys only to the proposed composite model. Exact work SDK/provider versions were not established by the supplied review, so the sample pins and records its own versions.
 
 ## Run and observed result
 
@@ -37,7 +37,7 @@ Forced generic mode blocked qualified writes even on their cold, unnamed extende
 - Rescheduling delivery into another day keeps the queue in its original parent-aligned partition.
 - Parent/template deletion cascades as described; soft history survives without explicit cleanup.
 - Both schemas permit duplicate queue rows despite `WithOne`. No extra unique constraint was silently introduced.
-- The proposed parent immutability trigger rejects timestamp changes. Composite PKs still permit duplicate bare IDs across timestamps.
+- The proposed parent and child immutability triggers reject retention timestamp changes, including when an alternate valid referenced parent exists. Composite PKs still permit duplicate bare IDs across timestamps.
 - Ten committed EF graphs and independent reads progress while a local archive transaction holds the expired leaves. Local archived rows still match before child-first retirement; fresh EF reads after commit verify live graph fields and counts. Soft history is explicitly fenced and cleaned.
 
 ## Decision and remaining coverage
@@ -47,3 +47,5 @@ Composite-key EF mapping is feasible in this bounded sample, but it does not mak
 The sample uses local archive tables, not S3; prior AWS export/restore receipts remain a separate evidence layer. It has two daily partitions, one sequential live writer, and an independent reader overlapping the archive transaction. It does not prove work's exact EF/provider release, full query/index inventory, high concurrency, Aurora/proxy wire behavior, workload sizing, a production migration, or automatic recovery. The source-locked copy, SQL admission, and archive retirement checks must not be combined into a claim that an online production migration is ready.
 
 No AWS infrastructure was added or changed. The October 9, 11 AM Central teardown reminder and original USD 50 lab budget are unchanged.
+
+Review regressions also commit duplicate queue IDs across expired/live partitions: full-key EF rescheduling preserves the other queue, and the archive rejects ambiguous ID-only history without changing data. The guard runs before snapshotting and again under parent access-exclusive locks before retirement, with a late-collision rollback test. History remains ID-only as supplied; the guard makes this limitation explicit rather than claiming to restore global uniqueness. The full 64-case result matrix is enforced, including positive automatic-mode outcomes. Malformed receipts and cleanup failures are tested and cannot produce a successful envelope.

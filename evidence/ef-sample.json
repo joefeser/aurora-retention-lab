@@ -35,6 +35,13 @@
           "partitioned: rollback restores every fixture column",
           "database rejects changing parent retention timestamp",
           "composite key permits duplicate bare IDs across partition timestamps",
+          "delivery_queue: database rejects child retention timestamp reassignment even with valid alternate parent",
+          "push_delivery: database rejects child retention timestamp reassignment even with valid alternate parent",
+          "full-key EF reschedule leaves committed colliding live queue unchanged",
+          "archive guard rejects committed duplicate queue IDs without changing source or history",
+          "collision regression cleanup preserves complete original fixture",
+          "collision introduced after snapshot aborts archive transaction before retirement",
+          "late-collision rejection preserves all original rows and soft history",
           "all 64 fenced EF probes and unfenced controls preserve complete fixture contents",
           "independent reader observes committed live graph 1 while expired fence held",
           "independent reader observes committed live graph 2 while expired fence held",
@@ -1335,9 +1342,10 @@
           "SELECT count(*)::int\nFROM partitioned.send_history AS s",
           "SELECT d.id, d.notification_event_id, d.scheduled_at, d.send_state, d.template_id\nFROM baseline.delivery_queue AS d\nORDER BY d.id",
           "SELECT d.id, d.notification_event_id, d.scheduled_at, d.send_state, d.template_id\nFROM baseline.delivery_queue AS d\nWHERE d.id = 1\nLIMIT 2",
-          "SELECT d.id, d.parent_scheduled_at, d.notification_event_id, d.scheduled_at, d.send_state, d.template_id\nFROM partitioned.delivery_queue AS d\nWHERE d.id = 1\nLIMIT 2",
+          "SELECT d.id, d.parent_scheduled_at, d.notification_event_id, d.scheduled_at, d.send_state, d.template_id\nFROM partitioned.delivery_queue AS d\nWHERE d.id = 1 AND d.parent_scheduled_at = @oldStamp\nLIMIT 2",
           "SELECT d.scheduled_at\nFROM baseline.delivery_queue AS d\nWHERE d.id = 1\nLIMIT 2",
-          "SELECT d.scheduled_at\nFROM partitioned.delivery_queue AS d\nWHERE d.id = 1\nLIMIT 2",
+          "SELECT d.scheduled_at\nFROM partitioned.delivery_queue AS d\nWHERE d.id = 1 AND d.parent_scheduled_at = @liveStamp\nLIMIT 2",
+          "SELECT d.scheduled_at\nFROM partitioned.delivery_queue AS d\nWHERE d.id = 1 AND d.parent_scheduled_at = @oldStamp\nLIMIT 2",
           "SELECT EXISTS (\n    SELECT 1\n    FROM partitioned.notification_event AS n\n    WHERE n.id = @ack_Item1 AND n.scheduled_at = @ack_Item2 AND n.external_ref_id = @ack_Item3)",
           "SELECT n.id, n.content_body, n.external_ref_id, n.scheduled_at, n.template_id, d.id, d.notification_event_id, d.scheduled_at, d.send_state, d.template_id, p.id, p.notification_event_id\nFROM baseline.notification_event AS n\nLEFT JOIN baseline.delivery_queue AS d ON n.id = d.notification_event_id\nLEFT JOIN baseline.push_delivery AS p ON n.id = p.notification_event_id\nORDER BY n.id, d.id",
           "SELECT n.id, n.name\nFROM partitioned.notification_template AS n\nLIMIT 2",
@@ -1352,7 +1360,7 @@
         ]
       },
       "container_removed": true,
-      "elapsed_seconds": 25.86
+      "elapsed_seconds": 25.46
     },
     {
       "passed": true,
@@ -1388,6 +1396,13 @@
           "partitioned: rollback restores every fixture column",
           "database rejects changing parent retention timestamp",
           "composite key permits duplicate bare IDs across partition timestamps",
+          "delivery_queue: database rejects child retention timestamp reassignment even with valid alternate parent",
+          "push_delivery: database rejects child retention timestamp reassignment even with valid alternate parent",
+          "full-key EF reschedule leaves committed colliding live queue unchanged",
+          "archive guard rejects committed duplicate queue IDs without changing source or history",
+          "collision regression cleanup preserves complete original fixture",
+          "collision introduced after snapshot aborts archive transaction before retirement",
+          "late-collision rejection preserves all original rows and soft history",
           "all 64 fenced EF probes and unfenced controls preserve complete fixture contents",
           "independent reader observes committed live graph 1 while expired fence held",
           "independent reader observes committed live graph 2 while expired fence held",
@@ -2688,9 +2703,10 @@
           "SELECT count(*)::int\nFROM partitioned.send_history AS s",
           "SELECT d.id, d.notification_event_id, d.scheduled_at, d.send_state, d.template_id\nFROM baseline.delivery_queue AS d\nORDER BY d.id",
           "SELECT d.id, d.notification_event_id, d.scheduled_at, d.send_state, d.template_id\nFROM baseline.delivery_queue AS d\nWHERE d.id = 1\nLIMIT 2",
-          "SELECT d.id, d.parent_scheduled_at, d.notification_event_id, d.scheduled_at, d.send_state, d.template_id\nFROM partitioned.delivery_queue AS d\nWHERE d.id = 1\nLIMIT 2",
+          "SELECT d.id, d.parent_scheduled_at, d.notification_event_id, d.scheduled_at, d.send_state, d.template_id\nFROM partitioned.delivery_queue AS d\nWHERE d.id = 1 AND d.parent_scheduled_at = @oldStamp\nLIMIT 2",
           "SELECT d.scheduled_at\nFROM baseline.delivery_queue AS d\nWHERE d.id = 1\nLIMIT 2",
-          "SELECT d.scheduled_at\nFROM partitioned.delivery_queue AS d\nWHERE d.id = 1\nLIMIT 2",
+          "SELECT d.scheduled_at\nFROM partitioned.delivery_queue AS d\nWHERE d.id = 1 AND d.parent_scheduled_at = @liveStamp\nLIMIT 2",
+          "SELECT d.scheduled_at\nFROM partitioned.delivery_queue AS d\nWHERE d.id = 1 AND d.parent_scheduled_at = @oldStamp\nLIMIT 2",
           "SELECT EXISTS (\n    SELECT 1\n    FROM partitioned.notification_event AS n\n    WHERE n.id = @ack_Item1 AND n.scheduled_at = @ack_Item2 AND n.external_ref_id = @ack_Item3)",
           "SELECT n.id, n.content_body, n.external_ref_id, n.scheduled_at, n.template_id, d.id, d.notification_event_id, d.scheduled_at, d.send_state, d.template_id, p.id, p.notification_event_id\nFROM baseline.notification_event AS n\nLEFT JOIN baseline.delivery_queue AS d ON n.id = d.notification_event_id\nLEFT JOIN baseline.push_delivery AS p ON n.id = p.notification_event_id\nORDER BY n.id, d.id",
           "SELECT n.id, n.name\nFROM partitioned.notification_template AS n\nLIMIT 2",
@@ -2705,7 +2721,7 @@
         ]
       },
       "container_removed": true,
-      "elapsed_seconds": 24.838
+      "elapsed_seconds": 24.633
     }
   ]
 }

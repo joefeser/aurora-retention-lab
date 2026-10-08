@@ -17,6 +17,49 @@ def run(*args, **kwargs):
     return subprocess.run(args, check=True, text=True, **kwargs)
 
 
+def validate_application(value):
+    if not isinstance(value, dict) or type(value.get('passed')) is not bool:
+        raise ValueError('Application receipt must be an object with a boolean passed field')
+    for field in ('engine', 'framework', 'efVersion', 'npgsqlVersion', 'providerVersion'):
+        if not isinstance(value.get(field), str) or not value[field]:
+            raise ValueError(f'Missing application receipt field: {field}')
+    for field in ('checks', 'sql'):
+        if not isinstance(value.get(field), list) or not all(isinstance(x, str) for x in value[field]):
+            raise ValueError(f'Invalid application receipt field: {field}')
+    if not isinstance(value.get('probes'), list) or not all(isinstance(x, dict) for x in value['probes']):
+        raise ValueError('Invalid application probes')
+    if value['passed']:
+        candidates = {'parent_id_update', 'parent_qualified_update', 'tracked_parent_update', 'queue_reschedule',
+                      'parent_id_delete', 'parent_qualified_delete', 'template_delete', 'expired_qualified_update'}
+        modes = {'unprepared', 'force_custom_plan', 'force_generic_plan', 'auto'}
+        expected = {(c, m, w) for c in candidates for m in modes for w in ('cold', 'warm')}
+        actual = {(p.get('candidate'), p.get('mode'), p.get('warmth')) for p in value['probes']}
+        if len(value['probes']) != 64 or actual != expected or not value['checks'] or not value['sql']:
+            raise ValueError('Successful receipt lacks complete matrix/evidence')
+        qualified = {'parent_qualified_update', 'tracked_parent_update', 'queue_reschedule', 'parent_qualified_delete'}
+        for p in value['probes']:
+            outcome = 'admitted_rolled_back' if p['candidate'] in qualified and p['mode'] != 'force_generic_plan' else 'blocked_55P03'
+            if p.get('outcome') != outcome:
+                raise ValueError('Successful receipt contradicts the expected matrix')
+    return value
+
+
+def finalize_receipt(receipt, destination, name, created, started, cleanup=subprocess.run):
+    # Cleanup failure must not overwrite the execution failure or prevent receipt persistence.
+    if created:
+        try:
+            removed = cleanup(['docker', 'rm', '-f', name], capture_output=True, timeout=30)
+            receipt['container_removed'] = removed.returncode == 0
+            if removed.returncode:
+                receipt['cleanup_failure'] = {'type': 'NonzeroExit', 'returncode': removed.returncode}
+        except Exception as exc:
+            receipt['container_removed'] = False
+            receipt['cleanup_failure'] = {'type': type(exc).__name__}
+        receipt['passed'] = receipt['passed'] is True and receipt['container_removed']
+    receipt['elapsed_seconds'] = round(time.monotonic() - started, 3)
+    (destination / 'evidence.json').write_text(json.dumps(receipt, indent=2) + '\n')
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--image', choices=['postgres:16', 'postgres:17'], default='postgres:17')
@@ -56,17 +99,19 @@ def main():
         # SQL and values are synthetic; never persist the connection string or generated password.
         (destination / 'run.log').write_text((result.stdout + result.stderr).replace(password, '[redacted]'))
         if (destination / 'application.json').exists():
-            receipt['application'] = json.loads((destination / 'application.json').read_text())
+            receipt['application'] = validate_application(json.loads((destination / 'application.json').read_text()))
+        if 'application' not in receipt:
+            raise ValueError('Missing application receipt')
         if result.returncode:
             raise RuntimeError(f'Application failed; see {destination / "run.log"}')
         receipt['passed'] = receipt['application']['passed']
+    except Exception as exc:
+        receipt['passed'] = False
+        receipt['execution_failure'] = {'type': type(exc).__name__, 'message': str(exc).replace(password, '[redacted]')}
+        if isinstance(exc, subprocess.CalledProcessError):
+            (destination / 'run.log').write_text(((exc.stdout or '') + (exc.stderr or '')).replace(password, '[redacted]'))
     finally:
-        if created:
-            removed = subprocess.run(['docker', 'rm', '-f', name], capture_output=True, timeout=30)
-            receipt['container_removed'] = removed.returncode == 0
-            receipt['passed'] = receipt['passed'] and receipt['container_removed']
-        receipt['elapsed_seconds'] = round(time.monotonic() - started, 3)
-        (destination / 'evidence.json').write_text(json.dumps(receipt, indent=2) + '\n')
+        finalize_receipt(receipt, destination, name, created, started)
         print(f'Evidence: {destination / "evidence.json"}', flush=True)
     if not receipt['passed']:
         raise RuntimeError('Application validation or cleanup failed')
