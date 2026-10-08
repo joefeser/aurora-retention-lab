@@ -4,7 +4,7 @@ The AWS lab must use dedicated, identifiable resources and synthetic data. Imple
 
 Before provisioning, establish the authenticated account, region, resource names, expected cost, and cleanup scope. Prefer infrastructure managed as a single dedicated stack and record resources that live outside it. Keep credentials and generated account-specific inventory out of Git.
 
-The intended experiment window ends October 9, 2026 at 11:00 AM (America/Chicago). A chat reminder will prompt teardown; a reminder is not an automatic resource expiry or a guarantee that billing has stopped.
+The owner-confirmed experiment window ends **October 9, 2026 at 1:00 PM Central (America/Chicago)**. The owner extended the previous 11 AM deadline to allow completion of the performance study. This page is the canonical teardown schedule for the phase documents. A chat reminder will prompt teardown; a reminder is not an automatic resource expiry or a guarantee that billing has stopped.
 
 The implementation must include a teardown procedure for the database, compute or network helpers, S3 objects and versions, secrets, and any separately created resources. Confirm deletion from AWS and record leftovers. Temporary archive objects must remain deletable; this lab must not enable irreversible seven-year retention locks.
 
