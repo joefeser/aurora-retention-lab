@@ -1,9 +1,9 @@
 {
-  "run_id": "d67b405a41a74e5dba1e41adc192f183",
-  "schema": "poc_d67b405a41a7",
+  "run_id": "e4a5a5fec742444faed6e5275526f793",
+  "schema": "poc_e4a5a5fec742",
   "checks": [
     "mutable delivery time stays in parent-aligned partition",
-    "failed export leaves source partition intact",
+    "destination-denied export preserves source contents",
     "queue S3 restore equals source, including duplicates and NULLs",
     "event S3 restore equals source, including duplicates and NULLs",
     "same-count corrupted restore is rejected",
@@ -18,8 +18,8 @@
       "rows": 100,
       "files": 1,
       "bytes": 2648026,
-      "key": "runs/d67b405a41a74e5dba1e41adc192f183/queue.csv",
-      "etag": "\"904195e26a6fff75b3c15fce7fd9a72e-1\"",
+      "key": "runs/e4a5a5fec742444faed6e5275526f793/queue.csv",
+      "etag": "\"0e038bcb28f99d0beb3be00918943406-1\"",
       "encryption": "aws:kms"
     },
     {
@@ -27,8 +27,8 @@
       "rows": 100,
       "files": 1,
       "bytes": 2649426,
-      "key": "runs/d67b405a41a74e5dba1e41adc192f183/event.csv",
-      "etag": "\"5d0c1c8416520e082dbb0adbec641531-1\"",
+      "key": "runs/e4a5a5fec742444faed6e5275526f793/event.csv",
+      "etag": "\"de0c58bb5a1bc3d2e26a68a9817751bd-1\"",
       "encryption": "aws:kms"
     }
   ],
@@ -52,6 +52,10 @@
       }
     ]
   ],
+  "export_failure": {
+    "kind": "destination_access_denied",
+    "sqlstate": "38000"
+  },
   "column_contract": {
     "event": [
       "id bigint",
@@ -68,7 +72,7 @@
     ]
   },
   "copy_options": "format csv",
-  "elapsed_seconds": 24.88,
+  "elapsed_seconds": 25.82,
   "independent_committed_state": {
     "event_rows": 1,
     "queue_rows": 1,

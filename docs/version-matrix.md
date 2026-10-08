@@ -27,7 +27,7 @@ Aurora PostgreSQL 17.9 passed the cloud fixture with `aws_s3` 2.0 and `pg_partma
 | Cloud capability | Aurora 16 | Aurora 17.9 |
 | --- | --- | --- |
 | S3 export and re-import, exact content comparison | Not run | Passed for 100 parent and 100 queue rows |
-| Failed export preserves source | Not run | Passed |
+| Destination-denied export preserves source contents | Not run | Passed against the actual source partition |
 | Detect same-count corrupted restore | Not run | Passed |
 | Child-first retirement preserves live pair | Not run | Passed; fresh post-commit request confirmed old partitions absent |
 | pg_partman without background worker | Not run | Manual maintenance passed, extension 5.2.4 |

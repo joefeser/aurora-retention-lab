@@ -13,6 +13,12 @@ lab = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(lab)
 
 
+def verified_object_metadata(obj):
+    if obj.get('ServerSideEncryption') != 'aws:kms':
+        raise RuntimeError('Export object is not verified as SSE-KMS encrypted')
+    return {'etag': obj['ETag'], 'encryption': obj['ServerSideEncryption']}
+
+
 def main():
     state = lab.checked_state()
     if state['status'] not in ('CREATE_COMPLETE', 'UPDATE_COMPLETE'):
@@ -91,16 +97,32 @@ def main():
               f"SELECT tableoid='{schema}.queue_old'::regclass FROM {schema}.queue WHERE id=1")
         # This intentionally blocks writers for the tiny proof. Not a production strategy.
         sql(f'LOCK TABLE {schema}.event, {schema}.queue IN ACCESS EXCLUSIVE MODE')
-        sql(f'''DO $test$ BEGIN
+        sql(f'CREATE TABLE {schema}.export_failure (sqlstate text, kind text)')
+        sql(f'CREATE TABLE {schema}.event_before_failure AS TABLE {schema}.event_old')
+        # The cluster export role can write runs/* only. Select the real source
+        # but target a prefix outside that permission; only access denial counts.
+        sql(f'''DO $test$ DECLARE error_state text; error_message text; error_detail text;
+        BEGIN
           BEGIN
-            PERFORM aws_s3.query_export_to_s3('SELECT * FROM {schema}.missing_source',
-              aws_commons.create_s3_uri('{out['Bucket']}','{prefix}failed.csv','{region}'), options := 'format csv');
+            PERFORM aws_s3.query_export_to_s3('SELECT * FROM {schema}.event_old',
+              aws_commons.create_s3_uri('{out['Bucket']}','denied/{run_id}/failed.csv','{region}'), options := 'format csv');
             RAISE EXCEPTION 'Expected export failure did not occur';
-          EXCEPTION WHEN undefined_table THEN NULL;
+          EXCEPTION WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS error_state = RETURNED_SQLSTATE,
+              error_message = MESSAGE_TEXT, error_detail = PG_EXCEPTION_DETAIL;
+            IF concat(error_message, ' ', error_detail) !~* '(AccessDenied|Access Denied|403|not authorized.*s3:PutObject)' THEN
+              RAISE;
+            END IF;
+            INSERT INTO {schema}.export_failure VALUES(error_state, 'destination_access_denied');
           END;
         END $test$''')
-        check('failed export leaves source partition intact',
-              f'SELECT count(*)=100 FROM {schema}.event_old')
+        check('destination-denied export preserves source contents', f'''SELECT
+          (SELECT count(*)=1 FROM {schema}.export_failure) AND
+          (SELECT count(*)=100 FROM {schema}.event_old) AND NOT EXISTS(
+            (TABLE {schema}.event_old EXCEPT ALL TABLE {schema}.event_before_failure)
+            UNION ALL (TABLE {schema}.event_before_failure EXCEPT ALL TABLE {schema}.event_old))''')
+        record['export_failure'] = {'kind': 'destination_access_denied',
+                                   'sqlstate': scalar(f'SELECT sqlstate FROM {schema}.export_failure')}
         for table in ('queue', 'event'):
             sql(f'CREATE TABLE {schema}.{table}_restored (LIKE {schema}.{table} INCLUDING DEFAULTS)')
             key = prefix + table + '.csv'
@@ -109,8 +131,9 @@ def main():
             if values[0] != 100 or values[1] != 1:
                 raise RuntimeError('This bounded fixture requires exactly 100 rows and one export object')
             obj = lab.aws(region, 's3api', 'head-object', '--bucket', out['Bucket'], '--key', key)
+            metadata = verified_object_metadata(obj)
             record['exports'].append({'table':table,'rows':values[0],'files':values[1],
-                                      'bytes':values[2],'key':key,'etag':obj['ETag']})
+                                      'bytes':values[2],'key':key, **metadata})
             sql(f"SELECT aws_s3.table_import_from_s3('{schema}.{table}_restored','','(format csv)',aws_commons.create_s3_uri('{out['Bucket']}','{key}','{region}'))")
             check(table + ' S3 restore equals source, including duplicates and NULLs', same(table))
         # Prove the verification gate detects corrupt content, then restore it.
