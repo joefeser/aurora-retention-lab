@@ -10,6 +10,15 @@ import uuid
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def require_fenced_outcome(mode, qualified, expired, outcome):
+    if mode not in ('force_custom_plan','force_generic_plan'):
+        raise ValueError('Unknown plan mode')
+    expected = ('admitted_rolled_back' if mode == 'force_custom_plan'
+                and qualified and not expired else 'blocked_55P03')
+    if outcome != expected:
+        raise RuntimeError(f'Fenced outcome mismatch: expected {expected}, got {outcome}')
+
+
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--image',choices=('postgres:16','postgres:17'),default='postgres:17')
@@ -106,9 +115,9 @@ def main():
         for mode in ('force_custom_plan','force_generic_plan'):
             for case in cases:
                 result=run_case(mode,case)
-                if (case[0].startswith('expired') or not case[2]) and result['outcome']!='blocked_55P03':
-                    raise RuntimeError('Expected expired/unqualified fence probe was admitted')
+                require_fenced_outcome(mode, case[2], case[3] == 1, result['outcome'])
                 record['cases'].append(result)
+        record['checks'].append('all 14 fenced outcomes match the mode-specific matrix')
         holder.stdin.write('ROLLBACK;\n')
         holder.stdin.flush()
         holder.communicate(timeout=5)

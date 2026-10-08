@@ -7,7 +7,7 @@ python3 scripts/run-prepared-plans.py --image postgres:16
 python3 scripts/run-prepared-plans.py --image postgres:17
 ```
 
-Both runs passed 14 unfenced controls, classified 14 fenced attempts, and proved both tables were unchanged afterward. Containers used no network, exposed no ports, had a 1 GiB memory limit and 512 MiB temporary data volume, and were removed successfully. No AWS requests or additional cloud resources were needed. Exact image IDs and receipts are in `evidence/prepared-plans.json`.
+Both runs passed 14 unfenced controls, enforced the mode-specific expected outcomes for all 14 fenced attempts, and proved both tables were unchanged afterward. Containers used no network, exposed no ports, had a 1 GiB memory limit and 512 MiB temporary data volume, and were removed successfully. No AWS requests or additional cloud resources were needed. Exact image IDs and receipts are in `evidence/prepared-plans.json`.
 
 ## Observed matrix
 
@@ -23,7 +23,7 @@ The outcomes were identical on local 16.15 and 17.11:
 | Live parent cascading DELETE, ID and timestamp parameter | Admitted | Blocked `55P03` |
 | Expired parent UPDATE, ID and timestamp parameter | Blocked `55P03` | Blocked `55P03` |
 
-All admitted mutations are deliberately rolled back by an injected subtransaction exception. Unexpected errors fail the fixture. Unfenced controls establish that each statement can execute and that the configured plan mode increments the corresponding `pg_prepared_statements` counter. Fenced attempts capture the configured mode and both counters.
+All admitted mutations are deliberately rolled back by an injected subtransaction exception. Unexpected errors or any mismatch with the full outcome matrix fail the fixture, including reversed outcomes for qualified live writes. Unfenced controls establish that each statement can execute and that the configured plan mode increments the corresponding `pg_prepared_statements` counter. Fenced attempts capture the configured mode and both counters.
 
 Every blocked attempt in these runs timed out before either cached-plan counter incremented. The result therefore describes **admission under a forced plan mode**, not execution of a completed generic plan. Admitted custom-mode attempts recorded one custom plan. The fixture does not infer a completed plan from a mode setting alone.
 

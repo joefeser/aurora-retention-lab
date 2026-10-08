@@ -234,13 +234,14 @@
       ],
       "checks": [
         "all 14 unfenced controls admitted with verified plan counters",
+        "all 14 fenced outcomes match the mode-specific matrix",
         "event contents unchanged",
         "queue contents unchanged"
       ],
       "engine": "PostgreSQL 16.15 (Debian 16.15-1.pgdg13+2) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
       "image_id": "sha256:c319f2a8182bcdcbb3297d568e2a9cc9e7da3a624438e14b63921c719817e1b6",
       "container_removed": true,
-      "elapsed_seconds": 5.156
+      "elapsed_seconds": 5.124
     },
     {
       "passed": true,
@@ -475,13 +476,14 @@
       ],
       "checks": [
         "all 14 unfenced controls admitted with verified plan counters",
+        "all 14 fenced outcomes match the mode-specific matrix",
         "event contents unchanged",
         "queue contents unchanged"
       ],
       "engine": "PostgreSQL 17.11 (Debian 17.11-1.pgdg13+2) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
       "image_id": "sha256:a470461db3d4079fb4cb545328a6ef7c7d1ffc33e6981f5d3e2cfda1634d297e",
       "container_removed": true,
-      "elapsed_seconds": 5.113
+      "elapsed_seconds": 5.064
     }
   ]
 }

@@ -27,6 +27,21 @@ def require_verified(exports, rows=ROWS, push_per_parent=2):
         raise RuntimeError('Retirement requires every related archive to be verified')
 
 
+def commit_and_verify(arm, commit, verify, persist):
+    # Persist before dispatch: lost acknowledgements must never look uncommitted.
+    arm['commit_state'] = 'unknown'
+    arm['stage'] = 'commit_pending'
+    persist()
+    commit()
+    arm['commit_state'] = 'committed'
+    arm['stage'] = 'committed_unverified'
+    persist()
+    verify()
+    arm['stage'] = 'complete'
+    arm['passed'] = True
+    persist()
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--rows', type=int, choices=(1024,4096), default=1024)
@@ -80,7 +95,7 @@ def main():
         for trial, order in enumerate((('delete', 'partition'), ('partition', 'delete')), 1):
             for mode in order:
                 s = f'retire_{run[:10]}_{trial}_{mode}'
-                arm = {'trial': trial, 'mode': mode, 'schema': s, 'exports': {}, 'passed': False}
+                arm = {'trial': trial, 'mode': mode, 'schema': s, 'exports': {}, 'passed': False, 'commit_state': 'not_attempted'}
                 record['trials'].append(arm)
                 partition = mode == 'partition'
                 pk = 'id,scheduled_at' if partition else 'id'
@@ -188,15 +203,18 @@ def main():
                     check(f'''SELECT (SELECT count(*) FROM {s}.{t})={LIVE * (fanout if t == 'push' else 1)}
                       AND NOT EXISTS((SELECT * FROM {s}.{t} EXCEPT ALL SELECT * FROM {s}.{t}_keepers)
                       UNION ALL (SELECT * FROM {s}.{t}_keepers EXCEPT ALL SELECT * FROM {s}.{t}))''')
-                call('commit-transaction', '--transaction-id', transaction)
-                transaction = None
-                arm['lock_through_commit_client_seconds'] = round(time.monotonic()-lock_start,3)
-                # New transactions prove committed state, not just in-transaction observations.
-                for t in TABLES:
-                    check(f'SELECT count(*)={LIVE * (fanout if t == "push" else 1)} FROM {s}.{t}')
-                arm['stage'] = 'complete'
-                arm['passed'] = True
-                persist()
+                def commit():
+                    nonlocal transaction
+                    call('commit-transaction', '--transaction-id', transaction)
+                    transaction = None
+                    arm['lock_through_commit_client_seconds'] = round(time.monotonic()-lock_start,3)
+
+                def verify():
+                    # New transactions prove committed counts rather than transaction-local observations.
+                    for t in TABLES:
+                        check(f'SELECT count(*)={LIVE * (fanout if t == "push" else 1)} FROM {s}.{t}')
+
+                commit_and_verify(arm, commit, verify, persist)
                 print(f'PASS trial {trial} {mode}: retirement {arm["retire_server_seconds"]:.6f}s server; archive/verify {arm["archive_verify_client_seconds"]}s', flush=True)
         record['passed'] = True
     finally:

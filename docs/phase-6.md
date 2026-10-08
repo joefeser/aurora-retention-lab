@@ -1,6 +1,6 @@
 # Phase 6: larger synthetic case and decision report
 
-The POC supports a conditional next step, not a production deployment decision: **evaluate parent-aligned partitioning only if the application can adopt composite keys and partition-qualified write paths.** Keep indexed batched deletion as the comparison baseline. The lab has not shown that a transparent change to the existing ID-only design can deliver safe online archival.
+The POC supports a conditional next step, not a production deployment decision: **evaluate parent-aligned partitioning only if the application can adopt composite keys and partition-qualified write paths.** The measured comparison baseline is indexed, unbatched bulk deletion; bounded deletion batches remain future work. The lab has not shown that a transparent change to the existing ID-only design can deliver safe online archival.
 
 ## Larger bounded case
 
@@ -12,6 +12,8 @@ python3 scripts/run-retirement.py --rows 4096 --push-per-parent 8
 The retirement runner now admits 1,024 or 4,096 expired parents and two or eight push rows per parent. Defaults preserve phase 3. The archive gate validates the selected counts, including fanout, before destructive operations. Export, import, and exact comparison now use chunks of at most 512 parent IDs (16 MiB of parent body per chunk); each restored table must also have the expected total count. This chunked path also applies to the default fixture, so historical phase-3 archive timings describe the earlier whole-table path. A negative test rejects a small-fixture receipt or incorrect push count for the larger fixture.
 
 The larger case has 4,096 expired parents, 4,096 queues, 32,768 push rows, and 4,096 soft-history rows per arm: 45,056 expired rows and 160 MiB of parent/queue body payload. Each arm also has 32 live parents and their corresponding relationships. Both designs run twice in reversed order, on the existing maximum-1-ACU cluster. This comparison retains phase 3's quiescent protocol: parent access-exclusive locks cover export, verification, and retirement. It does not combine the larger load with phase 4's concurrent writers. All data remains deterministic and synthetic.
+
+The DELETE arm is unbatched: archive chunking does not divide the two range-wide DELETE statements or provide inter-batch commits. It measures neither deletion batch size nor inter-batch progress.
 
 This increases row count and fanout together. It is a combined stress case, not an isolated causal measurement of either factor. It does not reproduce work data distributions, skew, real HTML, query mixes, or contention. No production migration duration can be inferred from it.
 
@@ -35,7 +37,7 @@ The run completed in 597.704 seconds including setup. Evidence: `evidence/retire
 | Choice | Evidence from this lab | Remaining gate |
 | --- | --- | --- |
 | Parent-aligned partitions with composite FKs | Exact S3 restores, coordinated retirement, mutable delivery time separated from retention identity, live insert/read progress | Work approval for key changes, all relationship/retention semantics, actual EF and prepared query shapes, production recovery design |
-| Preserve current ID-only design and batch DELETE | Indexed cascade baseline preserves relationships with explicit history cleanup | Representative batch sizes, vacuum/WAL/replication impact, backlog duration, operational load and archive fencing |
+| Preserve current ID-only design; evaluate bounded DELETE batches | Measured only unbatched bulk DELETE: one range-wide history DELETE and one range-wide parent DELETE in a single transaction | Batch sizes, per-batch commits/progress, backlog behavior, vacuum/WAL/replication impact, operational load and archive fencing are unmeasured |
 | Copy keepers and swap tables | Local cooperative writer shutdown preserved acknowledgements; naive live copy missed committed writes | Production freeze window or a separately designed change-capture/catch-up protocol, FK and sequence handling, real rollback plan |
 | Separate archive database or split payload storage | Not benchmarked | Retention/restore use cases, complete schema/application change assessment and operating cost |
 
@@ -65,3 +67,5 @@ A production archive controller would need a durable attempt/manifest state mode
 Review and merge the recovery PR first, then the stress/decision PR based on its branch. After the first merge, verify the second PR's base and diff against main, especially after a squash merge; do not blindly merge a diff that includes the predecessor again. No PR is automatically merged by this work.
 
 The teardown reminder is October 9, 2026 at **11 AM Central**. It is a reminder, not automatic deletion. Use `python3 scripts/aws-lab.py delete`, then verify `DELETE_COMPLETE` and remaining inventory. The original USD 50 budget remains in force; a 1 ACU ceiling does not cap total spend, and billing telemetry can lag. This phase adds no infrastructure. All synthetic tables, restores, and S3 objects remain until teardown.
+
+Retirement receipts now distinguish `commit_state: not_attempted`, `unknown` (commit intent persisted, outcome not yet confirmed), and `committed`. A confirmed commit is persisted with `stage: committed_unverified` before fresh checks. A failed fresh check leaves that state and `passed: false`; retirement is already durable and cannot be rolled back. Only successful checks transition to `complete`. Historical receipts predate these added fields and are not retroactively relabeled.
