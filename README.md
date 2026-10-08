@@ -32,3 +32,5 @@ Phase 2: [load and concurrency results](docs/phase-2.md). Both local versions pa
 Phase 3: [archive-verified retirement comparison](docs/phase-3.md), comparing indexed cascading DELETE plus soft-history cleanup with coordinated partition retirement.
 
 Phase 4: [archival with concurrent live inserts and reads](docs/phase-4.md), testing expired-leaf write fencing and brief parent locks for retirement.
+
+Phase 5: [query shapes and bounded recovery](docs/phase-5.md), covering abandoned exports, stale archives, reader contention, and transactional DDL rollback.
