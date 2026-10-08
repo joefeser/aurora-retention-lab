@@ -1,9 +1,12 @@
 public static class Schema
 {
-    public const string HistoryIdentityGuard = """
+    // Deliberately global admission policy: reject any duplicate bare queue ID, even
+    // live-only IDs without history. This fails closed; it does not enforce global uniqueness.
+    // Run at archive admission and again under parent locks before retirement.
+    public const string ArchiveQueueIdentityGuard = """
         DO $$ BEGIN
           IF EXISTS (SELECT id FROM partitioned.delivery_queue GROUP BY id HAVING count(*) > 1) THEN
-            RAISE EXCEPTION 'bare queue IDs are ambiguous for soft history; refuse archival' USING ERRCODE='23505';
+            RAISE EXCEPTION 'global archive policy requires unique bare queue IDs; refuse archival' USING ERRCODE='23505';
           END IF;
         END $$;
         """;
