@@ -60,9 +60,9 @@ def main():
         record["passed"] = True
     finally:
         db.close()
-        Path(".lab/recovery-smoke-evidence.json").write_text(
-            json.dumps(record, indent=2) + "\n"
-        )
+        evidence = Path(".lab/recovery-smoke-evidence.json")
+        evidence.parent.mkdir(parents=True, exist_ok=True)
+        evidence.write_text(json.dumps(record, indent=2) + "\n")
     print(json.dumps(record, indent=2))
     assert record["passed"] and record["container_removed"]
 

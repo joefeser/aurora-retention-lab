@@ -282,6 +282,69 @@ class CollectionAndRecoveryTests(unittest.TestCase):
             db.execute.assert_not_called()
             db.s3.delete_objects.assert_not_called()
 
+    def test_invalid_inventory_roots_leave_input_unchanged_and_do_not_call_services(
+        self,
+    ):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "invalid.json"
+            for raw in ("[]", '"text"', "null", "true", "7", "1.5", "{"):
+                for execute in (False, True):
+                    with self.subTest(raw=raw, execute=execute):
+                        path.write_text(raw)
+                        db = MagicMock()
+                        with self.assertRaisesRegex(
+                            ValueError, "^Invalid recovery inventory$"
+                        ):
+                            recover(db, path, execute=execute)
+                        self.assertEqual(path.read_text(), raw)
+                        self.assertEqual(db.mock_calls, [])
+
+    def test_archive_batch_ceiling_allows_final_confirmation_but_no_extra_delete(self):
+        with tempfile.TemporaryDirectory() as directory:
+            outputs = {"ClusterArn": "synthetic", "Bucket": "synthetic"}
+            for batches in (0, 1, 9, 10, 11):
+                with self.subTest(batches=batches):
+                    inv = Inventory(directory, outputs)
+                    prefix = inv.archive_prefix()
+                    db = MagicMock(outputs=outputs)
+                    db.s3.get_bucket_versioning.return_value = {}
+                    page = {"Contents": [{"Key": prefix + "part"}], "IsTruncated": True}
+                    db.s3.list_objects_v2.side_effect = [page] * batches + [
+                        {"Contents": [], "IsTruncated": False}
+                    ]
+                    db.s3.delete_objects.return_value = {}
+                    result = recover(db, inv.path, execute=True)
+                    self.assertEqual(
+                        result["state"],
+                        "recovered" if batches <= 10 else "recovery_incomplete",
+                    )
+                    self.assertEqual(db.s3.delete_objects.call_count, min(batches, 10))
+                    self.assertEqual(
+                        db.s3.list_objects_v2.call_count, min(batches + 1, 11)
+                    )
+                    if batches > 10:
+                        self.assertEqual(result["cleanup_error"], "TimeoutError")
+
+    def test_last_confirmation_must_not_be_truncated_or_failed(self):
+        with tempfile.TemporaryDirectory() as directory:
+            outputs = {"ClusterArn": "synthetic", "Bucket": "synthetic"}
+            for confirmation in (
+                {"Contents": [], "IsTruncated": True},
+                OSError("listing failed"),
+            ):
+                with self.subTest(confirmation=confirmation):
+                    inv = Inventory(directory, outputs)
+                    prefix = inv.archive_prefix()
+                    db = MagicMock(outputs=outputs)
+                    db.s3.get_bucket_versioning.return_value = {}
+                    page = {"Contents": [{"Key": prefix + "part"}]}
+                    db.s3.list_objects_v2.side_effect = [page] * 10 + [confirmation]
+                    db.s3.delete_objects.return_value = {}
+                    result = recover(db, inv.path, execute=True)
+                    self.assertEqual(result["state"], "recovery_incomplete")
+                    self.assertEqual(db.s3.delete_objects.call_count, 10)
+                    self.assertEqual(db.s3.list_objects_v2.call_count, 11)
+
     def test_recovery_dry_run_and_prefix_validation_never_delete(self):
         with tempfile.TemporaryDirectory() as directory:
             outputs = {"ClusterArn": "synthetic", "Bucket": "synthetic"}

@@ -73,7 +73,12 @@ class Inventory:
 
 def recover(db, path, *, execute=False):
     path = Path(path)
-    data = json.loads(path.read_text())
+    try:
+        data = json.loads(path.read_text())
+    except json.JSONDecodeError:
+        raise ValueError("Invalid recovery inventory") from None
+    if not isinstance(data, dict):
+        raise ValueError("Invalid recovery inventory")
     token = data.get("token")
     if (
         type(data.get("schema_version")) is not int
@@ -134,7 +139,8 @@ def recover(db, path, *, execute=False):
             outcomes.append({"schema": schema, "removed_or_absent": True})
         if prefix:
             # Listing the exact random prefix also catches multi-file/unknown exports.
-            for _ in range(10):
+            # Ten deletions plus one read-only confirmation of the last batch.
+            for deleted_batches in range(11):
                 budget()
                 page = db.s3.list_objects_v2(
                     Bucket=db.outputs["Bucket"], Prefix=prefix, MaxKeys=1000
@@ -146,14 +152,14 @@ def recover(db, path, *, execute=False):
                     if page.get("IsTruncated"):
                         raise RuntimeError("Incomplete archive listing")
                     break
+                if deleted_batches == 10:
+                    raise TimeoutError("Object recovery batch ceiling reached")
                 result = db.s3.delete_objects(
                     Bucket=db.outputs["Bucket"],
                     Delete={"Objects": objects, "Quiet": True},
                 )
                 if result.get("Errors"):
                     raise RuntimeError("Some owned archive deletions failed")
-            else:
-                raise TimeoutError("Object recovery batch ceiling reached")
         data["state"] = "recovered"
     except Exception as exc:
         data["state"] = "recovery_incomplete"
