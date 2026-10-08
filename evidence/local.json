@@ -1,0 +1,174 @@
+[
+  {
+    "image": "postgres:16",
+    "image_id": "sha256:c319f2a8182bcdcbb3297d568e2a9cc9e7da3a624438e14b63921c719817e1b6",
+    "elapsed_seconds": 1.32,
+    "passed": true,
+    "scope": "local PostgreSQL semantics; not Aurora or production throughput",
+    "engine": "PostgreSQL 16.15 (Debian 16.15-1.pgdg13+2) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+    "checks": [
+      {
+        "test": "01 ID-only primary key rejected",
+        "detail": "0A000: unique constraint on partitioned table must include all partitioning columns"
+      },
+      {
+        "test": "02 Partitioned parent identity works",
+        "detail": "Generated identity values route through a partitioned parent"
+      },
+      {
+        "test": "03 GENERATED ALWAYS rejects ordinary explicit IDs",
+        "detail": "428C9: cannot insert a non-DEFAULT value into column \"id\""
+      },
+      {
+        "test": "04 ID-only foreign key rejected",
+        "detail": "42830: there is no unique constraint matching given keys for referenced table \"event\""
+      },
+      {
+        "test": "05 One-to-one enforced per composite parent",
+        "detail": "23505: duplicate key value violates unique constraint \"queue_old_event_id_parent_scheduled_at_key\""
+      },
+      {
+        "test": "06 Orphan insertion rejected",
+        "detail": "23503: insert or update on table \"queue_old\" violates foreign key constraint \"queue_event_id_parent_scheduled_at_fkey\""
+      },
+      {
+        "test": "07 Quiet-time update stays in parent-aligned partition",
+        "detail": "Delivery scheduling can diverge without changing parent identity or child partition"
+      },
+      {
+        "test": "08 Composite key permits repeated bare ID",
+        "detail": "ID-only lookup is ambiguous after an explicit override"
+      },
+      {
+        "test": "09 Referenced parent partition cannot detach",
+        "detail": "23503: removing partition \"event_old\" violates foreign key constraint \"queue_event_id_parent_scheduled_at_fkey1\""
+      },
+      {
+        "test": "10 DROP RESTRICT preserves FK dependencies",
+        "detail": "2BP01: cannot drop table event_old because other objects depend on it"
+      },
+      {
+        "test": "11 DROP CASCADE leaves referencing rows",
+        "detail": "Observed inside a rolled-back savepoint; never use this as a retirement algorithm"
+      },
+      {
+        "test": "12 Row DELETE cascades",
+        "detail": "Both queue and push rows deleted inside rolled-back savepoint"
+      },
+      {
+        "test": "13 Local CSV round-trip exact comparison",
+        "detail": "EXCEPT ALL in both directions detects content and multiplicity differences"
+      },
+      {
+        "test": "14 Rename does not redirect existing foreign keys",
+        "detail": "Old queue still references the old table object"
+      },
+      {
+        "test": "15 Copy-keepers preserves related keep-set",
+        "detail": "Synthetic policy retains children and soft history only for retained parents"
+      },
+      {
+        "test": "16 Sequence continuity and stale rollback copy",
+        "detail": "Generated ID exceeds old high-water mark; old table lacks new write"
+      },
+      {
+        "test": "17 Screenshot SPLIT PARTITION syntax rejected",
+        "detail": "42601: syntax error at or near \"SPLIT\""
+      },
+      {
+        "test": "18 Direct leaf does not inherit identity",
+        "detail": "23502: null value in column \"id\" of relation \"event_live\" violates not-null constraint"
+      },
+      {
+        "test": "19 Direct leaf accepts explicit identity",
+        "detail": "PG16: ALWAYS on parent not inherited by direct leaf"
+      }
+    ]
+  },
+  {
+    "image": "postgres:17",
+    "image_id": "sha256:a470461db3d4079fb4cb545328a6ef7c7d1ffc33e6981f5d3e2cfda1634d297e",
+    "elapsed_seconds": 1.32,
+    "passed": true,
+    "scope": "local PostgreSQL semantics; not Aurora or production throughput",
+    "engine": "PostgreSQL 17.11 (Debian 17.11-1.pgdg13+2) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+    "checks": [
+      {
+        "test": "01 ID-only primary key rejected",
+        "detail": "0A000: unique constraint on partitioned table must include all partitioning columns"
+      },
+      {
+        "test": "02 Partitioned parent identity works",
+        "detail": "Generated identity values route through a partitioned parent"
+      },
+      {
+        "test": "03 GENERATED ALWAYS rejects ordinary explicit IDs",
+        "detail": "428C9: cannot insert a non-DEFAULT value into column \"id\""
+      },
+      {
+        "test": "04 ID-only foreign key rejected",
+        "detail": "42830: there is no unique constraint matching given keys for referenced table \"event\""
+      },
+      {
+        "test": "05 One-to-one enforced per composite parent",
+        "detail": "23505: duplicate key value violates unique constraint \"queue_old_event_id_parent_scheduled_at_key\""
+      },
+      {
+        "test": "06 Orphan insertion rejected",
+        "detail": "23503: insert or update on table \"queue_old\" violates foreign key constraint \"queue_event_id_parent_scheduled_at_fkey\""
+      },
+      {
+        "test": "07 Quiet-time update stays in parent-aligned partition",
+        "detail": "Delivery scheduling can diverge without changing parent identity or child partition"
+      },
+      {
+        "test": "08 Composite key permits repeated bare ID",
+        "detail": "ID-only lookup is ambiguous after an explicit override"
+      },
+      {
+        "test": "09 Referenced parent partition cannot detach",
+        "detail": "23503: removing partition \"event_old\" violates foreign key constraint \"queue_event_id_parent_scheduled_at_fkey1\""
+      },
+      {
+        "test": "10 DROP RESTRICT preserves FK dependencies",
+        "detail": "2BP01: cannot drop table event_old because other objects depend on it"
+      },
+      {
+        "test": "11 DROP CASCADE leaves referencing rows",
+        "detail": "Observed inside a rolled-back savepoint; never use this as a retirement algorithm"
+      },
+      {
+        "test": "12 Row DELETE cascades",
+        "detail": "Both queue and push rows deleted inside rolled-back savepoint"
+      },
+      {
+        "test": "13 Local CSV round-trip exact comparison",
+        "detail": "EXCEPT ALL in both directions detects content and multiplicity differences"
+      },
+      {
+        "test": "14 Rename does not redirect existing foreign keys",
+        "detail": "Old queue still references the old table object"
+      },
+      {
+        "test": "15 Copy-keepers preserves related keep-set",
+        "detail": "Synthetic policy retains children and soft history only for retained parents"
+      },
+      {
+        "test": "16 Sequence continuity and stale rollback copy",
+        "detail": "Generated ID exceeds old high-water mark; old table lacks new write"
+      },
+      {
+        "test": "17 Screenshot SPLIT PARTITION syntax rejected",
+        "detail": "42601: syntax error at or near \"SPLIT\""
+      },
+      {
+        "test": "18 Direct leaf generated identity",
+        "detail": "PG17: omitted ID generated on leaf"
+      },
+      {
+        "test": "19 Direct leaf explicit identity rejected",
+        "detail": "428C9: cannot insert a non-DEFAULT value into column \"id\""
+      }
+    ]
+  }
+]
