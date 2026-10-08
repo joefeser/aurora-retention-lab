@@ -1,0 +1,62 @@
+{
+  "passed": true,
+  "capacity": {
+    "MinCapacity": 0.5,
+    "MaxCapacity": 1.0
+  },
+  "checks": [
+    "event unchanged after abandoned transaction",
+    "queue unchanged after abandoned transaction",
+    "S3 objects survive database rollback",
+    "old archive is stale after fence release",
+    "event retry archive matches current source",
+    "queue retry archive matches current source",
+    "reader-blocked retirement leaves source intact",
+    "failed partial DDL restores child partition",
+    "failed partial DDL restores child contents",
+    "fresh request reconciles committed retirement",
+    "live pair unchanged after all probes and retry",
+    "cascade FK survives recovery"
+  ],
+  "query_shapes": {
+    "live parent UPDATE by id": "blocked_55P03",
+    "live parent UPDATE with partition key": "admitted_rolled_back",
+    "live queue UPDATE by id": "blocked_55P03",
+    "live queue UPDATE with partition key": "admitted_rolled_back",
+    "live parent cascading DELETE by id": "blocked_55P03",
+    "live parent cascading DELETE with partition key": "admitted_rolled_back",
+    "expired UPDATE": "blocked_55P03"
+  },
+  "exports": [
+    {
+      "table": "event",
+      "attempt": "abandoned",
+      "rows": 100,
+      "bytes": 5892,
+      "encryption": "aws:kms"
+    },
+    {
+      "table": "queue",
+      "attempt": "abandoned",
+      "rows": 100,
+      "bytes": 6184,
+      "encryption": "aws:kms"
+    },
+    {
+      "table": "event",
+      "attempt": "retry",
+      "rows": 100,
+      "bytes": 5881,
+      "encryption": "aws:kms"
+    },
+    {
+      "table": "queue",
+      "attempt": "retry",
+      "rows": 100,
+      "bytes": 6184,
+      "encryption": "aws:kms"
+    }
+  ],
+  "engine": "PostgreSQL 17.9 on aarch64-unknown-linux-gnu, compiled by aarch64-unknown-linux-gnu-gcc (GCC) 10.5.0, 64-bit",
+  "elapsed_seconds": 37.787
+}

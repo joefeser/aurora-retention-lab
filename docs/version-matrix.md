@@ -41,6 +41,8 @@ Phase 3's [archive-verified retirement comparison](phase-3.md) passed two trials
 
 Phase 4's [live archival fixture](phase-4.md) passed twice on Aurora 17.9: live inserts and reads progressed under expired-leaf SHARE locks, mutation probes were blocked, and acknowledged relationships survived retirement. Aurora 16 and general live UPDATE/DELETE behavior remain untested.
 
+Phase 5 [query-shape probes](phase-5.md) on Aurora 17.9 found that ID-only live UPDATE/cascading DELETE blocked behind the expired-leaf fence, while the tested constant partition-key forms were admitted. This has not been tested on Aurora 16 or with prepared/generic plans.
+
 ## References
 
 - [PostgreSQL 16 CREATE TABLE](https://www.postgresql.org/docs/16/sql-createtable.html)
