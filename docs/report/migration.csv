@@ -1,0 +1,10 @@
+evidence,target,trial,child_rows,add_columns_server_seconds,backfill_server_seconds,backfill_statement_wal_bytes,constraints_server_seconds
+pg17-migration,postgres:17,1,20040,0.000267,0.068257,13076368,0.005311
+pg17-migration,postgres:17,2,20040,0.00011,0.066911,13076384,0.005386
+pg17-migration,postgres:17,3,20040,0.000142,0.067537,13076296,0.005537
+pg16-migration,postgres:16,1,20040,0.000295,0.068568,13076736,0.005694
+pg16-migration,postgres:16,2,20040,0.000119,0.067053,13076752,0.005563
+pg16-migration,postgres:16,3,20040,0.000134,0.066938,13076640,0.005752
+aurora-migration,aurora,1,20040,0.026974,0.391472,,0.094371
+aurora-migration,aurora,2,20040,0.000578,0.286518,,0.042289
+aurora-migration,aurora,3,20040,0.000561,0.28891,,0.041293

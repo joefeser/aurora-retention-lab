@@ -40,3 +40,5 @@ Phase 6: [larger synthetic case and decision report](docs/phase-6.md), including
 Phase 7: [prepared-plan admission](docs/phase-7.md), showing why partition-qualified prepared queries still need plan-cache compatibility tests.
 
 Phase 8: [EF application sample and compatibility results](docs/phase-8.md), built from the supplied sanitized relationship model, with local PostgreSQL 16/17 migration, plan reuse, cascade, and archive-retirement probes.
+
+Phase 9: [source-shaped performance study](docs/report/full-report.md), with all 17 parent and 17 queue columns, full-row EF/BenchmarkDotNet, large narrow-key query matrices, archive round trips, migration probes, and [complete performance tables](docs/report/performance-tables.md).

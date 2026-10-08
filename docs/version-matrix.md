@@ -51,3 +51,5 @@ Phase 7 [prepared-plan admission](phase-7.md) produced the same outcomes on loca
 - [PostgreSQL 17 identity columns](https://www.postgresql.org/docs/17/ddl-identity-columns.html)
 - [PostgreSQL 17 ALTER TABLE syntax](https://www.postgresql.org/docs/17/sql-altertable.html)
 - [PostgreSQL 17 partitioning constraints](https://www.postgresql.org/docs/17/ddl-partitioning.html)
+
+Phase 9 adds the [full source-shaped workload report](report/full-report.md): PostgreSQL 16.15/17.11 and Aurora 17.9 archive fidelity, retention timing, two-million-row narrow query matrices and backfill measurements; full-row EF benchmarks and the concurrent row-movement retry test run locally. Aurora 16 and production proxy/failover behavior remain untested.
