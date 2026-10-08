@@ -36,3 +36,5 @@ Phase 4: [archival with concurrent live inserts and reads](docs/phase-4.md), tes
 Phase 5: [query shapes and bounded recovery](docs/phase-5.md), covering abandoned exports, stale archives, reader contention, and transactional DDL rollback.
 
 Phase 6: [larger synthetic case and decision report](docs/phase-6.md), including remaining production gates and a [sanitized work-side validation request](docs/work-validation-request.md).
+
+Phase 7: [prepared-plan admission](docs/phase-7.md), showing why partition-qualified prepared queries still need plan-cache compatibility tests.

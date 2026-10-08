@@ -1,0 +1,487 @@
+{
+  "passed": true,
+  "runs": [
+    {
+      "passed": true,
+      "image": "postgres:16",
+      "cases": [
+        {
+          "shape": "event UPDATE id",
+          "plan_mode": "force_custom_plan",
+          "outcome": "blocked_55P03",
+          "generic_plans": 0,
+          "custom_plans": 0,
+          "configured_mode": "force_custom_plan"
+        },
+        {
+          "shape": "event UPDATE id+timestamp",
+          "plan_mode": "force_custom_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 0,
+          "custom_plans": 1,
+          "configured_mode": "force_custom_plan"
+        },
+        {
+          "shape": "queue UPDATE id",
+          "plan_mode": "force_custom_plan",
+          "outcome": "blocked_55P03",
+          "generic_plans": 0,
+          "custom_plans": 0,
+          "configured_mode": "force_custom_plan"
+        },
+        {
+          "shape": "queue UPDATE id+timestamp",
+          "plan_mode": "force_custom_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 0,
+          "custom_plans": 1,
+          "configured_mode": "force_custom_plan"
+        },
+        {
+          "shape": "event DELETE id",
+          "plan_mode": "force_custom_plan",
+          "outcome": "blocked_55P03",
+          "generic_plans": 0,
+          "custom_plans": 0,
+          "configured_mode": "force_custom_plan"
+        },
+        {
+          "shape": "event DELETE id+timestamp",
+          "plan_mode": "force_custom_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 0,
+          "custom_plans": 1,
+          "configured_mode": "force_custom_plan"
+        },
+        {
+          "shape": "expired UPDATE id+timestamp",
+          "plan_mode": "force_custom_plan",
+          "outcome": "blocked_55P03",
+          "generic_plans": 0,
+          "custom_plans": 0,
+          "configured_mode": "force_custom_plan"
+        },
+        {
+          "shape": "event UPDATE id",
+          "plan_mode": "force_generic_plan",
+          "outcome": "blocked_55P03",
+          "generic_plans": 0,
+          "custom_plans": 0,
+          "configured_mode": "force_generic_plan"
+        },
+        {
+          "shape": "event UPDATE id+timestamp",
+          "plan_mode": "force_generic_plan",
+          "outcome": "blocked_55P03",
+          "generic_plans": 0,
+          "custom_plans": 0,
+          "configured_mode": "force_generic_plan"
+        },
+        {
+          "shape": "queue UPDATE id",
+          "plan_mode": "force_generic_plan",
+          "outcome": "blocked_55P03",
+          "generic_plans": 0,
+          "custom_plans": 0,
+          "configured_mode": "force_generic_plan"
+        },
+        {
+          "shape": "queue UPDATE id+timestamp",
+          "plan_mode": "force_generic_plan",
+          "outcome": "blocked_55P03",
+          "generic_plans": 0,
+          "custom_plans": 0,
+          "configured_mode": "force_generic_plan"
+        },
+        {
+          "shape": "event DELETE id",
+          "plan_mode": "force_generic_plan",
+          "outcome": "blocked_55P03",
+          "generic_plans": 0,
+          "custom_plans": 0,
+          "configured_mode": "force_generic_plan"
+        },
+        {
+          "shape": "event DELETE id+timestamp",
+          "plan_mode": "force_generic_plan",
+          "outcome": "blocked_55P03",
+          "generic_plans": 0,
+          "custom_plans": 0,
+          "configured_mode": "force_generic_plan"
+        },
+        {
+          "shape": "expired UPDATE id+timestamp",
+          "plan_mode": "force_generic_plan",
+          "outcome": "blocked_55P03",
+          "generic_plans": 0,
+          "custom_plans": 0,
+          "configured_mode": "force_generic_plan"
+        }
+      ],
+      "controls": [
+        {
+          "shape": "event UPDATE id",
+          "plan_mode": "force_custom_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 0,
+          "custom_plans": 1,
+          "configured_mode": "force_custom_plan"
+        },
+        {
+          "shape": "event UPDATE id+timestamp",
+          "plan_mode": "force_custom_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 0,
+          "custom_plans": 1,
+          "configured_mode": "force_custom_plan"
+        },
+        {
+          "shape": "queue UPDATE id",
+          "plan_mode": "force_custom_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 0,
+          "custom_plans": 1,
+          "configured_mode": "force_custom_plan"
+        },
+        {
+          "shape": "queue UPDATE id+timestamp",
+          "plan_mode": "force_custom_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 0,
+          "custom_plans": 1,
+          "configured_mode": "force_custom_plan"
+        },
+        {
+          "shape": "event DELETE id",
+          "plan_mode": "force_custom_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 0,
+          "custom_plans": 1,
+          "configured_mode": "force_custom_plan"
+        },
+        {
+          "shape": "event DELETE id+timestamp",
+          "plan_mode": "force_custom_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 0,
+          "custom_plans": 1,
+          "configured_mode": "force_custom_plan"
+        },
+        {
+          "shape": "expired UPDATE id+timestamp",
+          "plan_mode": "force_custom_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 0,
+          "custom_plans": 1,
+          "configured_mode": "force_custom_plan"
+        },
+        {
+          "shape": "event UPDATE id",
+          "plan_mode": "force_generic_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 1,
+          "custom_plans": 0,
+          "configured_mode": "force_generic_plan"
+        },
+        {
+          "shape": "event UPDATE id+timestamp",
+          "plan_mode": "force_generic_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 1,
+          "custom_plans": 0,
+          "configured_mode": "force_generic_plan"
+        },
+        {
+          "shape": "queue UPDATE id",
+          "plan_mode": "force_generic_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 1,
+          "custom_plans": 0,
+          "configured_mode": "force_generic_plan"
+        },
+        {
+          "shape": "queue UPDATE id+timestamp",
+          "plan_mode": "force_generic_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 1,
+          "custom_plans": 0,
+          "configured_mode": "force_generic_plan"
+        },
+        {
+          "shape": "event DELETE id",
+          "plan_mode": "force_generic_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 1,
+          "custom_plans": 0,
+          "configured_mode": "force_generic_plan"
+        },
+        {
+          "shape": "event DELETE id+timestamp",
+          "plan_mode": "force_generic_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 1,
+          "custom_plans": 0,
+          "configured_mode": "force_generic_plan"
+        },
+        {
+          "shape": "expired UPDATE id+timestamp",
+          "plan_mode": "force_generic_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 1,
+          "custom_plans": 0,
+          "configured_mode": "force_generic_plan"
+        }
+      ],
+      "checks": [
+        "all 14 unfenced controls admitted with verified plan counters",
+        "event contents unchanged",
+        "queue contents unchanged"
+      ],
+      "engine": "PostgreSQL 16.15 (Debian 16.15-1.pgdg13+2) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+      "image_id": "sha256:c319f2a8182bcdcbb3297d568e2a9cc9e7da3a624438e14b63921c719817e1b6",
+      "container_removed": true,
+      "elapsed_seconds": 5.156
+    },
+    {
+      "passed": true,
+      "image": "postgres:17",
+      "cases": [
+        {
+          "shape": "event UPDATE id",
+          "plan_mode": "force_custom_plan",
+          "outcome": "blocked_55P03",
+          "generic_plans": 0,
+          "custom_plans": 0,
+          "configured_mode": "force_custom_plan"
+        },
+        {
+          "shape": "event UPDATE id+timestamp",
+          "plan_mode": "force_custom_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 0,
+          "custom_plans": 1,
+          "configured_mode": "force_custom_plan"
+        },
+        {
+          "shape": "queue UPDATE id",
+          "plan_mode": "force_custom_plan",
+          "outcome": "blocked_55P03",
+          "generic_plans": 0,
+          "custom_plans": 0,
+          "configured_mode": "force_custom_plan"
+        },
+        {
+          "shape": "queue UPDATE id+timestamp",
+          "plan_mode": "force_custom_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 0,
+          "custom_plans": 1,
+          "configured_mode": "force_custom_plan"
+        },
+        {
+          "shape": "event DELETE id",
+          "plan_mode": "force_custom_plan",
+          "outcome": "blocked_55P03",
+          "generic_plans": 0,
+          "custom_plans": 0,
+          "configured_mode": "force_custom_plan"
+        },
+        {
+          "shape": "event DELETE id+timestamp",
+          "plan_mode": "force_custom_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 0,
+          "custom_plans": 1,
+          "configured_mode": "force_custom_plan"
+        },
+        {
+          "shape": "expired UPDATE id+timestamp",
+          "plan_mode": "force_custom_plan",
+          "outcome": "blocked_55P03",
+          "generic_plans": 0,
+          "custom_plans": 0,
+          "configured_mode": "force_custom_plan"
+        },
+        {
+          "shape": "event UPDATE id",
+          "plan_mode": "force_generic_plan",
+          "outcome": "blocked_55P03",
+          "generic_plans": 0,
+          "custom_plans": 0,
+          "configured_mode": "force_generic_plan"
+        },
+        {
+          "shape": "event UPDATE id+timestamp",
+          "plan_mode": "force_generic_plan",
+          "outcome": "blocked_55P03",
+          "generic_plans": 0,
+          "custom_plans": 0,
+          "configured_mode": "force_generic_plan"
+        },
+        {
+          "shape": "queue UPDATE id",
+          "plan_mode": "force_generic_plan",
+          "outcome": "blocked_55P03",
+          "generic_plans": 0,
+          "custom_plans": 0,
+          "configured_mode": "force_generic_plan"
+        },
+        {
+          "shape": "queue UPDATE id+timestamp",
+          "plan_mode": "force_generic_plan",
+          "outcome": "blocked_55P03",
+          "generic_plans": 0,
+          "custom_plans": 0,
+          "configured_mode": "force_generic_plan"
+        },
+        {
+          "shape": "event DELETE id",
+          "plan_mode": "force_generic_plan",
+          "outcome": "blocked_55P03",
+          "generic_plans": 0,
+          "custom_plans": 0,
+          "configured_mode": "force_generic_plan"
+        },
+        {
+          "shape": "event DELETE id+timestamp",
+          "plan_mode": "force_generic_plan",
+          "outcome": "blocked_55P03",
+          "generic_plans": 0,
+          "custom_plans": 0,
+          "configured_mode": "force_generic_plan"
+        },
+        {
+          "shape": "expired UPDATE id+timestamp",
+          "plan_mode": "force_generic_plan",
+          "outcome": "blocked_55P03",
+          "generic_plans": 0,
+          "custom_plans": 0,
+          "configured_mode": "force_generic_plan"
+        }
+      ],
+      "controls": [
+        {
+          "shape": "event UPDATE id",
+          "plan_mode": "force_custom_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 0,
+          "custom_plans": 1,
+          "configured_mode": "force_custom_plan"
+        },
+        {
+          "shape": "event UPDATE id+timestamp",
+          "plan_mode": "force_custom_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 0,
+          "custom_plans": 1,
+          "configured_mode": "force_custom_plan"
+        },
+        {
+          "shape": "queue UPDATE id",
+          "plan_mode": "force_custom_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 0,
+          "custom_plans": 1,
+          "configured_mode": "force_custom_plan"
+        },
+        {
+          "shape": "queue UPDATE id+timestamp",
+          "plan_mode": "force_custom_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 0,
+          "custom_plans": 1,
+          "configured_mode": "force_custom_plan"
+        },
+        {
+          "shape": "event DELETE id",
+          "plan_mode": "force_custom_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 0,
+          "custom_plans": 1,
+          "configured_mode": "force_custom_plan"
+        },
+        {
+          "shape": "event DELETE id+timestamp",
+          "plan_mode": "force_custom_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 0,
+          "custom_plans": 1,
+          "configured_mode": "force_custom_plan"
+        },
+        {
+          "shape": "expired UPDATE id+timestamp",
+          "plan_mode": "force_custom_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 0,
+          "custom_plans": 1,
+          "configured_mode": "force_custom_plan"
+        },
+        {
+          "shape": "event UPDATE id",
+          "plan_mode": "force_generic_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 1,
+          "custom_plans": 0,
+          "configured_mode": "force_generic_plan"
+        },
+        {
+          "shape": "event UPDATE id+timestamp",
+          "plan_mode": "force_generic_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 1,
+          "custom_plans": 0,
+          "configured_mode": "force_generic_plan"
+        },
+        {
+          "shape": "queue UPDATE id",
+          "plan_mode": "force_generic_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 1,
+          "custom_plans": 0,
+          "configured_mode": "force_generic_plan"
+        },
+        {
+          "shape": "queue UPDATE id+timestamp",
+          "plan_mode": "force_generic_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 1,
+          "custom_plans": 0,
+          "configured_mode": "force_generic_plan"
+        },
+        {
+          "shape": "event DELETE id",
+          "plan_mode": "force_generic_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 1,
+          "custom_plans": 0,
+          "configured_mode": "force_generic_plan"
+        },
+        {
+          "shape": "event DELETE id+timestamp",
+          "plan_mode": "force_generic_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 1,
+          "custom_plans": 0,
+          "configured_mode": "force_generic_plan"
+        },
+        {
+          "shape": "expired UPDATE id+timestamp",
+          "plan_mode": "force_generic_plan",
+          "outcome": "admitted_rolled_back",
+          "generic_plans": 1,
+          "custom_plans": 0,
+          "configured_mode": "force_generic_plan"
+        }
+      ],
+      "checks": [
+        "all 14 unfenced controls admitted with verified plan counters",
+        "event contents unchanged",
+        "queue contents unchanged"
+      ],
+      "engine": "PostgreSQL 17.11 (Debian 17.11-1.pgdg13+2) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+      "image_id": "sha256:a470461db3d4079fb4cb545328a6ef7c7d1ffc33e6981f5d3e2cfda1634d297e",
+      "container_removed": true,
+      "elapsed_seconds": 5.113
+    }
+  ]
+}

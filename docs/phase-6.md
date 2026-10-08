@@ -41,7 +41,7 @@ The run completed in 597.704 seconds including setup. Evidence: `evidence/retire
 
 Partitioning is not an additional key that can be bolted onto the existing contract unchanged. The tested design carries the parent's retention timestamp into primary and foreign keys. A composite key does not enforce global uniqueness of bare ID. Existing EF identity assumptions, joins, one-to-one uniqueness, all incoming FKs, and updates need explicit review. Soft history requires a policy of its own; the synthetic parent-aligned policy is not a business decision.
 
-Phase 5 identified a concrete compatibility problem: ID-only live UPDATE and cascading DELETE blocked under expired-leaf fencing, while tested forms with a constant partition predicate were admitted. Phase 4 therefore proves concurrent **inserts and reads**, not unrestricted online archival. Prepared/generic plans, pools, triggers, bulk operations, and all real writers still require tests.
+Phase 5 identified a concrete compatibility problem: ID-only live UPDATE and cascading DELETE blocked under expired-leaf fencing, while tested forms with a constant partition predicate were admitted. Phase 4 therefore proves concurrent **inserts and reads**, not unrestricted online archival. The [phase 7 local fixture](phase-7.md) subsequently found that first-execution attempts in forced generic mode blocked even with a timestamp parameter, while the tested forced-custom forms were admitted. Actual application/Aurora plan caching, pools, triggers, bulk operations, and all real writers still require tests.
 
 ## Evidence established across the POC
 
