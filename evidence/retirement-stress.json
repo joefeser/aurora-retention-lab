@@ -1,0 +1,1493 @@
+{
+  "passed": true,
+  "capacity": {
+    "MinCapacity": 0.5,
+    "MaxCapacity": 1.0
+  },
+  "expired_parents_per_arm": 4096,
+  "push_per_parent": 8,
+  "live_parents_per_arm": 32,
+  "trials": [
+    {
+      "trial": 1,
+      "mode": "delete",
+      "exports": {
+        "event": {
+          "rows": 4096,
+          "verified": true,
+          "encryption": "aws:kms",
+          "bytes": 134335405,
+          "batches": [
+            {
+              "first_parent_id": 1,
+              "last_parent_id": 512,
+              "rows": 512,
+              "bytes": 16791444,
+              "verified": true,
+              "export_seconds": 1.472,
+              "import_seconds": 1.504,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 513,
+              "last_parent_id": 1024,
+              "rows": 512,
+              "bytes": 16791577,
+              "verified": true,
+              "export_seconds": 1.413,
+              "import_seconds": 1.498,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1025,
+              "last_parent_id": 1536,
+              "rows": 512,
+              "bytes": 16792064,
+              "verified": true,
+              "export_seconds": 1.312,
+              "import_seconds": 1.253,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1537,
+              "last_parent_id": 2048,
+              "rows": 512,
+              "bytes": 16792064,
+              "verified": true,
+              "export_seconds": 1.37,
+              "import_seconds": 1.442,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2049,
+              "last_parent_id": 2560,
+              "rows": 512,
+              "bytes": 16792064,
+              "verified": true,
+              "export_seconds": 1.607,
+              "import_seconds": 1.464,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2561,
+              "last_parent_id": 3072,
+              "rows": 512,
+              "bytes": 16792064,
+              "verified": true,
+              "export_seconds": 1.253,
+              "import_seconds": 1.529,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3073,
+              "last_parent_id": 3584,
+              "rows": 512,
+              "bytes": 16792064,
+              "verified": true,
+              "export_seconds": 1.381,
+              "import_seconds": 1.504,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3585,
+              "last_parent_id": 4096,
+              "rows": 512,
+              "bytes": 16792064,
+              "verified": true,
+              "export_seconds": 1.376,
+              "import_seconds": 1.479,
+              "encryption": "aws:kms"
+            }
+          ]
+        },
+        "queue": {
+          "rows": 4096,
+          "verified": true,
+          "encryption": "aws:kms",
+          "bytes": 33785690,
+          "batches": [
+            {
+              "first_parent_id": 1,
+              "last_parent_id": 512,
+              "rows": 512,
+              "bytes": 4222248,
+              "verified": true,
+              "export_seconds": 1.118,
+              "import_seconds": 0.666,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 513,
+              "last_parent_id": 1024,
+              "rows": 512,
+              "bytes": 4222514,
+              "verified": true,
+              "export_seconds": 1.065,
+              "import_seconds": 0.612,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1025,
+              "last_parent_id": 1536,
+              "rows": 512,
+              "bytes": 4223488,
+              "verified": true,
+              "export_seconds": 1.049,
+              "import_seconds": 0.824,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1537,
+              "last_parent_id": 2048,
+              "rows": 512,
+              "bytes": 4223488,
+              "verified": true,
+              "export_seconds": 1.017,
+              "import_seconds": 0.577,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2049,
+              "last_parent_id": 2560,
+              "rows": 512,
+              "bytes": 4223488,
+              "verified": true,
+              "export_seconds": 1.01,
+              "import_seconds": 0.646,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2561,
+              "last_parent_id": 3072,
+              "rows": 512,
+              "bytes": 4223488,
+              "verified": true,
+              "export_seconds": 1.034,
+              "import_seconds": 0.564,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3073,
+              "last_parent_id": 3584,
+              "rows": 512,
+              "bytes": 4223488,
+              "verified": true,
+              "export_seconds": 1.108,
+              "import_seconds": 0.595,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3585,
+              "last_parent_id": 4096,
+              "rows": 512,
+              "bytes": 4223488,
+              "verified": true,
+              "export_seconds": 0.995,
+              "import_seconds": 0.663,
+              "encryption": "aws:kms"
+            }
+          ]
+        },
+        "push": {
+          "rows": 32768,
+          "verified": true,
+          "encryption": "aws:kms",
+          "bytes": 2929186,
+          "batches": [
+            {
+              "first_parent_id": 1,
+              "last_parent_id": 512,
+              "rows": 4096,
+              "bytes": 358498,
+              "verified": true,
+              "export_seconds": 0.772,
+              "import_seconds": 0.508,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 513,
+              "last_parent_id": 1024,
+              "rows": 4096,
+              "bytes": 360648,
+              "verified": true,
+              "export_seconds": 0.803,
+              "import_seconds": 0.492,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1025,
+              "last_parent_id": 1536,
+              "rows": 4096,
+              "bytes": 366840,
+              "verified": true,
+              "export_seconds": 0.636,
+              "import_seconds": 0.55,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1537,
+              "last_parent_id": 2048,
+              "rows": 4096,
+              "bytes": 368640,
+              "verified": true,
+              "export_seconds": 0.659,
+              "import_seconds": 0.515,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2049,
+              "last_parent_id": 2560,
+              "rows": 4096,
+              "bytes": 368640,
+              "verified": true,
+              "export_seconds": 0.735,
+              "import_seconds": 0.491,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2561,
+              "last_parent_id": 3072,
+              "rows": 4096,
+              "bytes": 368640,
+              "verified": true,
+              "export_seconds": 0.7,
+              "import_seconds": 0.478,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3073,
+              "last_parent_id": 3584,
+              "rows": 4096,
+              "bytes": 368640,
+              "verified": true,
+              "export_seconds": 0.685,
+              "import_seconds": 0.546,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3585,
+              "last_parent_id": 4096,
+              "rows": 4096,
+              "bytes": 368640,
+              "verified": true,
+              "export_seconds": 0.664,
+              "import_seconds": 0.485,
+              "encryption": "aws:kms"
+            }
+          ]
+        },
+        "history": {
+          "rows": 4096,
+          "verified": true,
+          "encryption": "aws:kms",
+          "bytes": 268122,
+          "batches": [
+            {
+              "first_parent_id": 1,
+              "last_parent_id": 512,
+              "rows": 512,
+              "bytes": 32552,
+              "verified": true,
+              "export_seconds": 0.64,
+              "import_seconds": 0.508,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 513,
+              "last_parent_id": 1024,
+              "rows": 512,
+              "bytes": 32818,
+              "verified": true,
+              "export_seconds": 0.757,
+              "import_seconds": 0.474,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1025,
+              "last_parent_id": 1536,
+              "rows": 512,
+              "bytes": 33792,
+              "verified": true,
+              "export_seconds": 0.658,
+              "import_seconds": 0.525,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1537,
+              "last_parent_id": 2048,
+              "rows": 512,
+              "bytes": 33792,
+              "verified": true,
+              "export_seconds": 0.644,
+              "import_seconds": 0.479,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2049,
+              "last_parent_id": 2560,
+              "rows": 512,
+              "bytes": 33792,
+              "verified": true,
+              "export_seconds": 0.656,
+              "import_seconds": 0.47,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2561,
+              "last_parent_id": 3072,
+              "rows": 512,
+              "bytes": 33792,
+              "verified": true,
+              "export_seconds": 0.667,
+              "import_seconds": 0.478,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3073,
+              "last_parent_id": 3584,
+              "rows": 512,
+              "bytes": 33792,
+              "verified": true,
+              "export_seconds": 0.627,
+              "import_seconds": 0.459,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3585,
+              "last_parent_id": 4096,
+              "rows": 512,
+              "bytes": 33792,
+              "verified": true,
+              "export_seconds": 0.628,
+              "import_seconds": 0.46,
+              "encryption": "aws:kms"
+            }
+          ]
+        }
+      },
+      "passed": true,
+      "lock_acquire_client_seconds": 0.423,
+      "stage": "complete",
+      "archive_verify_client_seconds": 94.419,
+      "retire_client_seconds": 10.062,
+      "retire_server_seconds": 9.620032,
+      "lock_through_commit_client_seconds": 108.286,
+      "independent_committed_checks": [
+        "both cascade FKs remain validated on active parent",
+        "all keeper columns match after commit"
+      ]
+    },
+    {
+      "trial": 1,
+      "mode": "partition",
+      "exports": {
+        "event": {
+          "rows": 4096,
+          "verified": true,
+          "encryption": "aws:kms",
+          "bytes": 134335405,
+          "batches": [
+            {
+              "first_parent_id": 1,
+              "last_parent_id": 512,
+              "rows": 512,
+              "bytes": 16791444,
+              "verified": true,
+              "export_seconds": 1.578,
+              "import_seconds": 1.93,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 513,
+              "last_parent_id": 1024,
+              "rows": 512,
+              "bytes": 16791577,
+              "verified": true,
+              "export_seconds": 1.372,
+              "import_seconds": 1.418,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1025,
+              "last_parent_id": 1536,
+              "rows": 512,
+              "bytes": 16792064,
+              "verified": true,
+              "export_seconds": 1.435,
+              "import_seconds": 1.958,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1537,
+              "last_parent_id": 2048,
+              "rows": 512,
+              "bytes": 16792064,
+              "verified": true,
+              "export_seconds": 1.226,
+              "import_seconds": 1.336,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2049,
+              "last_parent_id": 2560,
+              "rows": 512,
+              "bytes": 16792064,
+              "verified": true,
+              "export_seconds": 1.335,
+              "import_seconds": 1.615,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2561,
+              "last_parent_id": 3072,
+              "rows": 512,
+              "bytes": 16792064,
+              "verified": true,
+              "export_seconds": 1.292,
+              "import_seconds": 1.576,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3073,
+              "last_parent_id": 3584,
+              "rows": 512,
+              "bytes": 16792064,
+              "verified": true,
+              "export_seconds": 1.395,
+              "import_seconds": 1.407,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3585,
+              "last_parent_id": 4096,
+              "rows": 512,
+              "bytes": 16792064,
+              "verified": true,
+              "export_seconds": 1.634,
+              "import_seconds": 1.396,
+              "encryption": "aws:kms"
+            }
+          ]
+        },
+        "queue": {
+          "rows": 4096,
+          "verified": true,
+          "encryption": "aws:kms",
+          "bytes": 33785690,
+          "batches": [
+            {
+              "first_parent_id": 1,
+              "last_parent_id": 512,
+              "rows": 512,
+              "bytes": 4222248,
+              "verified": true,
+              "export_seconds": 1.059,
+              "import_seconds": 0.642,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 513,
+              "last_parent_id": 1024,
+              "rows": 512,
+              "bytes": 4222514,
+              "verified": true,
+              "export_seconds": 1.076,
+              "import_seconds": 0.723,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1025,
+              "last_parent_id": 1536,
+              "rows": 512,
+              "bytes": 4223488,
+              "verified": true,
+              "export_seconds": 1.168,
+              "import_seconds": 0.757,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1537,
+              "last_parent_id": 2048,
+              "rows": 512,
+              "bytes": 4223488,
+              "verified": true,
+              "export_seconds": 1.124,
+              "import_seconds": 0.75,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2049,
+              "last_parent_id": 2560,
+              "rows": 512,
+              "bytes": 4223488,
+              "verified": true,
+              "export_seconds": 1.019,
+              "import_seconds": 0.701,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2561,
+              "last_parent_id": 3072,
+              "rows": 512,
+              "bytes": 4223488,
+              "verified": true,
+              "export_seconds": 1.157,
+              "import_seconds": 0.617,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3073,
+              "last_parent_id": 3584,
+              "rows": 512,
+              "bytes": 4223488,
+              "verified": true,
+              "export_seconds": 1.037,
+              "import_seconds": 0.667,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3585,
+              "last_parent_id": 4096,
+              "rows": 512,
+              "bytes": 4223488,
+              "verified": true,
+              "export_seconds": 1.042,
+              "import_seconds": 0.666,
+              "encryption": "aws:kms"
+            }
+          ]
+        },
+        "push": {
+          "rows": 32768,
+          "verified": true,
+          "encryption": "aws:kms",
+          "bytes": 2929186,
+          "batches": [
+            {
+              "first_parent_id": 1,
+              "last_parent_id": 512,
+              "rows": 4096,
+              "bytes": 358498,
+              "verified": true,
+              "export_seconds": 0.801,
+              "import_seconds": 0.498,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 513,
+              "last_parent_id": 1024,
+              "rows": 4096,
+              "bytes": 360648,
+              "verified": true,
+              "export_seconds": 0.727,
+              "import_seconds": 0.486,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1025,
+              "last_parent_id": 1536,
+              "rows": 4096,
+              "bytes": 366840,
+              "verified": true,
+              "export_seconds": 0.779,
+              "import_seconds": 0.521,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1537,
+              "last_parent_id": 2048,
+              "rows": 4096,
+              "bytes": 368640,
+              "verified": true,
+              "export_seconds": 0.691,
+              "import_seconds": 0.493,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2049,
+              "last_parent_id": 2560,
+              "rows": 4096,
+              "bytes": 368640,
+              "verified": true,
+              "export_seconds": 0.664,
+              "import_seconds": 0.488,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2561,
+              "last_parent_id": 3072,
+              "rows": 4096,
+              "bytes": 368640,
+              "verified": true,
+              "export_seconds": 0.736,
+              "import_seconds": 0.497,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3073,
+              "last_parent_id": 3584,
+              "rows": 4096,
+              "bytes": 368640,
+              "verified": true,
+              "export_seconds": 0.812,
+              "import_seconds": 0.564,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3585,
+              "last_parent_id": 4096,
+              "rows": 4096,
+              "bytes": 368640,
+              "verified": true,
+              "export_seconds": 0.788,
+              "import_seconds": 0.507,
+              "encryption": "aws:kms"
+            }
+          ]
+        },
+        "history": {
+          "rows": 4096,
+          "verified": true,
+          "encryption": "aws:kms",
+          "bytes": 268122,
+          "batches": [
+            {
+              "first_parent_id": 1,
+              "last_parent_id": 512,
+              "rows": 512,
+              "bytes": 32552,
+              "verified": true,
+              "export_seconds": 0.722,
+              "import_seconds": 0.48,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 513,
+              "last_parent_id": 1024,
+              "rows": 512,
+              "bytes": 32818,
+              "verified": true,
+              "export_seconds": 0.654,
+              "import_seconds": 0.515,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1025,
+              "last_parent_id": 1536,
+              "rows": 512,
+              "bytes": 33792,
+              "verified": true,
+              "export_seconds": 0.669,
+              "import_seconds": 0.5,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1537,
+              "last_parent_id": 2048,
+              "rows": 512,
+              "bytes": 33792,
+              "verified": true,
+              "export_seconds": 0.694,
+              "import_seconds": 0.486,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2049,
+              "last_parent_id": 2560,
+              "rows": 512,
+              "bytes": 33792,
+              "verified": true,
+              "export_seconds": 0.679,
+              "import_seconds": 0.483,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2561,
+              "last_parent_id": 3072,
+              "rows": 512,
+              "bytes": 33792,
+              "verified": true,
+              "export_seconds": 0.653,
+              "import_seconds": 0.48,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3073,
+              "last_parent_id": 3584,
+              "rows": 512,
+              "bytes": 33792,
+              "verified": true,
+              "export_seconds": 0.691,
+              "import_seconds": 0.845,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3585,
+              "last_parent_id": 4096,
+              "rows": 512,
+              "bytes": 33792,
+              "verified": true,
+              "export_seconds": 0.707,
+              "import_seconds": 0.542,
+              "encryption": "aws:kms"
+            }
+          ]
+        }
+      },
+      "passed": true,
+      "lock_acquire_client_seconds": 0.426,
+      "stage": "complete",
+      "archive_verify_client_seconds": 98.325,
+      "retire_client_seconds": 0.553,
+      "retire_server_seconds": 0.055764,
+      "lock_through_commit_client_seconds": 102.701,
+      "independent_committed_checks": [
+        "both cascade FKs remain validated on active parent",
+        "all keeper columns match after commit",
+        "all expired partition relations absent"
+      ]
+    },
+    {
+      "trial": 2,
+      "mode": "partition",
+      "exports": {
+        "event": {
+          "rows": 4096,
+          "verified": true,
+          "encryption": "aws:kms",
+          "bytes": 134335405,
+          "batches": [
+            {
+              "first_parent_id": 1,
+              "last_parent_id": 512,
+              "rows": 512,
+              "bytes": 16791444,
+              "verified": true,
+              "export_seconds": 1.467,
+              "import_seconds": 1.533,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 513,
+              "last_parent_id": 1024,
+              "rows": 512,
+              "bytes": 16791577,
+              "verified": true,
+              "export_seconds": 1.329,
+              "import_seconds": 1.435,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1025,
+              "last_parent_id": 1536,
+              "rows": 512,
+              "bytes": 16792064,
+              "verified": true,
+              "export_seconds": 1.351,
+              "import_seconds": 1.608,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1537,
+              "last_parent_id": 2048,
+              "rows": 512,
+              "bytes": 16792064,
+              "verified": true,
+              "export_seconds": 1.358,
+              "import_seconds": 1.63,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2049,
+              "last_parent_id": 2560,
+              "rows": 512,
+              "bytes": 16792064,
+              "verified": true,
+              "export_seconds": 1.437,
+              "import_seconds": 1.44,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2561,
+              "last_parent_id": 3072,
+              "rows": 512,
+              "bytes": 16792064,
+              "verified": true,
+              "export_seconds": 1.391,
+              "import_seconds": 1.393,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3073,
+              "last_parent_id": 3584,
+              "rows": 512,
+              "bytes": 16792064,
+              "verified": true,
+              "export_seconds": 1.291,
+              "import_seconds": 1.587,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3585,
+              "last_parent_id": 4096,
+              "rows": 512,
+              "bytes": 16792064,
+              "verified": true,
+              "export_seconds": 1.46,
+              "import_seconds": 1.775,
+              "encryption": "aws:kms"
+            }
+          ]
+        },
+        "queue": {
+          "rows": 4096,
+          "verified": true,
+          "encryption": "aws:kms",
+          "bytes": 33785690,
+          "batches": [
+            {
+              "first_parent_id": 1,
+              "last_parent_id": 512,
+              "rows": 512,
+              "bytes": 4222248,
+              "verified": true,
+              "export_seconds": 1.0,
+              "import_seconds": 0.572,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 513,
+              "last_parent_id": 1024,
+              "rows": 512,
+              "bytes": 4222514,
+              "verified": true,
+              "export_seconds": 1.034,
+              "import_seconds": 0.591,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1025,
+              "last_parent_id": 1536,
+              "rows": 512,
+              "bytes": 4223488,
+              "verified": true,
+              "export_seconds": 1.112,
+              "import_seconds": 0.569,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1537,
+              "last_parent_id": 2048,
+              "rows": 512,
+              "bytes": 4223488,
+              "verified": true,
+              "export_seconds": 1.369,
+              "import_seconds": 0.604,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2049,
+              "last_parent_id": 2560,
+              "rows": 512,
+              "bytes": 4223488,
+              "verified": true,
+              "export_seconds": 1.0,
+              "import_seconds": 0.622,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2561,
+              "last_parent_id": 3072,
+              "rows": 512,
+              "bytes": 4223488,
+              "verified": true,
+              "export_seconds": 0.98,
+              "import_seconds": 0.614,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3073,
+              "last_parent_id": 3584,
+              "rows": 512,
+              "bytes": 4223488,
+              "verified": true,
+              "export_seconds": 1.054,
+              "import_seconds": 0.59,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3585,
+              "last_parent_id": 4096,
+              "rows": 512,
+              "bytes": 4223488,
+              "verified": true,
+              "export_seconds": 0.977,
+              "import_seconds": 0.608,
+              "encryption": "aws:kms"
+            }
+          ]
+        },
+        "push": {
+          "rows": 32768,
+          "verified": true,
+          "encryption": "aws:kms",
+          "bytes": 2929186,
+          "batches": [
+            {
+              "first_parent_id": 1,
+              "last_parent_id": 512,
+              "rows": 4096,
+              "bytes": 358498,
+              "verified": true,
+              "export_seconds": 0.669,
+              "import_seconds": 0.486,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 513,
+              "last_parent_id": 1024,
+              "rows": 4096,
+              "bytes": 360648,
+              "verified": true,
+              "export_seconds": 0.672,
+              "import_seconds": 0.503,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1025,
+              "last_parent_id": 1536,
+              "rows": 4096,
+              "bytes": 366840,
+              "verified": true,
+              "export_seconds": 0.711,
+              "import_seconds": 0.493,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1537,
+              "last_parent_id": 2048,
+              "rows": 4096,
+              "bytes": 368640,
+              "verified": true,
+              "export_seconds": 0.645,
+              "import_seconds": 0.508,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2049,
+              "last_parent_id": 2560,
+              "rows": 4096,
+              "bytes": 368640,
+              "verified": true,
+              "export_seconds": 0.727,
+              "import_seconds": 0.498,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2561,
+              "last_parent_id": 3072,
+              "rows": 4096,
+              "bytes": 368640,
+              "verified": true,
+              "export_seconds": 0.664,
+              "import_seconds": 0.5,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3073,
+              "last_parent_id": 3584,
+              "rows": 4096,
+              "bytes": 368640,
+              "verified": true,
+              "export_seconds": 0.655,
+              "import_seconds": 0.496,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3585,
+              "last_parent_id": 4096,
+              "rows": 4096,
+              "bytes": 368640,
+              "verified": true,
+              "export_seconds": 0.742,
+              "import_seconds": 0.481,
+              "encryption": "aws:kms"
+            }
+          ]
+        },
+        "history": {
+          "rows": 4096,
+          "verified": true,
+          "encryption": "aws:kms",
+          "bytes": 268122,
+          "batches": [
+            {
+              "first_parent_id": 1,
+              "last_parent_id": 512,
+              "rows": 512,
+              "bytes": 32552,
+              "verified": true,
+              "export_seconds": 0.709,
+              "import_seconds": 0.514,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 513,
+              "last_parent_id": 1024,
+              "rows": 512,
+              "bytes": 32818,
+              "verified": true,
+              "export_seconds": 0.654,
+              "import_seconds": 0.503,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1025,
+              "last_parent_id": 1536,
+              "rows": 512,
+              "bytes": 33792,
+              "verified": true,
+              "export_seconds": 0.64,
+              "import_seconds": 0.485,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1537,
+              "last_parent_id": 2048,
+              "rows": 512,
+              "bytes": 33792,
+              "verified": true,
+              "export_seconds": 0.732,
+              "import_seconds": 0.47,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2049,
+              "last_parent_id": 2560,
+              "rows": 512,
+              "bytes": 33792,
+              "verified": true,
+              "export_seconds": 0.684,
+              "import_seconds": 0.469,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2561,
+              "last_parent_id": 3072,
+              "rows": 512,
+              "bytes": 33792,
+              "verified": true,
+              "export_seconds": 0.646,
+              "import_seconds": 0.51,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3073,
+              "last_parent_id": 3584,
+              "rows": 512,
+              "bytes": 33792,
+              "verified": true,
+              "export_seconds": 0.642,
+              "import_seconds": 0.481,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3585,
+              "last_parent_id": 4096,
+              "rows": 512,
+              "bytes": 33792,
+              "verified": true,
+              "export_seconds": 0.656,
+              "import_seconds": 0.492,
+              "encryption": "aws:kms"
+            }
+          ]
+        }
+      },
+      "passed": true,
+      "lock_acquire_client_seconds": 0.442,
+      "stage": "complete",
+      "archive_verify_client_seconds": 94.443,
+      "retire_client_seconds": 0.475,
+      "retire_server_seconds": 0.053504,
+      "lock_through_commit_client_seconds": 98.472,
+      "independent_committed_checks": [
+        "both cascade FKs remain validated on active parent",
+        "all keeper columns match after commit",
+        "all expired partition relations absent"
+      ]
+    },
+    {
+      "trial": 2,
+      "mode": "delete",
+      "exports": {
+        "event": {
+          "rows": 4096,
+          "verified": true,
+          "encryption": "aws:kms",
+          "bytes": 134335405,
+          "batches": [
+            {
+              "first_parent_id": 1,
+              "last_parent_id": 512,
+              "rows": 512,
+              "bytes": 16791444,
+              "verified": true,
+              "export_seconds": 1.518,
+              "import_seconds": 1.581,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 513,
+              "last_parent_id": 1024,
+              "rows": 512,
+              "bytes": 16791577,
+              "verified": true,
+              "export_seconds": 1.438,
+              "import_seconds": 1.398,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1025,
+              "last_parent_id": 1536,
+              "rows": 512,
+              "bytes": 16792064,
+              "verified": true,
+              "export_seconds": 1.354,
+              "import_seconds": 1.687,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1537,
+              "last_parent_id": 2048,
+              "rows": 512,
+              "bytes": 16792064,
+              "verified": true,
+              "export_seconds": 1.681,
+              "import_seconds": 2.127,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2049,
+              "last_parent_id": 2560,
+              "rows": 512,
+              "bytes": 16792064,
+              "verified": true,
+              "export_seconds": 1.366,
+              "import_seconds": 1.375,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2561,
+              "last_parent_id": 3072,
+              "rows": 512,
+              "bytes": 16792064,
+              "verified": true,
+              "export_seconds": 1.364,
+              "import_seconds": 1.603,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3073,
+              "last_parent_id": 3584,
+              "rows": 512,
+              "bytes": 16792064,
+              "verified": true,
+              "export_seconds": 1.437,
+              "import_seconds": 1.281,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3585,
+              "last_parent_id": 4096,
+              "rows": 512,
+              "bytes": 16792064,
+              "verified": true,
+              "export_seconds": 1.326,
+              "import_seconds": 1.606,
+              "encryption": "aws:kms"
+            }
+          ]
+        },
+        "queue": {
+          "rows": 4096,
+          "verified": true,
+          "encryption": "aws:kms",
+          "bytes": 33785690,
+          "batches": [
+            {
+              "first_parent_id": 1,
+              "last_parent_id": 512,
+              "rows": 512,
+              "bytes": 4222248,
+              "verified": true,
+              "export_seconds": 1.27,
+              "import_seconds": 0.634,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 513,
+              "last_parent_id": 1024,
+              "rows": 512,
+              "bytes": 4222514,
+              "verified": true,
+              "export_seconds": 1.182,
+              "import_seconds": 0.606,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1025,
+              "last_parent_id": 1536,
+              "rows": 512,
+              "bytes": 4223488,
+              "verified": true,
+              "export_seconds": 1.291,
+              "import_seconds": 0.612,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1537,
+              "last_parent_id": 2048,
+              "rows": 512,
+              "bytes": 4223488,
+              "verified": true,
+              "export_seconds": 1.202,
+              "import_seconds": 0.638,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2049,
+              "last_parent_id": 2560,
+              "rows": 512,
+              "bytes": 4223488,
+              "verified": true,
+              "export_seconds": 1.153,
+              "import_seconds": 0.622,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2561,
+              "last_parent_id": 3072,
+              "rows": 512,
+              "bytes": 4223488,
+              "verified": true,
+              "export_seconds": 1.213,
+              "import_seconds": 0.672,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3073,
+              "last_parent_id": 3584,
+              "rows": 512,
+              "bytes": 4223488,
+              "verified": true,
+              "export_seconds": 1.221,
+              "import_seconds": 0.594,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3585,
+              "last_parent_id": 4096,
+              "rows": 512,
+              "bytes": 4223488,
+              "verified": true,
+              "export_seconds": 1.139,
+              "import_seconds": 0.778,
+              "encryption": "aws:kms"
+            }
+          ]
+        },
+        "push": {
+          "rows": 32768,
+          "verified": true,
+          "encryption": "aws:kms",
+          "bytes": 2929186,
+          "batches": [
+            {
+              "first_parent_id": 1,
+              "last_parent_id": 512,
+              "rows": 4096,
+              "bytes": 358498,
+              "verified": true,
+              "export_seconds": 0.802,
+              "import_seconds": 0.606,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 513,
+              "last_parent_id": 1024,
+              "rows": 4096,
+              "bytes": 360648,
+              "verified": true,
+              "export_seconds": 0.68,
+              "import_seconds": 0.486,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1025,
+              "last_parent_id": 1536,
+              "rows": 4096,
+              "bytes": 366840,
+              "verified": true,
+              "export_seconds": 0.657,
+              "import_seconds": 0.474,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1537,
+              "last_parent_id": 2048,
+              "rows": 4096,
+              "bytes": 368640,
+              "verified": true,
+              "export_seconds": 0.647,
+              "import_seconds": 0.469,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2049,
+              "last_parent_id": 2560,
+              "rows": 4096,
+              "bytes": 368640,
+              "verified": true,
+              "export_seconds": 0.637,
+              "import_seconds": 0.486,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2561,
+              "last_parent_id": 3072,
+              "rows": 4096,
+              "bytes": 368640,
+              "verified": true,
+              "export_seconds": 0.74,
+              "import_seconds": 0.493,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3073,
+              "last_parent_id": 3584,
+              "rows": 4096,
+              "bytes": 368640,
+              "verified": true,
+              "export_seconds": 0.671,
+              "import_seconds": 0.466,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3585,
+              "last_parent_id": 4096,
+              "rows": 4096,
+              "bytes": 368640,
+              "verified": true,
+              "export_seconds": 0.706,
+              "import_seconds": 0.505,
+              "encryption": "aws:kms"
+            }
+          ]
+        },
+        "history": {
+          "rows": 4096,
+          "verified": true,
+          "encryption": "aws:kms",
+          "bytes": 268122,
+          "batches": [
+            {
+              "first_parent_id": 1,
+              "last_parent_id": 512,
+              "rows": 512,
+              "bytes": 32552,
+              "verified": true,
+              "export_seconds": 0.686,
+              "import_seconds": 0.494,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 513,
+              "last_parent_id": 1024,
+              "rows": 512,
+              "bytes": 32818,
+              "verified": true,
+              "export_seconds": 0.628,
+              "import_seconds": 0.471,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1025,
+              "last_parent_id": 1536,
+              "rows": 512,
+              "bytes": 33792,
+              "verified": true,
+              "export_seconds": 0.637,
+              "import_seconds": 0.469,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 1537,
+              "last_parent_id": 2048,
+              "rows": 512,
+              "bytes": 33792,
+              "verified": true,
+              "export_seconds": 0.65,
+              "import_seconds": 0.471,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2049,
+              "last_parent_id": 2560,
+              "rows": 512,
+              "bytes": 33792,
+              "verified": true,
+              "export_seconds": 0.719,
+              "import_seconds": 0.476,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 2561,
+              "last_parent_id": 3072,
+              "rows": 512,
+              "bytes": 33792,
+              "verified": true,
+              "export_seconds": 0.668,
+              "import_seconds": 0.51,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3073,
+              "last_parent_id": 3584,
+              "rows": 512,
+              "bytes": 33792,
+              "verified": true,
+              "export_seconds": 0.648,
+              "import_seconds": 0.494,
+              "encryption": "aws:kms"
+            },
+            {
+              "first_parent_id": 3585,
+              "last_parent_id": 4096,
+              "rows": 512,
+              "bytes": 33792,
+              "verified": true,
+              "export_seconds": 0.75,
+              "import_seconds": 0.49,
+              "encryption": "aws:kms"
+            }
+          ]
+        }
+      },
+      "passed": true,
+      "lock_acquire_client_seconds": 0.44,
+      "stage": "complete",
+      "archive_verify_client_seconds": 96.834,
+      "retire_client_seconds": 11.305,
+      "retire_server_seconds": 10.867606,
+      "lock_through_commit_client_seconds": 111.819,
+      "independent_committed_checks": [
+        "both cascade FKs remain validated on active parent",
+        "all keeper columns match after commit"
+      ]
+    }
+  ],
+  "scope": "Quiescent synthetic comparison; two trials with reversed order; no concurrent writers",
+  "engine": "PostgreSQL 17.9 on aarch64-unknown-linux-gnu, compiled by aarch64-unknown-linux-gnu-gcc (GCC) 10.5.0, 64-bit",
+  "elapsed_seconds": 597.704
+}

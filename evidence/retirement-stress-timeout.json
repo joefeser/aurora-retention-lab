@@ -1,0 +1,29 @@
+{
+  "passed": false,
+  "capacity": {
+    "MinCapacity": 0.5,
+    "MaxCapacity": 1.0
+  },
+  "expired_parents_per_arm": 4096,
+  "push_per_parent": 8,
+  "live_parents_per_arm": 32,
+  "trials": [
+    {
+      "trial": 1,
+      "mode": "delete",
+      "exports": {},
+      "passed": false,
+      "lock_acquire_client_seconds": 0.411
+    }
+  ],
+  "scope": "Quiescent synthetic comparison; two trials with reversed order; no concurrent writers",
+  "engine": "PostgreSQL 17.9 on aarch64-unknown-linux-gnu, compiled by aarch64-unknown-linux-gnu-gcc (GCC) 10.5.0, 64-bit",
+  "elapsed_seconds": 102.247,
+  "failure": {
+    "type": "StatementTimeoutException",
+    "configured_statement_timeout_seconds": 35,
+    "location": "first table archive/restore path; original receipt did not distinguish export, import, and comparison",
+    "retirement_reached": false,
+    "fresh_check": "all seeded relation counts remain; transactional restore and timing relations absent"
+  }
+}
