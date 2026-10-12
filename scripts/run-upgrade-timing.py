@@ -4,6 +4,7 @@
 import argparse
 import datetime as dt
 import hashlib
+import fcntl
 import importlib.util
 import json
 import math
@@ -188,10 +189,19 @@ class Lab:
                 raise ValueError("Requested instance/version is not orderable")
         return latest
 
-    def owned_stack(self, state):
-        stack = self.cf.describe_stacks(
-            StackName=state.get("stack_id", state["stack_name"])
-        )["Stacks"][0]
+    def owned_stack(self, state, missing_ok=False):
+        try:
+            stack = self.cf.describe_stacks(
+                StackName=state.get("stack_id", state["stack_name"])
+            )["Stacks"][0]
+        except Exception as exc:
+            if (
+                missing_ok
+                and error_code(exc) == "ValidationError"
+                and "does not exist" in str(exc)
+            ):
+                return None
+            raise
         tags = {t["Key"]: t["Value"] for t in stack.get("Tags", [])}
         if (
             stack["StackName"] != state["stack_name"]
@@ -307,7 +317,28 @@ def error_code(exc):
 
 def cleanup(lab, directory, state):
     """Delete only the recorded run stack and its recorded upgrade snapshots."""
-    stack = lab.owned_stack(state)
+    stack = lab.owned_stack(state, missing_ok=True)
+    if stack is not None:
+        state["stack_id"] = stack["StackId"]
+        if not state.get("cluster_id"):
+            resources = lab.cf.describe_stack_resources(StackName=state["stack_id"])[
+                "StackResources"
+            ]
+            for resource in resources:
+                if resource["LogicalResourceId"] == "UpgradeCluster" and resource.get(
+                    "PhysicalResourceId"
+                ):
+                    state["cluster_id"] = resource["PhysicalResourceId"]
+        save(directory / "inventory.json", state)
+    elif state.get("cluster_id"):
+        try:
+            lab.rds.describe_db_clusters(DBClusterIdentifier=state["cluster_id"])
+        except lab.rds.exceptions.DBClusterNotFoundFault:
+            pass
+        else:
+            raise ValueError(
+                "Stack absent but recorded cluster still exists; inspect ownership"
+            )
     if state.get("cluster_id"):
         snapshots = lab.rds.describe_db_cluster_snapshots(
             DBClusterIdentifier=state["cluster_id"]
@@ -321,13 +352,21 @@ def cleanup(lab, directory, state):
                 if snap["DBClusterSnapshotIdentifier"] not in state["snapshots"]:
                     state["snapshots"].append(snap["DBClusterSnapshotIdentifier"])
         save(directory / "inventory.json", state)
-    if stack["StackStatus"] not in ("DELETE_COMPLETE", "DELETE_IN_PROGRESS"):
+    if stack is not None and stack["StackStatus"] not in (
+        "DELETE_COMPLETE",
+        "DELETE_IN_PROGRESS",
+    ):
         lab.cf.delete_stack(StackName=state["stack_id"])
     deadline = time.monotonic() + 3600
-    while lab.owned_stack(state)["StackStatus"] != "DELETE_COMPLETE":
+    while stack is not None and stack["StackStatus"] != "DELETE_COMPLETE":
+        if stack["StackStatus"] == "DELETE_FAILED":
+            raise RuntimeError(
+                "Stack deletion failed; inspect stack events before cleanup retry"
+            )
         if time.monotonic() > deadline:
             raise TimeoutError("Stack deletion deadline; run cleanup explicitly later")
         time.sleep(30)
+        stack = lab.owned_stack(state, missing_ok=True)
     for identifier in state.get("snapshots", []):
         try:
             snap = lab.rds.describe_db_cluster_snapshots(
@@ -353,10 +392,29 @@ def cleanup(lab, directory, state):
 
 
 def run(args):
+    PRIVATE.mkdir(parents=True, exist_ok=True)
+    with (PRIVATE / ".run.lock").open("a") as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as exc:
+            raise ValueError("Another benchmark process holds the run lock") from exc
+        return run_locked(args)
+
+
+def run_locked(args):
     if not math.isfinite(args.prior_spend_usd) or args.prior_spend_usd < 0:
         raise ValueError("A finite conservative prior-spend estimate is required")
-    old = json.loads((ROOT / ".lab/aws.json").read_text())
-    lab = Lab(args.region, old["account"])
+    account = args.expected_account
+    if account is None:
+        inventory = ROOT / ".lab/aws.json"
+        if not inventory.exists():
+            raise ValueError(
+                "Fresh checkout: supply --expected-account with the intended AWS account ID"
+            )
+        account = json.loads(inventory.read_text())["account"]
+    if not re.fullmatch(r"[0-9]{12}", account):
+        raise ValueError("Expected account must contain exactly 12 digits")
+    lab = Lab(args.region, account)
     lab.versions(args.source, args.target, CLASSES[args.config])
     PRIVATE.mkdir(parents=True, exist_ok=True)
     existing = [json.loads(p.read_text()) for p in PRIVATE.glob("*/inventory.json")]
@@ -379,7 +437,7 @@ def run(args):
         "schema_version": 1,
         "run_id": rid,
         "stack_name": "aurora-upgrade-bench-" + rid,
-        "account": old["account"],
+        "account": account,
         "region": args.region,
         "created_at": utc(),
         "reserved_usd": RUN_RESERVE_USD,
@@ -706,6 +764,8 @@ def publish(run_ids):
             raise ValueError("Private metadata in receipt")
         runs.append(record)
     cases = {(r["tier"], r["config"]) for r in runs}
+    if len(cases) != len(runs):
+        raise ValueError("Select only one receipt per tier and configuration")
     save(
         PUBLIC,
         {
@@ -729,6 +789,10 @@ def main():
     execute.add_argument("--tier", choices=TIERS, required=True)
     execute.add_argument("--config", choices=CLASSES, default="serverless_v2")
     execute.add_argument("--region", default="us-east-2")
+    execute.add_argument(
+        "--expected-account",
+        help="Intended AWS account ID; defaults to the existing private lab inventory",
+    )
     execute.add_argument("--source", required=True)
     execute.add_argument("--target", required=True)
     execute.add_argument("--prior-spend-usd", type=float, required=True)

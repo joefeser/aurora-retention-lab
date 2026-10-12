@@ -3,7 +3,8 @@ from pathlib import Path
 import unittest
 import json
 import tempfile
-from unittest.mock import patch
+from types import SimpleNamespace
+from unittest.mock import patch, Mock
 
 spec = importlib.util.spec_from_file_location(
     "upgrade_timing",
@@ -14,6 +15,45 @@ spec.loader.exec_module(u)
 
 
 class UpgradeTests(unittest.TestCase):
+    def test_cleanup_missing_stack_and_recovered_stack_id(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            lab = Mock()
+            lab.owned_stack.return_value = None
+            state = {"stack_name": "owned-run"}
+            u.cleanup(lab, root, state)
+            lab.cf.delete_stack.assert_not_called()
+            self.assertEqual(
+                state["cleanup"], "verified_stack_deleted_no_cluster_snapshots"
+            )
+            state = {"stack_name": "owned-run"}
+            lab.owned_stack.side_effect = [
+                {"StackId": "owned-stack-id", "StackStatus": "CREATE_COMPLETE"},
+                {"StackId": "owned-stack-id", "StackStatus": "DELETE_COMPLETE"},
+            ]
+            lab.cf.describe_stack_resources.return_value = {"StackResources": []}
+            with patch.object(u.time, "sleep"):
+                u.cleanup(lab, root, state)
+            lab.cf.delete_stack.assert_called_once_with(StackName="owned-stack-id")
+            self.assertEqual(
+                json.loads((root / "inventory.json").read_text())["stack_id"],
+                "owned-stack-id",
+            )
+
+    def test_run_lock_blocks_second_launcher_before_budget_or_aws(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            with patch.object(u, "PRIVATE", root), patch.object(
+                u, "run_locked"
+            ) as launch:
+                with (root / ".run.lock").open("a") as lock:
+                    u.fcntl.flock(lock, u.fcntl.LOCK_EX | u.fcntl.LOCK_NB)
+                    with self.assertRaisesRegex(ValueError, "run lock"):
+                        u.run(SimpleNamespace())
+                    launch.assert_not_called()
+                u.run(SimpleNamespace())
+                launch.assert_called_once()
+
     def test_rollback_requires_current_attempt_failure_event(self):
         start = u.dt.datetime(2026, 10, 12, tzinfo=u.dt.timezone.utc)
         old = {
@@ -49,7 +89,8 @@ class UpgradeTests(unittest.TestCase):
             if s.startswith("INSERT INTO upgrade_bench.notification_event ")
         ]
         self.assertEqual(len(parents), 3)
-        self.assertIn("generate_series(2049,2050)", parents[-1])
+        for sql, (lo, hi) in zip(parents, [(1, 1024), (1025, 2048), (2049, 2050)]):
+            self.assertIn(f"generate_series({lo},{hi})", sql)
         for table in ("delivery_queue", "push_delivery", "send_history"):
             children = [
                 s
@@ -93,6 +134,8 @@ class UpgradeTests(unittest.TestCase):
                 "parent_rows": 32768,
                 "instance_class": "db.serverless",
                 "errors": [],
+                "min_acu": 0.5,
+                "max_acu": 2.0,
             }
             with patch.object(u, "PRIVATE", root), patch.object(u, "PUBLIC", output):
                 (run / "receipt.json").write_text(json.dumps(base))
