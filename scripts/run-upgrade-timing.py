@@ -354,15 +354,21 @@ def cleanup(lab, directory, state):
         )
     if stack is not None:
         state["stack_id"] = stack["StackId"]
-        if not state.get("cluster_id"):
-            resources = lab.cf_read.describe_stack_resources(
-                StackName=state["stack_id"]
-            )["StackResources"]
-            for resource in resources:
-                if resource["LogicalResourceId"] == "UpgradeCluster" and resource.get(
-                    "PhysicalResourceId"
-                ):
-                    state["cluster_id"] = resource["PhysicalResourceId"]
+        resources = lab.cf_read.describe_stack_resources(StackName=state["stack_id"])[
+            "StackResources"
+        ]
+        cluster_id = next(
+            (
+                r.get("PhysicalResourceId")
+                for r in resources
+                if r["LogicalResourceId"] == "UpgradeCluster"
+            ),
+            None,
+        )
+        if state.get("cluster_id") and state["cluster_id"] != cluster_id:
+            raise ValueError("Recorded cluster does not match the owned stack")
+        if cluster_id:
+            state["cluster_id"] = cluster_id
         save(directory / "inventory.json", state)
     elif state.get("cluster_id"):
         try:
@@ -377,6 +383,10 @@ def cleanup(lab, directory, state):
         snapshots = lab.rds_read.describe_db_cluster_snapshots(
             DBClusterIdentifier=state["cluster_id"]
         )["DBClusterSnapshots"]
+        if stack is None and snapshots:
+            raise ValueError(
+                "Cannot bind remaining snapshots to an absent stack; reconcile ownership"
+            )
         for snap in snapshots:
             # Unique cluster resource ownership, not just a name prefix.
             if snap["DBClusterIdentifier"] != state["cluster_id"]:

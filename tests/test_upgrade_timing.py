@@ -15,6 +15,30 @@ spec.loader.exec_module(u)
 
 
 class UpgradeTests(unittest.TestCase):
+    def test_cleanup_rejects_cluster_from_another_stack_before_mutations(self):
+        lab = Mock()
+        lab.owned_stack.return_value = {
+            "StackId": "owned-stack",
+            "StackStatus": "CREATE_COMPLETE",
+        }
+        lab.cf_read.describe_stack_resources.return_value = {
+            "StackResources": [
+                {
+                    "LogicalResourceId": "UpgradeCluster",
+                    "PhysicalResourceId": "owned-cluster",
+                }
+            ]
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaisesRegex(ValueError, "does not match"):
+                u.cleanup(
+                    lab,
+                    Path(directory),
+                    {"stack_name": "owned", "cluster_id": "unrelated-cluster"},
+                )
+        lab.cf.delete_stack.assert_not_called()
+        lab.rds.delete_db_cluster_snapshot.assert_not_called()
+
     def test_create_rejection_and_unknown_transport_outcome_are_distinct(self):
         with tempfile.TemporaryDirectory() as directory:
             for code, expected in [
