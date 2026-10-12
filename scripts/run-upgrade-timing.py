@@ -62,6 +62,17 @@ def expected_counts(parents):
     )
 
 
+def failure_event(events, started):
+    """Only current-attempt AWS failure evidence establishes a rolled-back upgrade."""
+    for event in events:
+        if event["Date"] >= started and (
+            "state that cannot be upgraded" in event["Message"].lower()
+            or "major version upgrade failed" in event["Message"].lower()
+        ):
+            return event
+    return None
+
+
 def seed_statements(parents, chunk=1024):
     yield from w.schema_sql(SCHEMA)
     yield w.seed_functions(SCHEMA)
@@ -534,6 +545,23 @@ def run(args):
                 record["upgrade_elapsed_seconds"] = time.monotonic() - tick
                 record["upgrade_finished_utc"] = utc()
                 break
+            if (
+                cluster["Status"] == "available"
+                and cluster["EngineVersion"] == args.source
+            ):
+                events = lab.rds.describe_events(
+                    SourceIdentifier=state["cluster_id"],
+                    SourceType="db-cluster",
+                    StartTime=dt.datetime.fromisoformat(record["upgrade_started_utc"]),
+                )["Events"]
+                failed = failure_event(
+                    events, dt.datetime.fromisoformat(record["upgrade_started_utc"])
+                )
+                if failed:
+                    save(directory / "cluster-events.json", events)
+                    raise RuntimeError(
+                        "AWS reported upgrade failure: " + failed["Message"]
+                    )
             if cluster["Status"] in (
                 "upgrade-failed",
                 "incompatible-parameters",

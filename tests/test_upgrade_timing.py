@@ -14,6 +14,20 @@ spec.loader.exec_module(u)
 
 
 class UpgradeTests(unittest.TestCase):
+    def test_rollback_requires_current_attempt_failure_event(self):
+        start = u.dt.datetime(2026, 10, 12, tzinfo=u.dt.timezone.utc)
+        old = {
+            "Date": start - u.dt.timedelta(seconds=1),
+            "Message": "Database cluster is in a state that cannot be upgraded",
+        }
+        healthy = {"Date": start, "Message": "Upgrade preparation in progress"}
+        failure = {
+            "Date": start + u.dt.timedelta(seconds=300),
+            "Message": old["Message"],
+        }
+        self.assertIsNone(u.failure_event([old, healthy], start))
+        self.assertEqual(u.failure_event([old, healthy, failure], start), failure)
+
     def test_old_available_engine_cannot_finish_upgrade(self):
         cluster = {"Status": "available", "EngineVersion": "16.15"}
         writer = {"DBInstanceStatus": "available", "EngineVersion": "16.15"}

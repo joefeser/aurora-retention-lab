@@ -2,6 +2,40 @@
 
 This extension measures a **quiescent in-place Aurora PostgreSQL upgrade**. It is not an RDS PostgreSQL instance upgrade, blue/green deployment, logical migration, or production downtime guarantee. It does not test partition DDL. Original documents and real data remain outside Git.
 
+## October 12 outcome: failed baseline, no automatic retry
+
+The [published receipt](../evidence/upgrade-timing.json) records **one attempted case and zero successful upgrades**. Config A / 1x failed inside AWS-managed `pg_upgrade` and returned to 16.15. We stopped the matrix and preserved the failure; Config B and both larger tiers remain unmeasured. No result supports a ≤1 hour successful upgrade window or an instance-size comparison.
+
+| Measurement | Observed result |
+| --- | --- |
+| Requested version change | Aurora 16.15 → 17.11 |
+| Instance configuration | Serverless v2, 0.5–2 ACU |
+| Parents / queues | 32,768 each, before and after rollback |
+| Database size | 453,487,191 bytes (432.48 MiB), unchanged after rollback |
+| Five-table total relation size | 445,308,928 bytes (424.68 MiB) |
+| Load elapsed | 78.24 seconds |
+| Upgrade request start | 2026-10-12 18:15:14.160 UTC |
+| AWS upgrade failure event | 2026-10-12 18:20:21.707 UTC |
+| First sampled SQL recovery on **16.15** | ~361.54 seconds after request |
+| Failed Data API probes | 11 |
+| Sampled API interruption upper envelope | 360.23 seconds; not direct application downtime |
+| Successful upgrade elapsed | **Not available: upgrade failed** |
+
+The CLI accepted the request (exit 0, empty stderr). AWS events then reported successful online prechecks, taking the cluster offline, creating a pre-upgrade snapshot, cloning the volume, upgrading the writer, and failure. The managed upgrade server log contains this diagnostic, preserved verbatim apart from its timestamp/prefix:
+
+```text
+FATAL:  shared memory segment sizes are configured too large; total requested: 6330675200 (buffer cache: 40960, main segment: 5761819280, 65536 buffers), system total memory: 5158047744.
+HINT: try reducing shared memory parameters, such as shared buffers.
+```
+
+This establishes a source-server startup failure during `pg_upgrade`; it does not establish whether the root cause is Aurora configuration, capacity handling, or an engine defect. No custom parameter group was supplied. Increasing capacity or changing parameters would be a new experiment, not a correction to this failed receipt. All five post-rollback relation counts matched and physical database size was unchanged. Counts do not verify every payload byte.
+
+The original runner correctly refused to count `available` on 16.15 as success, but continued polling. After inspecting the explicit AWS failure event, the operator interrupted polling and added the diagnostic and post-rollback checks to the receipt. Its `KeyboardInterrupt` records that intervention; `AWSUpgradeFailure` records the service failure. A subsequent runner change detects current-attempt failure events on rollback and stops earlier. The original execution commit and hashes remain in the receipt. Raw service logs and identifiers remain private.
+
+The old engine became available after rollback, so an `available` status alone would have produced a misleading success. This run also disproves an uninterrupted-online interpretation for this attempt; it cannot establish successful-upgrade outage duration.
+
+Cleanup completed on October 12: the stack reached `DELETE_COMPLETE`; independent reads confirmed the cluster, writer and managed secret absent, and zero cluster snapshots. Raw logs and the ownership inventory are retained only locally. AWS billing can lag resource deletion; the $6 run allowance is not a measured invoice.
+
 ## Experimental design
 
 Use a fresh PostgreSQL 16 cluster for every size/configuration. The original retention lab, including its VPC and subnet group, was verified deleted on October 9. `infra/lab.json` therefore adds an opt-in `LabMode=upgrade` with `UpgradeCluster`/`UpgradeWriter` and recreates the same isolated network layout. It does not recreate the old PostgreSQL 17 cluster or its S3 archive resources. Each run has a distinct stack and private ownership inventory under `.lab/upgrade-timing/`; `.lab/aws.json` remains the original lab inventory.
