@@ -7,7 +7,7 @@ import importlib.util
 import ipaddress
 import json
 import math
-import os
+import re
 from pathlib import Path
 import subprocess
 import threading
@@ -81,6 +81,8 @@ class Lab:
         self.region = region
 
     def versions(self, source, target, instance):
+        if not re.fullmatch(r'16\.[0-9]+', source) or not re.fullmatch(r'17\.[0-9]+', target):
+            raise ValueError('This study permits only PostgreSQL 16 to 17')
         v = self.rds.describe_db_engine_versions(Engine='postgres', EngineVersion=source)['DBEngineVersions']
         if len(v) != 1 or v[0]['Status'] != 'available' or not any(
             t['EngineVersion'] == target and t['IsMajorVersionUpgrade'] for t in v[0]['ValidUpgradeTarget']):
@@ -363,7 +365,9 @@ def run(args):
                 raise ValueError('Post-upgrade synthetic graph count mismatch')
             print(f"{args.tier}: upgrade validated in {receipt['request_to_ready_seconds']:.1f}s; cleaning owned resources", flush=True)
         except BaseException as exc:
+            receipt['passed'] = False
             receipt['failure_type'] = type(exc).__name__
+            receipt['failure_stage'] = receipt['stage']
             # Raw exception is private. Do not infer rollback from an ambiguous exception.
             (directory / 'error.txt').write_text(str(exc))
             raise
@@ -383,13 +387,32 @@ def run(args):
             print(f'{args.tier}: cleanup verified', flush=True)
 
 
+PUBLIC_FIELDS = (
+    'schema_version', 'engine', 'tier', 'source_version', 'target_version',
+    'instance_class', 'region', 'allocated_storage_gib', 'storage_type', 'multi_az',
+    'parents', 'provenance', 'created_at', 'stage', 'sql_samples', 'control_samples',
+    'passed', 'budget_reservation_usd', 'observed_storage', 'provision_seconds',
+    'load_seconds', 'before', 'request_started_seconds', 'request_at',
+    'request_returned_seconds', 'request_to_ready_seconds', 'interruption',
+    'after', 'validation_seconds', 'checks', 'event_categories', 'cleanup', 'total_seconds',
+)
+
+
+def public_receipt(data):
+    if (not data.get('passed') or data.get('cleanup') !=
+            'verified_stack_deleted_database_snapshots_secret_absent' or data.get('stage') != 'complete'):
+        raise ValueError('Only validated and cleaned cases may be published')
+    # New private fields must be deliberately considered before publication.
+    if set(data) != set(PUBLIC_FIELDS):
+        raise ValueError('Receipt fields differ from the approved public schema')
+    return {key: data[key] for key in PUBLIC_FIELDS}
+
+
 def publish():
     receipts = []
     for path in sorted(PRIVATE.glob('*/receipt.json')):
         data = json.loads(path.read_text())
-        if not data.get('passed') or data.get('cleanup') != 'verified_stack_deleted_database_snapshots_secret_absent' or data.get('stage') != 'complete':
-            raise ValueError('Only validated and cleaned cases may be published')
-        receipts.append(data)
+        receipts.append(public_receipt(data))
     if not receipts:
         raise ValueError('No RDS receipts to publish')
     save(ROOT / 'evidence/upgrade-timing-rds.json', {'schema_version': 1, 'engine': 'postgres', 'cases': receipts,

@@ -65,6 +65,22 @@ class RdsUpgradeTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'engine/class'):
             lab.db({'run_id': 'mine', 'instance_class': 'db.r7g.xlarge'})
 
+    def test_out_of_scope_major_upgrade_is_refused_before_aws(self):
+        lab = object.__new__(u.Lab)
+        lab.rds = Mock()
+        with self.assertRaisesRegex(ValueError, 'only PostgreSQL 16 to 17'):
+            lab.versions('16.15', '18.3', 'db.r7g.xlarge')
+        lab.rds.describe_db_engine_versions.assert_not_called()
+
+    def test_unreviewed_private_field_blocks_publication(self):
+        data = {key: None for key in u.PUBLIC_FIELDS}
+        data.update(passed=True, stage='complete',
+                    cleanup='verified_stack_deleted_database_snapshots_secret_absent')
+        self.assertEqual(set(u.PUBLIC_FIELDS), set(u.public_receipt(data)))
+        data['private_endpoint'] = 'private.example.invalid'
+        with self.assertRaisesRegex(ValueError, 'approved public schema'):
+            u.public_receipt(data)
+
 
 if __name__ == '__main__':
     unittest.main()
