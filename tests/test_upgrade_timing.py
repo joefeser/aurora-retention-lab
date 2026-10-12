@@ -31,7 +31,7 @@ class UpgradeTests(unittest.TestCase):
                 {"StackId": "owned-stack-id", "StackStatus": "CREATE_COMPLETE"},
                 {"StackId": "owned-stack-id", "StackStatus": "DELETE_COMPLETE"},
             ]
-            lab.cf.describe_stack_resources.return_value = {"StackResources": []}
+            lab.cf_read.describe_stack_resources.return_value = {"StackResources": []}
             with patch.object(u.time, "sleep"):
                 u.cleanup(lab, root, state)
             lab.cf.delete_stack.assert_called_once_with(StackName="owned-stack-id")

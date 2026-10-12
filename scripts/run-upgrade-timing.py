@@ -140,6 +140,15 @@ class Lab:
         )
         self.rds = boto3.client("rds", region_name=region, config=config)
         self.cf = boto3.client("cloudformation", region_name=region, config=config)
+        read_config = Config(
+            connect_timeout=5,
+            read_timeout=60,
+            retries={"mode": "standard", "total_max_attempts": 3},
+        )
+        self.rds_read = boto3.client("rds", region_name=region, config=read_config)
+        self.cf_read = boto3.client(
+            "cloudformation", region_name=region, config=read_config
+        )
         self.data = boto3.client("rds-data", region_name=region, config=config)
         if (
             boto3.client(
@@ -152,9 +161,9 @@ class Lab:
     def versions(self, source, target, instance):
         versions = [
             v
-            for page in self.rds.get_paginator("describe_db_engine_versions").paginate(
-                Engine="aurora-postgresql"
-            )
+            for page in self.rds_read.get_paginator(
+                "describe_db_engine_versions"
+            ).paginate(Engine="aurora-postgresql")
             for v in page["DBEngineVersions"]
         ]
         ordinary = [
@@ -181,7 +190,7 @@ class Lab:
                 "Require a supported direct PG16 -> latest regional PG17 upgrade"
             )
         for version in (source, target):
-            if not self.rds.describe_orderable_db_instance_options(
+            if not self.rds_read.describe_orderable_db_instance_options(
                 Engine="aurora-postgresql",
                 EngineVersion=version,
                 DBInstanceClass=instance,
@@ -191,7 +200,7 @@ class Lab:
 
     def owned_stack(self, state, missing_ok=False):
         try:
-            stack = self.cf.describe_stacks(
+            stack = self.cf_read.describe_stacks(
                 StackName=state.get("stack_id", state["stack_name"])
             )["Stacks"][0]
         except Exception as exc:
@@ -222,12 +231,12 @@ class Lab:
             secretArn=outputs["UpgradeSecretArn"],
             database="retentionlab",
         )
-        cluster = self.rds.describe_db_clusters(
+        cluster = self.rds_read.describe_db_clusters(
             DBClusterIdentifier=outputs["UpgradeClusterId"]
         )["DBClusters"][0]
         tags = {
             t["Key"]: t["Value"]
-            for t in self.rds.list_tags_for_resource(
+            for t in self.rds_read.list_tags_for_resource(
                 ResourceName=cluster["DBClusterArn"]
             )["TagList"]
         }
@@ -298,10 +307,10 @@ class Lab:
         }
 
     def states(self, state):
-        cluster = self.rds.describe_db_clusters(
+        cluster = self.rds_read.describe_db_clusters(
             DBClusterIdentifier=state["cluster_id"]
         )["DBClusters"][0]
-        writer = self.rds.describe_db_instances(
+        writer = self.rds_read.describe_db_instances(
             DBInstanceIdentifier=state["writer_id"]
         )["DBInstances"][0]
         return cluster, writer
@@ -321,9 +330,9 @@ def cleanup(lab, directory, state):
     if stack is not None:
         state["stack_id"] = stack["StackId"]
         if not state.get("cluster_id"):
-            resources = lab.cf.describe_stack_resources(StackName=state["stack_id"])[
-                "StackResources"
-            ]
+            resources = lab.cf_read.describe_stack_resources(
+                StackName=state["stack_id"]
+            )["StackResources"]
             for resource in resources:
                 if resource["LogicalResourceId"] == "UpgradeCluster" and resource.get(
                     "PhysicalResourceId"
@@ -332,7 +341,7 @@ def cleanup(lab, directory, state):
         save(directory / "inventory.json", state)
     elif state.get("cluster_id"):
         try:
-            lab.rds.describe_db_clusters(DBClusterIdentifier=state["cluster_id"])
+            lab.rds_read.describe_db_clusters(DBClusterIdentifier=state["cluster_id"])
         except lab.rds.exceptions.DBClusterNotFoundFault:
             pass
         else:
@@ -340,7 +349,7 @@ def cleanup(lab, directory, state):
                 "Stack absent but recorded cluster still exists; inspect ownership"
             )
     if state.get("cluster_id"):
-        snapshots = lab.rds.describe_db_cluster_snapshots(
+        snapshots = lab.rds_read.describe_db_cluster_snapshots(
             DBClusterIdentifier=state["cluster_id"]
         )["DBClusterSnapshots"]
         for snap in snapshots:
@@ -369,7 +378,7 @@ def cleanup(lab, directory, state):
         stack = lab.owned_stack(state, missing_ok=True)
     for identifier in state.get("snapshots", []):
         try:
-            snap = lab.rds.describe_db_cluster_snapshots(
+            snap = lab.rds_read.describe_db_cluster_snapshots(
                 DBClusterSnapshotIdentifier=identifier
             )["DBClusterSnapshots"][0]
         except lab.rds.exceptions.DBClusterSnapshotNotFoundFault:
@@ -380,7 +389,7 @@ def cleanup(lab, directory, state):
     deadline = time.monotonic() + 900
     while (
         state.get("cluster_id")
-        and lab.rds.describe_db_cluster_snapshots(
+        and lab.rds_read.describe_db_cluster_snapshots(
             DBClusterIdentifier=state["cluster_id"]
         )["DBClusterSnapshots"]
     ):
@@ -629,7 +638,7 @@ def run_locked(args):
                 cluster["Status"] == "available"
                 and cluster["EngineVersion"] == args.source
             ):
-                events = lab.rds.describe_events(
+                events = lab.rds_read.describe_events(
                     SourceIdentifier=state["cluster_id"],
                     SourceType="db-cluster",
                     StartTime=dt.datetime.fromisoformat(record["upgrade_started_utc"]),
@@ -639,6 +648,28 @@ def run_locked(args):
                 )
                 if failed:
                     save(directory / "cluster-events.json", events)
+                    if probe["sql_ok"]:
+                        rollback = lab.measures()
+                        record.update(
+                            after=rollback,
+                            size_after_bytes=rollback["database_bytes"],
+                            engine_after=cluster["EngineVersion"],
+                            smoke_parent_count=rollback["tables"]["notification_event"][
+                                "rows"
+                            ],
+                            smoke_queue_count=rollback["tables"]["delivery_queue"][
+                                "rows"
+                            ],
+                        )
+                        if {
+                            t: v["rows"] for t, v in rollback["tables"].items()
+                        } != expected_counts(TIERS[args.tier]):
+                            record["warnings"].append(
+                                {
+                                    "type": "RollbackCountMismatch",
+                                    "stage": "rollback_checks",
+                                }
+                            )
                     raise RuntimeError(
                         "AWS reported upgrade failure: " + failed["Message"]
                     )
