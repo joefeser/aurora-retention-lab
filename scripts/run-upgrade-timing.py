@@ -4,7 +4,7 @@
 import argparse
 import datetime as dt
 import hashlib
-import fcntl
+import shutil
 import importlib.util
 import json
 import math
@@ -436,6 +436,10 @@ def cleanup(lab, directory, state):
 
 
 def run(args):
+    try:
+        import fcntl
+    except ImportError as exc:
+        raise RuntimeError("Running benchmarks requires macOS, Linux or WSL file locking") from exc
     PRIVATE.mkdir(parents=True, exist_ok=True)
     with (PRIVATE / ".run.lock").open("a") as lock:
         try:
@@ -462,6 +466,8 @@ def create_stack_once(client, directory, state, **arguments):
 
 
 def run_locked(args):
+    if shutil.which("aws") is None:
+        raise ValueError("Install and authenticate the AWS CLI before provisioning")
     if not math.isfinite(args.prior_spend_usd) or args.prior_spend_usd < 0:
         raise ValueError("A finite conservative prior-spend estimate is required")
     account = args.expected_account
@@ -707,6 +713,7 @@ def run_locked(args):
                 if failed or rollback_observed(
                     record["probes"], args.source, cluster.get("PendingModifiedValues")
                 ):
+                    record["stage"] = "failed_rollback"
                     save(directory / "cluster-events.json", events)
                     if probe["sql_ok"]:
                         rollback = lab.measures()
@@ -741,6 +748,7 @@ def run_locked(args):
                 "incompatible-restore",
                 "inaccessible-encryption-credentials",
             ):
+                record["stage"] = "failed_terminal_status"
                 raise RuntimeError("Terminal upgrade failure status")
             time.sleep(max(0, 30 - (time.monotonic() - cycle)))
         else:
@@ -794,6 +802,52 @@ def run_locked(args):
     return directory
 
 
+def validate_receipt_envelope(record):
+    """Reject unsupported or incomplete receipts before touching public evidence."""
+    if (
+        not isinstance(record, dict)
+        or type(record.get("schema_version")) is not int
+        or record["schema_version"] != 1
+    ):
+        raise ValueError("Unsupported receipt schema")
+    for key in (
+        "run_id", "tier", "config", "instance_class", "profile", "git_head",
+        "engine_requested_before", "engine_requested_after", "started_utc",
+        "stage", "notes",
+    ):
+        if not isinstance(record.get(key), str) or not record[key]:
+            raise ValueError("Missing receipt field: " + key)
+    end_field = "upgrade_finished_utc" if record.get("passed") else "finished_utc"
+    if not isinstance(record.get(end_field), str) or not record[end_field]:
+        raise ValueError("Missing receipt field: " + end_field)
+    if not isinstance(record.get("source_hashes"), dict) or not record["source_hashes"]:
+        raise ValueError("Missing source hashes")
+    for key in ("errors", "warnings"):
+        if not isinstance(record.get(key), list) or any(
+            not isinstance(x, dict)
+            or not isinstance(x.get("type"), str)
+            or not isinstance(x.get("stage"), str)
+            for x in record[key]
+        ):
+            raise ValueError("Invalid diagnostic list: " + key)
+    if not isinstance(record.get("probes"), list):
+        raise ValueError("Invalid probes")
+    for index, probe in enumerate(record["probes"]):
+        if not isinstance(probe, dict) or type(probe.get("sql_ok")) is not bool:
+            raise ValueError("Invalid probe")
+        for field in ("elapsed_seconds", "response_elapsed_seconds"):
+            if (
+                field == "response_elapsed_seconds"
+                and index == 0
+                and probe.get("elapsed_seconds") == 0
+                and field not in probe
+            ):
+                continue  # The pre-request SQL check is the zero-time baseline.
+            value = probe.get(field)
+            if type(value) not in (int, float) or not math.isfinite(value) or value < 0:
+                raise ValueError("Invalid probe timing")
+
+
 def publish(run_ids):
     if not run_ids or len(set(run_ids)) != len(run_ids):
         raise ValueError("Select distinct run IDs explicitly")
@@ -802,6 +856,7 @@ def publish(run_ids):
         if not re.fullmatch("[a-f0-9]{12}", rid):
             raise ValueError("Invalid run ID")
         record = json.loads((PRIVATE / rid / "receipt.json").read_text())
+        validate_receipt_envelope(record)
         if record.get("run_id") != rid or type(record.get("passed")) is not bool:
             raise ValueError("Invalid receipt identity/outcome")
         if record.get("tier") not in TIERS or record.get("config") not in CLASSES:
@@ -865,8 +920,12 @@ def publish(run_ids):
                         < table["heap_bytes"] + table["index_bytes"]
                     ):
                         raise ValueError("Inconsistent table size")
-        elif not record.get("errors"):
-            raise ValueError("Pending runs cannot be published as failures")
+        elif (
+            not record["errors"]
+            or record["stage"] not in ("failed_rollback", "failed_terminal_status")
+            or not record.get("upgrade_started_utc")
+        ):
+            raise ValueError("Only reconciled terminal upgrade failures can be published")
         allowed = set(
             "schema_version run_id passed tier config instance_class min_acu max_acu engine_requested_before engine_requested_after parent_rows profile errors warnings notes git_head source_hashes started_utc stage probes load_elapsed_seconds before size_before_bytes engine_before upgrade_started_utc upgrade_elapsed_seconds upgrade_finished_utc availability after size_after_bytes engine_after smoke_parent_count smoke_queue_count cleanup finished_utc".split()
         )

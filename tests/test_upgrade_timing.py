@@ -15,6 +15,30 @@ spec.loader.exec_module(u)
 
 
 class UpgradeTests(unittest.TestCase):
+    def test_non_posix_can_import_publish_and_cleanup_but_run_fails_clearly(self):
+        import builtins
+
+        real_import = builtins.__import__
+
+        def without_fcntl(name, *args, **kwargs):
+            if name == "fcntl":
+                raise ImportError("simulated non-POSIX platform")
+            return real_import(name, *args, **kwargs)
+
+        module = importlib.util.module_from_spec(spec)
+        with patch("builtins.__import__", side_effect=without_fcntl):
+            spec.loader.exec_module(module)
+            self.assertTrue(callable(module.publish))
+            self.assertTrue(callable(module.cleanup))
+            with self.assertRaisesRegex(RuntimeError, "file locking"):
+                module.run(SimpleNamespace())
+
+    def test_missing_cli_stops_before_account_inventory_or_aws(self):
+        with patch.object(u.shutil, "which", return_value=None), patch.object(u, "Lab") as lab:
+            with self.assertRaisesRegex(ValueError, "AWS CLI"):
+                u.run_locked(SimpleNamespace())
+            lab.assert_not_called()
+
     def test_cleanup_rejects_cluster_from_another_stack_before_mutations(self):
         lab = Mock()
         lab.owned_stack.return_value = {
@@ -86,6 +110,12 @@ class UpgradeTests(unittest.TestCase):
         rid = "b" * 12
         counts = u.expected_counts(32768)
         base = dict(
+            schema_version=1, profile="typical", git_head="a" * 40,
+            source_hashes={"fixture": "b" * 64},
+            started_utc="2026-10-12T00:00:00+00:00",
+            finished_utc="2026-10-12T01:00:00+00:00",
+            upgrade_finished_utc="2026-10-12T01:00:00+00:00",
+            notes="synthetic fixture", warnings=[], probes=[],
             run_id=rid,
             passed=True,
             tier="1x",
@@ -121,14 +151,30 @@ class UpgradeTests(unittest.TestCase):
                 u.save(root / rid / "receipt.json", base)
                 u.publish([rid])
                 original = output.read_text()
-                for mutation in ("old_sql", "bad_size", "wrong_capacity"):
+                for mutation in (
+                    "old_sql", "bad_size", "wrong_capacity", "future_schema",
+                    "bad_errors", "missing_finish", "unknown_failure", "never_attempted",
+                ):
                     bad = copy.deepcopy(base)
                     if mutation == "old_sql":
                         bad["after"]["server_version"] = "16.15"
                     elif mutation == "bad_size":
                         bad["size_after_bytes"] = 42
-                    else:
+                    elif mutation == "wrong_capacity":
                         bad["max_acu"] = 2
+                    elif mutation == "future_schema":
+                        bad["schema_version"] = 2
+                    elif mutation == "bad_errors":
+                        bad["errors"] = "error"
+                    elif mutation == "missing_finish":
+                        del bad["upgrade_finished_utc"]
+                    else:
+                        bad.update(
+                            passed=False,
+                            stage="load" if mutation == "never_attempted" else "upgrade_polling",
+                            errors=[{"type": "TimeoutError", "stage": "upgrade_polling"}],
+                            upgrade_started_utc="2026-10-12T00:00:00+00:00",
+                        )
                     u.save(root / rid / "receipt.json", bad)
                     with self.assertRaises(ValueError):
                         u.publish([rid])
@@ -140,6 +186,16 @@ class UpgradeTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "one receipt"):
                     u.publish([rid, second["run_id"]])
                 self.assertEqual(output.read_text(), original)
+                # A confirmed rollback is publishable; a transport error alone is not.
+                failure = copy.deepcopy(base)
+                failure.update(
+                    passed=False, stage="failed_rollback",
+                    upgrade_started_utc="2026-10-12T00:00:00+00:00",
+                    errors=[{"type": "AWSUpgradeFailure", "stage": "failed_rollback"}],
+                )
+                u.save(root / rid / "receipt.json", failure)
+                u.publish([rid])
+                self.assertFalse(json.loads(output.read_text())["runs"][0]["passed"])
 
     def test_cleanup_missing_stack_and_recovered_stack_id(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -170,14 +226,17 @@ class UpgradeTests(unittest.TestCase):
                 "owned-stack-id",
             )
 
+    @unittest.skipUnless(importlib.util.find_spec("fcntl"), "POSIX locking test")
     def test_run_lock_blocks_second_launcher_before_budget_or_aws(self):
+        import fcntl
+
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             with patch.object(u, "PRIVATE", root), patch.object(
                 u, "run_locked"
             ) as launch:
                 with (root / ".run.lock").open("a") as lock:
-                    u.fcntl.flock(lock, u.fcntl.LOCK_EX | u.fcntl.LOCK_NB)
+                    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
                     with self.assertRaisesRegex(ValueError, "run lock"):
                         u.run(SimpleNamespace())
                     launch.assert_not_called()
