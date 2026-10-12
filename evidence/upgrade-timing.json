@@ -270,6 +270,621 @@
       "smoke_parent_count": 32768,
       "smoke_queue_count": 32768,
       "cleanup": "verified_stack_deleted_no_cluster_snapshots"
+    },
+    {
+      "schema_version": 1,
+      "run_id": "3cdb459938b8",
+      "passed": true,
+      "tier": "1x",
+      "config": "serverless_4acu",
+      "instance_class": "db.serverless",
+      "min_acu": 4.0,
+      "max_acu": 4.0,
+      "engine_requested_before": "16.15",
+      "engine_requested_after": "17.11",
+      "parent_rows": 32768,
+      "profile": "typical",
+      "errors": [],
+      "warnings": [],
+      "notes": "One run per case; physical sizes include normal TOAST and indexes. No padded/uncompressed size targets. Data API availability is not wire-protocol downtime.",
+      "git_head": "6a65394500879cef277a8982b007c47dd69572c1",
+      "source_hashes": {
+        "scripts/run-upgrade-timing.py": "61ad3c37e89d4092e3f03d50d4652810c843de9a8e65253725374dcf16e60e56",
+        "benchmarks/workload.py": "a047a5cee803ba98752f483fe51aebf0e9216d54df22ec1333bbc9b4c83ef1e1",
+        "infra/lab.json": "72f1467f8c410b4e76c964a58020b44c4c836c86b3c2ba77a3d6ab4af0a7fdc3"
+      },
+      "started_utc": "2026-10-12T18:41:25.212863+00:00",
+      "stage": "complete",
+      "probes": [
+        {
+          "elapsed_seconds": 0.0,
+          "sql_ok": true,
+          "server_version": "16.15",
+          "cluster_status": "available",
+          "engine": "16.15"
+        },
+        {
+          "elapsed_seconds": 1.3078527497127652,
+          "utc": "2026-10-12T18:50:03.525670+00:00",
+          "cluster_status": "available",
+          "writer_status": "available",
+          "engine": "16.15",
+          "sql_ok": true,
+          "server_version": "16.15",
+          "response_elapsed_seconds": 1.365073500201106
+        },
+        {
+          "elapsed_seconds": 31.200852041132748,
+          "utc": "2026-10-12T18:50:33.418936+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "upgrading",
+          "engine": "16.15",
+          "sql_ok": false,
+          "error_code": "InternalServerErrorException",
+          "response_elapsed_seconds": 31.263882500119507
+        },
+        {
+          "elapsed_seconds": 61.21109691541642,
+          "utc": "2026-10-12T18:51:03.429445+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "upgrading",
+          "engine": "16.15",
+          "sql_ok": false,
+          "error_code": "InternalServerErrorException",
+          "response_elapsed_seconds": 61.27453095745295
+        },
+        {
+          "elapsed_seconds": 91.58257579058409,
+          "utc": "2026-10-12T18:51:33.801193+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "upgrading",
+          "engine": "16.15",
+          "sql_ok": false,
+          "error_code": "InternalServerErrorException",
+          "response_elapsed_seconds": 91.78947445750237
+        },
+        {
+          "elapsed_seconds": 121.21976862475276,
+          "utc": "2026-10-12T18:52:03.438649+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "upgrading",
+          "engine": "16.15",
+          "sql_ok": false,
+          "error_code": "InternalServerErrorException",
+          "response_elapsed_seconds": 121.28628408256918
+        },
+        {
+          "elapsed_seconds": 151.2151718325913,
+          "utc": "2026-10-12T18:52:33.434321+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "upgrading",
+          "engine": "16.15",
+          "sql_ok": false,
+          "error_code": "InternalServerErrorException",
+          "response_elapsed_seconds": 151.2774512078613
+        },
+        {
+          "elapsed_seconds": 181.22254499979317,
+          "utc": "2026-10-12T18:53:03.441960+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "upgrading",
+          "engine": "16.15",
+          "sql_ok": false,
+          "error_code": "InternalServerErrorException",
+          "response_elapsed_seconds": 181.28305637463927
+        },
+        {
+          "elapsed_seconds": 211.22687812522054,
+          "utc": "2026-10-12T18:53:33.446558+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "upgrading",
+          "engine": "16.15",
+          "sql_ok": false,
+          "error_code": "InternalServerErrorException",
+          "response_elapsed_seconds": 211.2837756657973
+        },
+        {
+          "elapsed_seconds": 241.39495404064655,
+          "utc": "2026-10-12T18:54:03.614902+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "upgrading",
+          "engine": "16.15",
+          "sql_ok": false,
+          "error_code": "InternalServerErrorException",
+          "response_elapsed_seconds": 241.45366479083896
+        },
+        {
+          "elapsed_seconds": 271.299903832376,
+          "utc": "2026-10-12T18:54:33.520118+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "upgrading",
+          "engine": "16.15",
+          "sql_ok": false,
+          "error_code": "InternalServerErrorException",
+          "response_elapsed_seconds": 271.5348624996841
+        },
+        {
+          "elapsed_seconds": 301.23485170770437,
+          "utc": "2026-10-12T18:55:03.455332+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "upgrading",
+          "engine": "16.15",
+          "sql_ok": false,
+          "error_code": "InternalServerErrorException",
+          "response_elapsed_seconds": 301.29444329068065
+        },
+        {
+          "elapsed_seconds": 331.31296999938786,
+          "utc": "2026-10-12T18:55:33.533718+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "upgrading",
+          "engine": "16.15",
+          "sql_ok": false,
+          "error_code": "InternalServerErrorException",
+          "response_elapsed_seconds": 331.37176520749927
+        },
+        {
+          "elapsed_seconds": 361.2252241661772,
+          "utc": "2026-10-12T18:56:03.446236+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "upgrading",
+          "engine": "16.15",
+          "sql_ok": false,
+          "error_code": "InternalServerErrorException",
+          "response_elapsed_seconds": 361.287987540476
+        },
+        {
+          "elapsed_seconds": 391.4145216252655,
+          "utc": "2026-10-12T18:56:33.635805+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "upgrading",
+          "engine": "16.15",
+          "sql_ok": false,
+          "error_code": "InternalServerErrorException",
+          "response_elapsed_seconds": 391.4748101653531
+        },
+        {
+          "elapsed_seconds": 421.25550995767117,
+          "utc": "2026-10-12T18:57:03.477057+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "available",
+          "engine": "17.11",
+          "sql_ok": false,
+          "error_code": "InternalServerErrorException",
+          "response_elapsed_seconds": 421.31367029063404
+        },
+        {
+          "elapsed_seconds": 451.25499883294106,
+          "utc": "2026-10-12T18:57:33.476813+00:00",
+          "cluster_status": "available",
+          "writer_status": "available",
+          "engine": "17.11",
+          "sql_ok": false,
+          "error_code": "InternalServerErrorException",
+          "response_elapsed_seconds": 451.3196594156325
+        },
+        {
+          "elapsed_seconds": 481.4578573750332,
+          "utc": "2026-10-12T18:58:03.679944+00:00",
+          "cluster_status": "available",
+          "writer_status": "available",
+          "engine": "17.11",
+          "sql_ok": true,
+          "server_version": "17.11",
+          "response_elapsed_seconds": 481.62605241592973
+        }
+      ],
+      "load_elapsed_seconds": 62.370573666878045,
+      "before": {
+        "database_bytes": 453478999,
+        "tables": {
+          "notification_event": {
+            "rows": 32768,
+            "total_bytes": 306896896,
+            "heap_bytes": 54714368,
+            "index_bytes": 753664
+          },
+          "delivery_queue": {
+            "rows": 32768,
+            "total_bytes": 111624192,
+            "heap_bytes": 56459264,
+            "index_bytes": 1507328
+          },
+          "push_delivery": {
+            "rows": 98304,
+            "total_bytes": 25460736,
+            "heap_bytes": 20135936,
+            "index_bytes": 5292032
+          },
+          "send_history": {
+            "rows": 8192,
+            "total_bytes": 1286144,
+            "heap_bytes": 835584,
+            "index_bytes": 409600
+          },
+          "notification_template": {
+            "rows": 1,
+            "total_bytes": 32768,
+            "heap_bytes": 8192,
+            "index_bytes": 16384
+          }
+        },
+        "server_version": "16.15",
+        "version_string": "PostgreSQL 16.15 on aarch64-linux, compiled by gcc-10.5.0, 64-bit",
+        "default_toast_compression": "pglz"
+      },
+      "size_before_bytes": 453478999,
+      "engine_before": "16.15",
+      "upgrade_started_utc": "2026-10-12T18:50:02.216366+00:00",
+      "upgrade_elapsed_seconds": 481.6265650410205,
+      "upgrade_finished_utc": "2026-10-12T18:58:03.848648+00:00",
+      "availability": {
+        "observed_failure_count": 15,
+        "first_failure_seconds": 31.200852041132748,
+        "last_failure_seconds": 451.25499883294106,
+        "gap_upper_seconds": 480.31819966621697,
+        "note": "Data API observation envelope; may include multiple outages and API unavailability. Not a wire-protocol outage measurement."
+      },
+      "after": {
+        "database_bytes": 453412083,
+        "tables": {
+          "notification_event": {
+            "rows": 32768,
+            "total_bytes": 306896896,
+            "heap_bytes": 54714368,
+            "index_bytes": 753664
+          },
+          "delivery_queue": {
+            "rows": 32768,
+            "total_bytes": 111624192,
+            "heap_bytes": 56459264,
+            "index_bytes": 1507328
+          },
+          "push_delivery": {
+            "rows": 98304,
+            "total_bytes": 25460736,
+            "heap_bytes": 20135936,
+            "index_bytes": 5292032
+          },
+          "send_history": {
+            "rows": 8192,
+            "total_bytes": 1286144,
+            "heap_bytes": 835584,
+            "index_bytes": 409600
+          },
+          "notification_template": {
+            "rows": 1,
+            "total_bytes": 32768,
+            "heap_bytes": 8192,
+            "index_bytes": 16384
+          }
+        },
+        "server_version": "17.11",
+        "version_string": "PostgreSQL 17.11 on aarch64-linux, compiled by gcc-10.5.0, 64-bit",
+        "default_toast_compression": "pglz"
+      },
+      "size_after_bytes": 453412083,
+      "engine_after": "17.11",
+      "smoke_parent_count": 32768,
+      "smoke_queue_count": 32768,
+      "cleanup": "verified_stack_deleted_no_cluster_snapshots"
+    },
+    {
+      "schema_version": 1,
+      "run_id": "d3b05fd4e75d",
+      "passed": true,
+      "tier": "4x",
+      "config": "serverless_4acu",
+      "instance_class": "db.serverless",
+      "min_acu": 4.0,
+      "max_acu": 4.0,
+      "engine_requested_before": "16.15",
+      "engine_requested_after": "17.11",
+      "parent_rows": 131072,
+      "profile": "typical",
+      "errors": [],
+      "warnings": [],
+      "notes": "One run per case; physical sizes include normal TOAST and indexes. No padded/uncompressed size targets. Data API availability is not wire-protocol downtime.",
+      "git_head": "37fefe442d1b9e2f1e2b036cc2722b8ecf5bf879",
+      "source_hashes": {
+        "scripts/run-upgrade-timing.py": "68f21b0b9da9fd85046d830f7244f72d9fbe43dc9d7c069d95b7ff33a1654455",
+        "benchmarks/workload.py": "a047a5cee803ba98752f483fe51aebf0e9216d54df22ec1333bbc9b4c83ef1e1",
+        "infra/lab.json": "72f1467f8c410b4e76c964a58020b44c4c836c86b3c2ba77a3d6ab4af0a7fdc3"
+      },
+      "started_utc": "2026-10-12T19:09:45.495283+00:00",
+      "stage": "complete",
+      "probes": [
+        {
+          "elapsed_seconds": 0.0,
+          "sql_ok": true,
+          "server_version": "16.15",
+          "cluster_status": "available",
+          "engine": "16.15"
+        },
+        {
+          "elapsed_seconds": 1.557351291179657,
+          "utc": "2026-10-12T19:21:38.329066+00:00",
+          "cluster_status": "available",
+          "writer_status": "available",
+          "engine": "16.15",
+          "sql_ok": true,
+          "server_version": "16.15",
+          "response_elapsed_seconds": 1.614594915881753
+        },
+        {
+          "elapsed_seconds": 31.77120166644454,
+          "utc": "2026-10-12T19:22:08.543288+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "upgrading",
+          "engine": "16.15",
+          "sql_ok": false,
+          "error_code": "InternalServerErrorException",
+          "response_elapsed_seconds": 31.931954165920615
+        },
+        {
+          "elapsed_seconds": 61.474414750002325,
+          "utc": "2026-10-12T19:22:38.246866+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "upgrading",
+          "engine": "16.15",
+          "sql_ok": false,
+          "error_code": "InternalServerErrorException",
+          "response_elapsed_seconds": 61.5373718328774
+        },
+        {
+          "elapsed_seconds": 91.57911841571331,
+          "utc": "2026-10-12T19:23:08.351939+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "upgrading",
+          "engine": "16.15",
+          "sql_ok": false,
+          "error_code": "InternalServerErrorException",
+          "response_elapsed_seconds": 91.64133095834404
+        },
+        {
+          "elapsed_seconds": 121.4778809165582,
+          "utc": "2026-10-12T19:23:38.251069+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "upgrading",
+          "engine": "16.15",
+          "sql_ok": false,
+          "error_code": "InternalServerErrorException",
+          "response_elapsed_seconds": 121.5374320410192
+        },
+        {
+          "elapsed_seconds": 151.46659495774657,
+          "utc": "2026-10-12T19:24:08.240152+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "upgrading",
+          "engine": "16.15",
+          "sql_ok": false,
+          "error_code": "InternalServerErrorException",
+          "response_elapsed_seconds": 151.522771791555
+        },
+        {
+          "elapsed_seconds": 181.50689008273184,
+          "utc": "2026-10-12T19:24:38.280817+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "upgrading",
+          "engine": "16.15",
+          "sql_ok": false,
+          "error_code": "InternalServerErrorException",
+          "response_elapsed_seconds": 181.56859945785254
+        },
+        {
+          "elapsed_seconds": 211.59766804147512,
+          "utc": "2026-10-12T19:25:08.371964+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "upgrading",
+          "engine": "16.15",
+          "sql_ok": false,
+          "error_code": "InternalServerErrorException",
+          "response_elapsed_seconds": 211.65607179142535
+        },
+        {
+          "elapsed_seconds": 241.61445495765656,
+          "utc": "2026-10-12T19:25:38.389120+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "upgrading",
+          "engine": "16.15",
+          "sql_ok": false,
+          "error_code": "InternalServerErrorException",
+          "response_elapsed_seconds": 241.67344533279538
+        },
+        {
+          "elapsed_seconds": 271.5611133752391,
+          "utc": "2026-10-12T19:26:08.336147+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "upgrading",
+          "engine": "16.15",
+          "sql_ok": false,
+          "error_code": "InternalServerErrorException",
+          "response_elapsed_seconds": 271.77201112546027
+        },
+        {
+          "elapsed_seconds": 301.5034503331408,
+          "utc": "2026-10-12T19:26:38.278855+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "upgrading",
+          "engine": "16.15",
+          "sql_ok": false,
+          "error_code": "InternalServerErrorException",
+          "response_elapsed_seconds": 301.5576634583995
+        },
+        {
+          "elapsed_seconds": 331.53690195828676,
+          "utc": "2026-10-12T19:27:08.312672+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "upgrading",
+          "engine": "16.15",
+          "sql_ok": false,
+          "error_code": "InternalServerErrorException",
+          "response_elapsed_seconds": 331.59261237550527
+        },
+        {
+          "elapsed_seconds": 361.56659483350813,
+          "utc": "2026-10-12T19:27:38.342736+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "upgrading",
+          "engine": "16.15",
+          "sql_ok": false,
+          "error_code": "InternalServerErrorException",
+          "response_elapsed_seconds": 361.62297704070807
+        },
+        {
+          "elapsed_seconds": 391.51037216652185,
+          "utc": "2026-10-12T19:28:08.288884+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "upgrading",
+          "engine": "16.15",
+          "sql_ok": false,
+          "error_code": "InternalServerErrorException",
+          "response_elapsed_seconds": 391.56697137467563
+        },
+        {
+          "elapsed_seconds": 421.5299445828423,
+          "utc": "2026-10-12T19:28:38.309745+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "upgrading",
+          "engine": "17.11",
+          "sql_ok": false,
+          "error_code": "InternalServerErrorException",
+          "response_elapsed_seconds": 421.58559795841575
+        },
+        {
+          "elapsed_seconds": 451.50565687473863,
+          "utc": "2026-10-12T19:29:08.285975+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "upgrading",
+          "engine": "17.11",
+          "sql_ok": false,
+          "error_code": "InternalServerErrorException",
+          "response_elapsed_seconds": 451.562577791512
+        },
+        {
+          "elapsed_seconds": 481.7255828753114,
+          "utc": "2026-10-12T19:29:38.506317+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "upgrading",
+          "engine": "17.11",
+          "sql_ok": true,
+          "server_version": "17.11",
+          "response_elapsed_seconds": 481.8859658334404
+        },
+        {
+          "elapsed_seconds": 511.6328404163942,
+          "utc": "2026-10-12T19:30:08.413970+00:00",
+          "cluster_status": "upgrading",
+          "writer_status": "upgrading",
+          "engine": "17.11",
+          "sql_ok": true,
+          "server_version": "17.11",
+          "response_elapsed_seconds": 511.71968912519515
+        },
+        {
+          "elapsed_seconds": 541.6151115000248,
+          "utc": "2026-10-12T19:30:38.396667+00:00",
+          "cluster_status": "available",
+          "writer_status": "available",
+          "engine": "17.11",
+          "sql_ok": true,
+          "server_version": "17.11",
+          "response_elapsed_seconds": 541.9886672906578
+        }
+      ],
+      "load_elapsed_seconds": 226.01187008339912,
+      "before": {
+        "database_bytes": 1791257175,
+        "tables": {
+          "notification_event": {
+            "rows": 131072,
+            "total_bytes": 1227218944,
+            "heap_bytes": 218857472,
+            "index_bytes": 2957312
+          },
+          "delivery_queue": {
+            "rows": 131072,
+            "total_bytes": 449249280,
+            "heap_bytes": 224116736,
+            "index_bytes": 5914624
+          },
+          "push_delivery": {
+            "rows": 393216,
+            "total_bytes": 101679104,
+            "heap_bytes": 80535552,
+            "index_bytes": 21094400
+          },
+          "send_history": {
+            "rows": 32768,
+            "total_bytes": 4866048,
+            "heap_bytes": 3317760,
+            "index_bytes": 1507328
+          },
+          "notification_template": {
+            "rows": 1,
+            "total_bytes": 32768,
+            "heap_bytes": 8192,
+            "index_bytes": 16384
+          }
+        },
+        "server_version": "16.15",
+        "version_string": "PostgreSQL 16.15 on aarch64-linux, compiled by gcc-10.5.0, 64-bit",
+        "default_toast_compression": "pglz"
+      },
+      "size_before_bytes": 1791257175,
+      "engine_before": "16.15",
+      "upgrade_started_utc": "2026-10-12T19:21:36.769555+00:00",
+      "upgrade_elapsed_seconds": 541.98948749993,
+      "upgrade_finished_utc": "2026-10-12T19:30:38.771014+00:00",
+      "availability": {
+        "observed_failure_count": 15,
+        "first_failure_seconds": 31.77120166644454,
+        "last_failure_seconds": 451.50565687473863,
+        "gap_upper_seconds": 480.32861454226077,
+        "note": "Data API observation envelope; may include multiple outages and API unavailability. Not a wire-protocol outage measurement."
+      },
+      "after": {
+        "database_bytes": 1791141107,
+        "tables": {
+          "notification_event": {
+            "rows": 131072,
+            "total_bytes": 1227218944,
+            "heap_bytes": 218857472,
+            "index_bytes": 2957312
+          },
+          "delivery_queue": {
+            "rows": 131072,
+            "total_bytes": 449249280,
+            "heap_bytes": 224116736,
+            "index_bytes": 5914624
+          },
+          "push_delivery": {
+            "rows": 393216,
+            "total_bytes": 101679104,
+            "heap_bytes": 80535552,
+            "index_bytes": 21094400
+          },
+          "send_history": {
+            "rows": 32768,
+            "total_bytes": 4866048,
+            "heap_bytes": 3317760,
+            "index_bytes": 1507328
+          },
+          "notification_template": {
+            "rows": 1,
+            "total_bytes": 32768,
+            "heap_bytes": 8192,
+            "index_bytes": 16384
+          }
+        },
+        "server_version": "17.11",
+        "version_string": "PostgreSQL 17.11 on aarch64-linux, compiled by gcc-10.5.0, 64-bit",
+        "default_toast_compression": "pglz"
+      },
+      "size_after_bytes": 1791141107,
+      "engine_after": "17.11",
+      "smoke_parent_count": 131072,
+      "smoke_queue_count": 131072
     }
   ],
   "unmeasured_cases": [
@@ -281,6 +896,11 @@
     {
       "tier": "16x",
       "config": "serverless_v2",
+      "status": "not_measured"
+    },
+    {
+      "tier": "16x",
+      "config": "serverless_4acu",
       "status": "not_measured"
     },
     {

@@ -38,7 +38,7 @@ Cleanup completed on October 12: the stack reached `DELETE_COMPLETE`; independen
 
 ## Authorized capacity follow-up
 
-The first fixed-4-ACU baseline succeeded: **481.63 seconds (8 minutes 2 seconds)** from request to verified target-engine/SQL availability. All five counts matched. Database size was 453,478,999 bytes before and 453,412,083 after. The Data API interruption upper envelope was 480.32 seconds. This is one successful 1x observation, not a larger-tier or production-window guarantee. The remaining cases are still running.
+The first fixed-4-ACU baseline succeeded: **481.63 seconds (8 minutes 2 seconds)** from request to verified target-engine/SQL availability. All five counts matched. Database size was 453,478,999 bytes before and 453,412,083 after. The Data API interruption upper envelope was 480.32 seconds. This is one successful 1x observation, not a larger-tier or production-window guarantee. Its stack and upgrade snapshots were then verified deleted. The 4x case also succeeded at **541.99 seconds (9 minutes 2 seconds)** with 1,791,257,175 bytes before upgrade and all five counts preserved. Its API interruption upper envelope was 480.33 seconds; SQL recovered before AWS finished reporting the upgrade as complete. The remaining cases are still running.
 
 
 After reviewing the failed baseline, the owner authorized a higher-capacity test and completion of the process. The follow-up configuration `serverless_4acu` holds both minimum and maximum at 4 ACU; it is distinct from the original `serverless_v2` 0.5–2 ACU case. Fresh clusters remain required per case. A passing baseline will be followed by the 4x and 16x tiers and the provisioned comparison while budget permits. The failed receipt remains published.
