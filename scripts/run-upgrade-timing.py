@@ -7,6 +7,7 @@ import hashlib
 import importlib.util
 import json
 import math
+import os
 from pathlib import Path
 import re
 import subprocess
@@ -495,7 +496,13 @@ def run(args):
         with (directory / "modify.stdout.json").open("w") as out, (
             directory / "modify.stderr.txt"
         ).open("w") as err:
-            modified = subprocess.run(command, stdout=out, stderr=err, timeout=70)
+            modified = subprocess.run(
+                command,
+                stdout=out,
+                stderr=err,
+                timeout=70,
+                env={**os.environ, "AWS_MAX_ATTEMPTS": "1", "AWS_PAGER": ""},
+            )
         if modified.returncode:
             raise RuntimeError("Upgrade CLI failed; raw output retained privately")
         record["stage"] = "upgrade_polling"
