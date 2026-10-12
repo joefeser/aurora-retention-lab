@@ -2,6 +2,20 @@
 
 This extension measures a **quiescent in-place Aurora PostgreSQL upgrade**. It is not an RDS PostgreSQL instance upgrade, blue/green deployment, logical migration, or production downtime guarantee. It does not test partition DDL. Original documents and real data remain outside Git.
 
+## Findings from the completed upgrade matrix
+
+All **six authorized follow-up upgrades passed** from Aurora PostgreSQL 16.15 to 17.11, across measured databases of **0.422–6.685 GiB**. Fixed 4 ACU and `db.r6g.large` each completed 1x, 4x and 16x. Observed upgrade elapsed times ranged from **7 minutes 31 seconds to 9 minutes 2 seconds**. The original 0.5–2 ACU baseline failed and is preserved below.
+
+| Team question | Evidence-backed answer |
+| --- | --- |
+| Is a ≤1 hour upgrade realistic at these dev/stage sizes? | Every successful managed-upgrade measurement was under 10 minutes for this quiescent synthetic fixture. This supports feasibility at the tested sizes/configurations, not a guaranteed production or end-to-end application maintenance window. Loading, application checks and post-upgrade statistics work are outside the upgrade timer. |
+| Do we need more capacity? | Fixed 4 ACU was sufficient in all three tests after the 0.5–2 ACU attempt failed during managed source-server startup. This does not establish the minimum required capacity or prove a live resize/downscale procedure. |
+| Does instance size materially change the duration? | These single observations do not demonstrate a consistent material advantage for either tested capacity model. Serverless elapsed times were non-monotonic across data sizes; repeat runs would be needed to estimate distributions or attribute differences to capacity. |
+| Is the upgrade uninterrupted? | No: every case recorded failed Data API SQL probes. Successful cases had sampled interruption upper envelopes of about 7–8 minutes. Direct TCP/application downtime was not measured. |
+| Did the graph survive? | All five row counts and per-table total/heap/index byte measurements matched before and after every successful upgrade. Database-wide size changed slightly. This is not payload checksum or application-behavior validation. |
+
+The matrix completes the requested bounded version-upgrade experiment. It does not add partition operations, production traffic, extensions, failover testing or production-specific parameter groups. Use the detailed receipts and limitations below when planning a real maintenance window.
+
 ## Original October 12 attempt: failed low-capacity baseline
 
 The original Config A / 1x attempt failed inside AWS-managed `pg_upgrade` and returned to 16.15. We stopped that matrix and preserved the failure in the [published receipts](../evidence/upgrade-timing.json). The owner then authorized the higher-capacity follow-up below. This original attempt supplies no successful-upgrade timing.
@@ -30,7 +44,7 @@ HINT: try reducing shared memory parameters, such as shared buffers.
 
 This establishes a source-server startup failure during `pg_upgrade`; it does not establish whether the root cause is Aurora configuration, capacity handling, or an engine defect. No custom parameter group was supplied. Increasing capacity or changing parameters would be a new experiment, not a correction to this failed receipt. All five post-rollback relation counts matched and physical database size was unchanged. Counts do not verify every payload byte.
 
-The original runner correctly refused to count `available` on 16.15 as success, but continued polling. After inspecting the explicit AWS failure event, the operator interrupted polling and added the diagnostic and post-rollback checks to the receipt. Its `KeyboardInterrupt` records that intervention; `AWSUpgradeFailure` records the service failure. A subsequent runner change detects current-attempt failure events on rollback and stops earlier. The original execution commit and hashes remain in the receipt. Raw service logs and identifiers remain private.
+The original runner correctly refused to count `available` on 16.15 as success, but continued polling. After inspecting the explicit AWS failure event, the operator interrupted polling and added the diagnostic and post-rollback checks to the receipt. Its `KeyboardInterrupt` records that intervention; `AWSUpgradeFailure` records the service failure. A subsequent runner change detects current-attempt failure events on rollback and stops earlier. The original execution commit and hashes remain in the receipt. Its publication stage was subsequently reconciled to `failed_rollback` using that preserved failure event and verified source-version recovery; original error stages remain unchanged. Raw service logs and identifiers remain private.
 
 The old engine became available after rollback, so an `available` status alone would have produced a misleading success. This run also disproves an uninterrupted-online interpretation for this attempt; it cannot establish successful-upgrade outage duration.
 
@@ -38,14 +52,32 @@ Cleanup completed on October 12: the stack reached `DELETE_COMPLETE`; independen
 
 ## Authorized capacity follow-up
 
-The first fixed-4-ACU baseline succeeded: **481.63 seconds (8 minutes 2 seconds)** from request to verified target-engine/SQL availability. All five counts matched. Database size was 453,478,999 bytes before and 453,412,083 after. The Data API interruption upper envelope was 480.32 seconds. This is one successful 1x observation, not a larger-tier or production-window guarantee. Its stack and upgrade snapshots were then verified deleted. The 4x case also succeeded at **541.99 seconds (9 minutes 2 seconds)** with 1,791,257,175 bytes before upgrade and all five counts preserved. Its API interruption upper envelope was 480.33 seconds; SQL recovered before AWS finished reporting the upgrade as complete. The 16x case also succeeded at **451.41 seconds (7 minutes 31 seconds)** with 7,177,587,287 bytes (6.68 GiB) before upgrade; all five counts matched. Its API interruption upper envelope was 420.21 seconds. All three fixed-4-ACU sizes have passed and their stacks and upgrade snapshots were verified deleted. The provisioned comparison is still running.
+**6 of 6 follow-up upgrades passed; 6 have verified stack/snapshot cleanup in their published receipts.** The original 0.5–2 ACU failure remains a separate observation. All follow-up cases use fresh Aurora 16.15 clusters and target 17.11.
 
+| Configuration | Tier | Before GiB | After GiB | Load seconds | Upgrade seconds | API gap upper seconds | Outcome |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | --- |
+| Fixed 4 ACU | 1x | 0.422 | 0.422 | 62.37 | 481.63 | 480.32 | Passed |
+| Fixed 4 ACU | 4x | 1.668 | 1.668 | 226.01 | 541.99 | 480.33 | Passed |
+| Fixed 4 ACU | 16x | 6.685 | 6.685 | 887.66 | 451.41 | 420.21 | Passed |
+| db.r6g.large | 1x | 0.422 | 0.422 | 79.08 | 451.49 | 450.14 | Passed |
+| db.r6g.large | 4x | 1.668 | 1.668 | 298.08 | 482.14 | 480.62 | Passed |
+| db.r6g.large | 16x | 6.685 | 6.685 | 1,168.63 | 481.71 | 480.29 | Passed |
 
-After reviewing the failed baseline, the owner authorized a higher-capacity test and completion of the process. The follow-up configuration `serverless_4acu` holds both minimum and maximum at 4 ACU; it is distinct from the original `serverless_v2` 0.5–2 ACU case. Fresh clusters remain required per case. A passing baseline will be followed by the 4x and 16x tiers and the provisioned comparison while budget permits. The failed receipt remains published.
+Values are rounded here; [the receipts](../evidence/upgrade-timing.json) contain exact byte counts, UTC timestamps, all probes and per-table measurements. Upgrade completion requires both target-version control-plane availability and SQL; SQL can recover before AWS finishes reporting the upgrade as complete. The approximately 30-second polling cadence limits timing precision.
+
+Every passing case preserved all five row counts. The per-table total, heap and index byte measurements also matched before and after for the completed cases; `pg_database_size()` changed slightly. This is not a payload-byte checksum comparison.
+
+The timings are individual observations, not a latency distribution or a causal instance-size estimate. The non-monotonic serverless results show why these data should not be extrapolated as a size-to-duration formula. The original low-capacity 4x and 16x cases remain intentionally unmeasured after the baseline failure; they are not part of the authorized six-case follow-up.
+
+After reviewing the failed baseline, the owner authorized a higher-capacity test and completion of the process. The follow-up configuration `serverless_4acu` holds both minimum and maximum at 4 ACU; it is distinct from the original `serverless_v2` 0.5–2 ACU case. Fresh clusters remain required per case. The authorized follow-up covers 1x, 4x and 16x on fixed 4 ACU and on the provisioned class, subject to the shared budget. The failed receipt remains published.
 
 [AWS capacity guidance](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-serverless-v2.setting-capacity.html) recommends raising the minimum and/or maximum for memory pressure and notes that Aurora manages `shared_buffers` dynamically. Holding 4 ACU avoids a low idle capacity; it does not guarantee that the underlying upgrade failure is fixed.
 
 New attempts reserve $5 each, while the original attempt retains its $6 reservation: the prior $11.60 allowance plus $6 plus six new $5 reservations totals $47.60. At the verified $0.12/ACU-hour rate, fixed 4 ACU costs $0.48/hour. Approximately 6.25 hours of bounded phase waits would allow $3 compute, leaving $2 per run for other usage; this is planning, not an enforced cap. Review usage and stop before exceeding the overall $50 constraint.
+
+## Final resource verification
+
+At **2026-10-12T22:16:17.979308+00:00**, independent AWS reads verified all seven attempt inventories: every owned stack was `DELETE_COMPLETE`, every recorded cluster and writer was absent, every managed secret was absent, and each cluster had zero remaining snapshots. This includes the failed baseline and all six successful follow-up cases. The sequential controller exited successfully. No known resources from these seven attempts remain; billing settlement can lag deletion.
 
 ## Experimental design
 
@@ -83,15 +115,15 @@ An initial `available` response from PostgreSQL 16 is not upgrade completion. Re
 ## Run and cleanup
 
 ```sh
-# Existing benchmark venv with benchmarks/requirements.txt; authenticated AWS default profile.
+# AWS CLI installed and authenticated; benchmark venv with benchmarks/requirements.txt.
 .lab/perf-venv/bin/python scripts/run-upgrade-timing.py run \
   --tier 1x --config serverless_4acu --source 16.15 --target 17.11 \
   --prior-spend-usd 11.60
 ```
 
-For a fresh checkout, create a Python virtual environment and install `benchmarks/requirements.txt`, then supply `--expected-account YOUR_INTENDED_12_DIGIT_ACCOUNT_ID`. The runner checks the authenticated STS account against that explicit value before provisioning. Without this option, an existing private `.lab/aws.json` inventory is required. Account values and credentials belong outside Git. Use `--config serverless_4acu` for the authorized fixed-4 follow-up. A process lock serializes launch, reservation and execution; an interrupted process releases the lock but its retained inventory still requires inspection/cleanup.
+The `run` action uses POSIX file locking and requires macOS, Linux or WSL; publication and cleanup do not import the locking module. It checks that the AWS CLI is installed before provisioning. For a fresh checkout, create a Python virtual environment and install `benchmarks/requirements.txt`, then supply `--expected-account YOUR_INTENDED_12_DIGIT_ACCOUNT_ID`. The runner checks the authenticated STS account against that explicit value before provisioning. Without this option, an existing private `.lab/aws.json` inventory is required. Account values and credentials belong outside Git. Use `--config serverless_4acu` for the authorized fixed-4 follow-up. A process lock serializes launch, reservation and execution; an interrupted process releases the lock but its retained inventory still requires inspection/cleanup.
 
-Replace tier/config only after reviewing the prior run and remaining budget. The prior-spend figure is a conservative October 12 readback of Ohio RDS/S3/Secrets Manager/KMS/CloudWatch charges since October 8, including unrelated account activity; it is not an exact lab invoice. It must be refreshed for later reuse. Current regional compute rates read from AWS Pricing were $0.12/ACU-hour (at most $0.24/hour here) and $0.26/hour for standard Aurora `db.r6g.large`; storage, I/O, snapshots, secret/API usage and tax are additional.
+Replace tier/config only after reviewing the prior run and remaining budget. The prior-spend figure is a conservative October 12 readback of Ohio RDS/S3/Secrets Manager/KMS/CloudWatch charges since October 8, including unrelated account activity; it is not an exact lab invoice. It must be refreshed for later reuse. Current regional compute rates read from AWS Pricing were $0.12/ACU-hour ($0.24/hour at the original 2-ACU maximum; $0.48/hour at fixed 4 ACU) and $0.26/hour for standard Aurora `db.r6g.large`; storage, I/O, snapshots, secret/API usage and tax are additional.
 
 The initial harness reserved $6 per attempted case; new follow-up attempts reserve $5 each against the total $50 budget and never refunds that reservation automatically based on delayed billing. This is an operational planning allowance, **not an AWS-enforced spending cap**. It rejects another case while any earlier owned run remains retained. Creation, loading, upgrade and cleanup have bounded waits. Review actual usage/cost between cases and stop the matrix if the allowance becomes insufficient.
 
@@ -119,4 +151,10 @@ Publish only explicitly selected finished receipts:
 .lab/perf-venv/bin/python scripts/run-upgrade-timing.py publish RUN_ID [RUN_ID ...]
 ```
 
-Pending runs cannot be published as failures or successes. The public file lists cases not measured; absence is not a successful result. Each receipt records its execution commit and source hashes because subsequent documentation/publication changes may be newer than the actual benchmark code.
+Pending or unknown outcomes and failures before any upgrade request cannot be published as measured upgrade failures. Failed publication requires a reconciled terminal failure or rollback stage; a timeout or transport exception alone is insufficient. Unsupported receipt schemas and malformed diagnostic/probe envelopes are rejected before replacing existing evidence. The public file lists cases not measured; absence is not a successful result. Each receipt records its execution commit and source hashes because subsequent documentation/publication changes may be newer than the actual benchmark code.
+
+### Review the upgrade evidence without AWS
+
+Start with the six-case table above, then inspect `evidence/upgrade-timing.json`. For each passing case, check both SQL and control-plane versions, the five before/after row counts, measured bytes, upgrade timestamps and probe sequence. The original failed attempt must remain a failure; the two larger low-capacity cases are explicitly unmeasured.
+
+Each `git_head` identifies execution code, not the later publication commit. With the repository history available, verify each recorded `source_hashes` entry against the SHA-256 of `git show <git_head>:<path>`. The source files are the runner, workload generator and infrastructure template. A later reporting fix does not mean an earlier cloud run used that fix. These checks establish internal consistency and code provenance; they do not independently authenticate historical AWS execution or reproduce its timing.

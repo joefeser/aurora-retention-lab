@@ -15,7 +15,7 @@ Only synthetic data belongs in this repository or the lab. This is an experiment
 
 The study is complete for the recorded fixtures, not a production readiness certification. It does not prove a 100M-row completion time or a 10× payload-split improvement. The two-million-row tests use a narrow key projection; the full-schema datasets are smaller. Original work attachments and real data are not included: deterministic synthetic data can be regenerated from the supplied schema shapes and declared assumptions.
 
-The separate [Aurora PostgreSQL 16 → 17 upgrade timing extension](docs/upgrade-timing.md) measures version-upgrade elapsed time and sampled SQL availability using the same synthetic schema. Its results and limitations are independent of the retention performance conclusions above.
+The separate [Aurora PostgreSQL 16 → 17 upgrade timing extension](docs/upgrade-timing.md) records six successful 16.15 → 17.11 upgrades across fixed 4 ACU and `db.r6g.large`, at 1x/4x/16x synthetic data sizes. Measured upgrades took 7:31–9:02; the original 0.5–2 ACU attempt failed and remains in the evidence. Start with its findings table, then inspect the [upgrade receipts](evidence/upgrade-timing.json) and code-provenance instructions. These observations do not guarantee a production maintenance window and are independent of the retention performance conclusions above.
 
 ### Validate the published study without AWS or Docker
 
