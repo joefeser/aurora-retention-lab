@@ -344,6 +344,14 @@ def error_code(exc):
 def cleanup(lab, directory, state):
     """Delete only the recorded run stack and its recorded upgrade snapshots."""
     stack = lab.owned_stack(state, missing_ok=True)
+    if (
+        stack is None
+        and not state.get("stack_id")
+        and state.get("create_outcome") not in ("not_submitted", "rejected")
+    ):
+        raise ValueError(
+            "Creation outcome is uncertain and stack is absent; reconcile the exact run before releasing its reservation"
+        )
     if stack is not None:
         state["stack_id"] = stack["StackId"]
         if not state.get("cluster_id"):
@@ -427,6 +435,22 @@ def run(args):
         return run_locked(args)
 
 
+def create_stack_once(client, directory, state, **arguments):
+    try:
+        return client.create_stack(**arguments)
+    except Exception as exc:
+        if error_code(exc) in (
+            "ValidationError",
+            "AccessDenied",
+            "AccessDeniedException",
+            "InsufficientCapabilitiesException",
+            "LimitExceededException",
+        ):
+            state["create_outcome"] = "rejected"
+            save(directory / "inventory.json", state)
+        raise
+
+
 def run_locked(args):
     if not math.isfinite(args.prior_spend_usd) or args.prior_spend_usd < 0:
         raise ValueError("A finite conservative prior-spend estimate is required")
@@ -469,6 +493,7 @@ def run_locked(args):
         "reserved_usd": RUN_RESERVE_USD,
         "prior_spend_usd": args.prior_spend_usd,
         "cleanup": "retained",
+        "create_outcome": "not_submitted",
     }
     record = {
         "schema_version": 1,
@@ -507,7 +532,12 @@ def run_locked(args):
     try:
         template = (ROOT / "infra/lab.json").read_text()
         lab.cf.validate_template(TemplateBody=template)
-        result = lab.cf.create_stack(
+        state["create_outcome"] = "pending"
+        save(directory / "inventory.json", state)
+        result = create_stack_once(
+            lab.cf,
+            directory,
+            state,
             StackName=state["stack_name"],
             TemplateBody=template,
             Parameters=[
@@ -532,6 +562,7 @@ def run_locked(args):
             TimeoutInMinutes=45,
         )
         state["stack_id"] = result["StackId"]
+        state["create_outcome"] = "accepted"
         save(directory / "inventory.json", state)
         deadline = time.monotonic() + 3600
         while True:

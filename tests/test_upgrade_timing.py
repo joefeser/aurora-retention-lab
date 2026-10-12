@@ -15,6 +15,24 @@ spec.loader.exec_module(u)
 
 
 class UpgradeTests(unittest.TestCase):
+    def test_create_rejection_and_unknown_transport_outcome_are_distinct(self):
+        with tempfile.TemporaryDirectory() as directory:
+            for code, expected in [
+                ("ValidationError", "rejected"),
+                ("ReadTimeoutError", "pending"),
+            ]:
+                error = RuntimeError("fixture")
+                error.response = {"Error": {"Code": code}}
+                client = Mock()
+                client.create_stack.side_effect = error
+                state = {"create_outcome": "pending"}
+                with self.assertRaises(RuntimeError):
+                    u.create_stack_once(
+                        client, Path(directory), state, StackName="owned-run"
+                    )
+                self.assertEqual(state["create_outcome"], expected)
+                client.create_stack.assert_called_once_with(StackName="owned-run")
+
     def test_rollback_state_requires_progress_and_two_stable_sql_samples(self):
         old = dict(
             cluster_status="available",
@@ -104,13 +122,17 @@ class UpgradeTests(unittest.TestCase):
             root = Path(directory)
             lab = Mock()
             lab.owned_stack.return_value = None
-            state = {"stack_name": "owned-run"}
+            state = {"stack_name": "owned-run", "create_outcome": "not_submitted"}
             u.cleanup(lab, root, state)
             lab.cf.delete_stack.assert_not_called()
+            with self.assertRaisesRegex(ValueError, "uncertain"):
+                u.cleanup(
+                    lab, root, {"stack_name": "owned-run", "create_outcome": "pending"}
+                )
             self.assertEqual(
                 state["cleanup"], "verified_stack_deleted_no_cluster_snapshots"
             )
-            state = {"stack_name": "owned-run"}
+            state = {"stack_name": "owned-run", "create_outcome": "not_submitted"}
             lab.owned_stack.side_effect = [
                 {"StackId": "owned-stack-id", "StackStatus": "CREATE_COMPLETE"},
                 {"StackId": "owned-stack-id", "StackStatus": "DELETE_COMPLETE"},
