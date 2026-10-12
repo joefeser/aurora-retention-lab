@@ -84,6 +84,23 @@ def failure_event(events, started):
     return None
 
 
+def rollback_observed(probes, source, pending):
+    """Require upgrade progress followed by two stable source-engine SQL samples."""
+    return (
+        not pending
+        and len(probes) >= 3
+        and any(p.get("cluster_status") == "upgrading" for p in probes[:-2])
+        and all(
+            p.get("cluster_status") == "available"
+            and p.get("writer_status") == "available"
+            and p.get("engine") == source
+            and p.get("server_version") == source
+            and p.get("sql_ok") is True
+            for p in probes[-2:]
+        )
+    )
+
+
 def seed_statements(parents, chunk=1024):
     yield from w.schema_sql(SCHEMA)
     yield w.seed_functions(SCHEMA)
@@ -646,7 +663,9 @@ def run_locked(args):
                 failed = failure_event(
                     events, dt.datetime.fromisoformat(record["upgrade_started_utc"])
                 )
-                if failed:
+                if failed or rollback_observed(
+                    record["probes"], args.source, cluster.get("PendingModifiedValues")
+                ):
                     save(directory / "cluster-events.json", events)
                     if probe["sql_ok"]:
                         rollback = lab.measures()
@@ -672,6 +691,8 @@ def run_locked(args):
                             )
                     raise RuntimeError(
                         "AWS reported upgrade failure: " + failed["Message"]
+                        if failed
+                        else "Observed rollback: source engine and SQL available in two probes after upgrading, with no pending modification"
                     )
             if cluster["Status"] in (
                 "upgrade-failed",

@@ -2,9 +2,9 @@
 
 This extension measures a **quiescent in-place Aurora PostgreSQL upgrade**. It is not an RDS PostgreSQL instance upgrade, blue/green deployment, logical migration, or production downtime guarantee. It does not test partition DDL. Original documents and real data remain outside Git.
 
-## October 12 outcome: failed baseline, no automatic retry
+## Original October 12 attempt: failed low-capacity baseline
 
-The [published receipt](../evidence/upgrade-timing.json) records **one attempted case and zero successful upgrades**. Config A / 1x failed inside AWS-managed `pg_upgrade` and returned to 16.15. We stopped the matrix and preserved the failure; Config B and both larger tiers remain unmeasured. No result supports a ≤1 hour successful upgrade window or an instance-size comparison.
+The original Config A / 1x attempt failed inside AWS-managed `pg_upgrade` and returned to 16.15. We stopped that matrix and preserved the failure in the [published receipts](../evidence/upgrade-timing.json). The owner then authorized the higher-capacity follow-up below. This original attempt supplies no successful-upgrade timing.
 
 | Measurement | Observed result |
 | --- | --- |
@@ -37,6 +37,9 @@ The old engine became available after rollback, so an `available` status alone w
 Cleanup completed on October 12: the stack reached `DELETE_COMPLETE`; independent reads confirmed the cluster, writer and managed secret absent, and zero cluster snapshots. Raw logs and the ownership inventory are retained only locally. AWS billing can lag resource deletion; the $6 run allowance is not a measured invoice.
 
 ## Authorized capacity follow-up
+
+The first fixed-4-ACU baseline succeeded: **481.63 seconds (8 minutes 2 seconds)** from request to verified target-engine/SQL availability. All five counts matched. Database size was 453,478,999 bytes before and 453,412,083 after. The Data API interruption upper envelope was 480.32 seconds. This is one successful 1x observation, not a larger-tier or production-window guarantee. The remaining cases are still running.
+
 
 After reviewing the failed baseline, the owner authorized a higher-capacity test and completion of the process. The follow-up configuration `serverless_4acu` holds both minimum and maximum at 4 ACU; it is distinct from the original `serverless_v2` 0.5–2 ACU case. Fresh clusters remain required per case. A passing baseline will be followed by the 4x and 16x tiers and the provisioned comparison while budget permits. The failed receipt remains published.
 

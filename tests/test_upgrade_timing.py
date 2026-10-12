@@ -15,6 +15,29 @@ spec.loader.exec_module(u)
 
 
 class UpgradeTests(unittest.TestCase):
+    def test_rollback_state_requires_progress_and_two_stable_sql_samples(self):
+        old = dict(
+            cluster_status="available",
+            writer_status="available",
+            engine="16.15",
+            server_version="16.15",
+            sql_ok=True,
+        )
+        progress = dict(
+            cluster_status="upgrading",
+            writer_status="upgrading",
+            engine="16.15",
+            sql_ok=False,
+        )
+        self.assertFalse(u.rollback_observed([old, old, old], "16.15", {}))
+        self.assertFalse(u.rollback_observed([old, progress, old], "16.15", {}))
+        self.assertFalse(
+            u.rollback_observed(
+                [progress, old, old], "16.15", {"EngineVersion": "17.11"}
+            )
+        )
+        self.assertTrue(u.rollback_observed([progress, old, old], "16.15", {}))
+
     def test_success_publication_requires_sql_versions_sizes_and_unique_cases(self):
         import copy
 
