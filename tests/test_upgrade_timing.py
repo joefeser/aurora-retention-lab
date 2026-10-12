@@ -1,6 +1,9 @@
 import importlib.util
 from pathlib import Path
 import unittest
+import json
+import tempfile
+from unittest.mock import patch
 
 spec = importlib.util.spec_from_file_location(
     "upgrade_timing",
@@ -59,6 +62,49 @@ class UpgradeTests(unittest.TestCase):
             ]
         )
         self.assertIsNone(u.availability(probes[:-1])["gap_upper_seconds"])
+
+    def test_publication_rejects_pending_and_incomplete_success_without_writing(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            rid = "a" * 12
+            run = root / rid
+            run.mkdir()
+            output = root / "public.json"
+            output.write_text("preserved")
+            base = {
+                "run_id": rid,
+                "passed": False,
+                "tier": "1x",
+                "config": "serverless_v2",
+                "parent_rows": 32768,
+                "instance_class": "db.serverless",
+                "errors": [],
+            }
+            with patch.object(u, "PRIVATE", root), patch.object(u, "PUBLIC", output):
+                (run / "receipt.json").write_text(json.dumps(base))
+                with self.assertRaises(ValueError):
+                    u.publish([rid])
+                self.assertEqual(output.read_text(), "preserved")
+                base.update(
+                    passed=True,
+                    stage="complete",
+                    engine_before="16.15",
+                    engine_after="17.11",
+                    engine_requested_after="17.11",
+                    upgrade_elapsed_seconds=float("inf"),
+                )
+                (run / "receipt.json").write_text(json.dumps(base))
+                with self.assertRaises(ValueError):
+                    u.publish([rid])
+                self.assertEqual(output.read_text(), "preserved")
+
+    def test_probe_envelope_includes_successful_response_latency(self):
+        probes = [
+            {"elapsed_seconds": 0, "sql_ok": True},
+            {"elapsed_seconds": 30, "response_elapsed_seconds": 60, "sql_ok": False},
+            {"elapsed_seconds": 90, "response_elapsed_seconds": 105, "sql_ok": True},
+        ]
+        self.assertEqual(u.availability(probes)["gap_upper_seconds"], 105)
 
 
 if __name__ == "__main__":

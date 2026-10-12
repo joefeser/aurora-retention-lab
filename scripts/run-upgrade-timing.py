@@ -586,6 +586,81 @@ def run(args):
     return directory
 
 
+def publish(run_ids):
+    if not run_ids or len(set(run_ids)) != len(run_ids):
+        raise ValueError("Select distinct run IDs explicitly")
+    runs = []
+    for rid in run_ids:
+        if not re.fullmatch("[a-f0-9]{12}", rid):
+            raise ValueError("Invalid run ID")
+        record = json.loads((PRIVATE / rid / "receipt.json").read_text())
+        if record.get("run_id") != rid or type(record.get("passed")) is not bool:
+            raise ValueError("Invalid receipt identity/outcome")
+        if record.get("tier") not in TIERS or record.get("config") not in CLASSES:
+            raise ValueError("Unknown case")
+        if (
+            record["parent_rows"] != TIERS[record["tier"]]
+            or record["instance_class"] != CLASSES[record["config"]]
+        ):
+            raise ValueError("Case configuration mismatch")
+        if record["passed"]:
+            if (
+                record["stage"] != "complete"
+                or record["errors"]
+                or not record["engine_before"].startswith("16.")
+                or record["engine_after"] != record["engine_requested_after"]
+            ):
+                raise ValueError("Unverified upgrade outcome")
+            seconds = record.get("upgrade_elapsed_seconds")
+            if (
+                type(seconds) not in (int, float)
+                or not math.isfinite(seconds)
+                or not 0 <= seconds <= 7200
+            ):
+                raise ValueError("Invalid upgrade duration")
+            for phase in ("before", "after"):
+                measured = record[phase]
+                if {
+                    t: v["rows"] for t, v in measured["tables"].items()
+                } != expected_counts(record["parent_rows"]):
+                    raise ValueError("Incomplete graph smoke check")
+                if (
+                    type(measured["database_bytes"]) is not int
+                    or measured["database_bytes"] <= 0
+                ):
+                    raise ValueError("Missing physical size")
+        elif not record.get("errors"):
+            raise ValueError("Pending runs cannot be published as failures")
+        allowed = set(
+            "schema_version run_id passed tier config instance_class min_acu max_acu engine_requested_before engine_requested_after parent_rows profile errors warnings notes git_head source_hashes started_utc stage probes load_elapsed_seconds before size_before_bytes engine_before upgrade_started_utc upgrade_elapsed_seconds upgrade_finished_utc availability after size_after_bytes engine_after smoke_parent_count smoke_queue_count cleanup finished_utc".split()
+        )
+        if not set(record) <= allowed:
+            raise ValueError("Unexpected receipt metadata")
+        encoded = json.dumps(record, allow_nan=False)
+        if re.search(
+            r"arn:aws|[0-9]{12}:|/Users/|Password=|rds\.amazonaws\.com|secretArn|resourceArn|api_token|private_key|access_key",
+            encoded,
+            re.I,
+        ):
+            raise ValueError("Private metadata in receipt")
+        runs.append(record)
+    cases = {(r["tier"], r["config"]) for r in runs}
+    save(
+        PUBLIC,
+        {
+            "schema_version": 1,
+            "scope": "Quiescent Aurora major upgrade; synthetic typical profile, one run per case. Data API availability only; no production downtime guarantee.",
+            "runs": runs,
+            "unmeasured_cases": [
+                {"tier": t, "config": c, "status": "not_measured"}
+                for c in CLASSES
+                for t in TIERS
+                if (t, c) not in cases
+            ],
+        },
+    )
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="action", required=True)
@@ -603,9 +678,13 @@ def main():
     )
     clean = sub.add_parser("cleanup")
     clean.add_argument("run_id")
+    publication = sub.add_parser("publish")
+    publication.add_argument("run_ids", nargs="+")
     args = parser.parse_args()
     if args.action == "run":
         run(args)
+    elif args.action == "publish":
+        publish(args.run_ids)
     else:
         if not re.fullmatch("[a-f0-9]{12}", args.run_id):
             raise ValueError("Invalid run ID")
