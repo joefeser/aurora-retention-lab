@@ -15,6 +15,67 @@ spec.loader.exec_module(u)
 
 
 class UpgradeTests(unittest.TestCase):
+    def test_success_publication_requires_sql_versions_sizes_and_unique_cases(self):
+        import copy
+
+        rid = "b" * 12
+        counts = u.expected_counts(32768)
+        base = dict(
+            run_id=rid,
+            passed=True,
+            tier="1x",
+            config="serverless_4acu",
+            parent_rows=32768,
+            instance_class="db.serverless",
+            min_acu=4.0,
+            max_acu=4.0,
+            stage="complete",
+            errors=[],
+            engine_before="16.15",
+            engine_requested_before="16.15",
+            engine_after="17.11",
+            engine_requested_after="17.11",
+            upgrade_elapsed_seconds=600,
+            size_before_bytes=10000,
+            size_after_bytes=10000,
+        )
+        for phase, version in [("before", "16.15"), ("after", "17.11")]:
+            base[phase] = dict(
+                database_bytes=10000,
+                server_version=version,
+                tables={
+                    t: dict(rows=n, total_bytes=1000, heap_bytes=500, index_bytes=200)
+                    for t, n in counts.items()
+                },
+            )
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / rid).mkdir()
+            output = root / "public.json"
+            with patch.object(u, "PRIVATE", root), patch.object(u, "PUBLIC", output):
+                u.save(root / rid / "receipt.json", base)
+                u.publish([rid])
+                original = output.read_text()
+                for mutation in ("old_sql", "bad_size", "wrong_capacity"):
+                    bad = copy.deepcopy(base)
+                    if mutation == "old_sql":
+                        bad["after"]["server_version"] = "16.15"
+                    elif mutation == "bad_size":
+                        bad["size_after_bytes"] = 42
+                    else:
+                        bad["max_acu"] = 2
+                    u.save(root / rid / "receipt.json", bad)
+                    with self.assertRaises(ValueError):
+                        u.publish([rid])
+                    self.assertEqual(output.read_text(), original)
+                u.save(root / rid / "receipt.json", base)
+                second = copy.deepcopy(base)
+                second["run_id"] = "c" * 12
+                u.save(root / second["run_id"] / "receipt.json", second)
+                with self.assertRaisesRegex(ValueError, "one receipt"):
+                    u.publish([rid, second["run_id"]])
+                self.assertEqual(output.read_text(), original)
+
     def test_cleanup_missing_stack_and_recovered_stack_id(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -146,6 +207,7 @@ class UpgradeTests(unittest.TestCase):
                     passed=True,
                     stage="complete",
                     engine_before="16.15",
+                    engine_requested_before="16.15",
                     engine_after="17.11",
                     engine_requested_after="17.11",
                     upgrade_elapsed_seconds=float("inf"),

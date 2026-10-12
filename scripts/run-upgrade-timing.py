@@ -759,6 +759,8 @@ def publish(run_ids):
                 or record["errors"]
                 or not record["engine_before"].startswith("16.")
                 or record["engine_after"] != record["engine_requested_after"]
+                or not record["engine_after"].startswith("17.")
+                or record["engine_before"] != record["engine_requested_before"]
             ):
                 raise ValueError("Unverified upgrade outcome")
             seconds = record.get("upgrade_elapsed_seconds")
@@ -770,6 +772,10 @@ def publish(run_ids):
                 raise ValueError("Invalid upgrade duration")
             for phase in ("before", "after"):
                 measured = record[phase]
+                if not str(measured.get("server_version", "")).startswith(
+                    "16." if phase == "before" else "17."
+                ):
+                    raise ValueError("Missing SQL engine evidence")
                 if {
                     t: v["rows"] for t, v in measured["tables"].items()
                 } != expected_counts(record["parent_rows"]):
@@ -779,6 +785,24 @@ def publish(run_ids):
                     or measured["database_bytes"] <= 0
                 ):
                     raise ValueError("Missing physical size")
+                if record.get("size_" + phase + "_bytes") != measured["database_bytes"]:
+                    raise ValueError("Inconsistent database size")
+                for table in measured["tables"].values():
+                    if any(
+                        type(table.get(field)) is not int or table[field] < 0
+                        for field in (
+                            "rows",
+                            "total_bytes",
+                            "heap_bytes",
+                            "index_bytes",
+                        )
+                    ):
+                        raise ValueError("Invalid table measurements")
+                    if (
+                        table["total_bytes"]
+                        < table["heap_bytes"] + table["index_bytes"]
+                    ):
+                        raise ValueError("Inconsistent table size")
         elif not record.get("errors"):
             raise ValueError("Pending runs cannot be published as failures")
         allowed = set(
