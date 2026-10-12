@@ -10,6 +10,8 @@ Use standard RDS for PostgreSQL (`Engine=postgres`) in `us-east-2`, starting at 
 
 On October 12, 2026, the Ohio RDS API returned:
 
+The sanitized [version/orderability receipt](../evidence/rds-version-orderability.json) records these API observations without account identifiers.
+
 - `DescribeDBEngineVersions`, with `Engine=postgres`, `EngineVersion=16.8`, and `IncludeAll=true`: `Status=deprecated`.
 - `DescribeOrderableDBInstanceOptions`, with `Engine=postgres`, `EngineVersion=16.8`, and `DBInstanceClass=db.r7g.xlarge`: `InvalidParameterCombination`, with the message `Cannot find version 16.8 for postgres`.
 - The 16.8 engine metadata still listed upgrade targets including 17.11. Upgrade targets for an existing instance and availability for new provisioning are different facts.
