@@ -6,6 +6,27 @@
       "Type": "String",
       "Default": "17.9",
       "AllowedPattern": "17\\.[0-9]+"
+    },
+    "LabMode": {
+      "Type": "String",
+      "Default": "retention",
+      "AllowedValues": [
+        "retention",
+        "upgrade"
+      ]
+    },
+    "UpgradeEngineVersion": {
+      "Type": "String",
+      "Default": "16.8",
+      "AllowedPattern": "16\\.[0-9]+"
+    },
+    "UpgradeInstanceClass": {
+      "Type": "String",
+      "Default": "db.serverless",
+      "AllowedValues": [
+        "db.serverless",
+        "db.r6g.large"
+      ]
     }
   },
   "Resources": {
@@ -136,7 +157,8 @@
             "Ref": "RouteTable"
           }
         ]
-      }
+      },
+      "Condition": "RetentionMode"
     },
     "SecurityGroup": {
       "Type": "AWS::EC2::SecurityGroup",
@@ -212,7 +234,8 @@
         ]
       },
       "DeletionPolicy": "Delete",
-      "UpdateReplacePolicy": "Delete"
+      "UpdateReplacePolicy": "Delete",
+      "Condition": "RetentionMode"
     },
     "ArchivePolicy": {
       "Type": "AWS::S3::BucketPolicy",
@@ -246,7 +269,8 @@
             }
           ]
         }
-      }
+      },
+      "Condition": "RetentionMode"
     },
     "S3Role": {
       "Type": "AWS::IAM::Role",
@@ -334,7 +358,8 @@
             "Value": "synthetic-disposable-poc"
           }
         ]
-      }
+      },
+      "Condition": "RetentionMode"
     },
     "Cluster": {
       "Type": "AWS::RDS::DBCluster",
@@ -396,7 +421,8 @@
         ]
       },
       "DeletionPolicy": "Delete",
-      "UpdateReplacePolicy": "Delete"
+      "UpdateReplacePolicy": "Delete",
+      "Condition": "RetentionMode"
     },
     "Writer": {
       "Type": "AWS::RDS::DBInstance",
@@ -420,7 +446,8 @@
         ]
       },
       "DeletionPolicy": "Delete",
-      "UpdateReplacePolicy": "Delete"
+      "UpdateReplacePolicy": "Delete",
+      "Condition": "RetentionMode"
     },
     "S3ImportRole": {
       "Type": "AWS::IAM::Role",
@@ -506,7 +533,86 @@
             "Value": "synthetic-disposable-poc"
           }
         ]
-      }
+      },
+      "Condition": "RetentionMode"
+    },
+    "UpgradeCluster": {
+      "Type": "AWS::RDS::DBCluster",
+      "Properties": {
+        "Engine": "aurora-postgresql",
+        "EngineVersion": {
+          "Ref": "UpgradeEngineVersion"
+        },
+        "EngineMode": "provisioned",
+        "DatabaseName": "retentionlab",
+        "MasterUsername": "labadmin",
+        "ManageMasterUserPassword": true,
+        "StorageEncrypted": true,
+        "EnableHttpEndpoint": true,
+        "ServerlessV2ScalingConfiguration": {
+          "Fn::If": [
+            "UpgradeServerless",
+            {
+              "MinCapacity": 0.5,
+              "MaxCapacity": 2
+            },
+            {
+              "Ref": "AWS::NoValue"
+            }
+          ]
+        },
+        "DBSubnetGroupName": {
+          "Ref": "SubnetGroup"
+        },
+        "VpcSecurityGroupIds": [
+          {
+            "Ref": "SecurityGroup"
+          }
+        ],
+        "BackupRetentionPeriod": 1,
+        "DeletionProtection": false,
+        "CopyTagsToSnapshot": true,
+        "Tags": [
+          {
+            "Key": "Project",
+            "Value": "aurora-retention-lab"
+          },
+          {
+            "Key": "Purpose",
+            "Value": "pg16-upgrade-bench"
+          }
+        ]
+      },
+      "DeletionPolicy": "Delete",
+      "UpdateReplacePolicy": "Delete",
+      "Condition": "UpgradeMode"
+    },
+    "UpgradeWriter": {
+      "Type": "AWS::RDS::DBInstance",
+      "Properties": {
+        "Engine": "aurora-postgresql",
+        "DBClusterIdentifier": {
+          "Ref": "UpgradeCluster"
+        },
+        "DBInstanceClass": {
+          "Ref": "UpgradeInstanceClass"
+        },
+        "PubliclyAccessible": false,
+        "AutoMinorVersionUpgrade": false,
+        "Tags": [
+          {
+            "Key": "Project",
+            "Value": "aurora-retention-lab"
+          },
+          {
+            "Key": "Purpose",
+            "Value": "pg16-upgrade-bench"
+          }
+        ]
+      },
+      "DeletionPolicy": "Delete",
+      "UpdateReplacePolicy": "Delete",
+      "Condition": "UpgradeMode"
     }
   },
   "Outputs": {
@@ -516,7 +622,8 @@
           "Cluster",
           "DBClusterArn"
         ]
-      }
+      },
+      "Condition": "RetentionMode"
     },
     "SecretArn": {
       "Value": {
@@ -524,12 +631,64 @@
           "Cluster",
           "MasterUserSecret.SecretArn"
         ]
-      }
+      },
+      "Condition": "RetentionMode"
     },
     "Bucket": {
       "Value": {
         "Ref": "Archive"
+      },
+      "Condition": "RetentionMode"
+    },
+    "UpgradeClusterArn": {
+      "Condition": "UpgradeMode",
+      "Value": {
+        "Fn::GetAtt": [
+          "UpgradeCluster",
+          "DBClusterArn"
+        ]
       }
+    },
+    "UpgradeSecretArn": {
+      "Condition": "UpgradeMode",
+      "Value": {
+        "Fn::GetAtt": [
+          "UpgradeCluster",
+          "MasterUserSecret.SecretArn"
+        ]
+      }
+    },
+    "UpgradeClusterId": {
+      "Condition": "UpgradeMode",
+      "Value": {
+        "Ref": "UpgradeCluster"
+      }
+    }
+  },
+  "Conditions": {
+    "RetentionMode": {
+      "Fn::Equals": [
+        {
+          "Ref": "LabMode"
+        },
+        "retention"
+      ]
+    },
+    "UpgradeMode": {
+      "Fn::Equals": [
+        {
+          "Ref": "LabMode"
+        },
+        "upgrade"
+      ]
+    },
+    "UpgradeServerless": {
+      "Fn::Equals": [
+        {
+          "Ref": "UpgradeInstanceClass"
+        },
+        "db.serverless"
+      ]
     }
   }
 }
