@@ -17,6 +17,8 @@ The study is complete for the recorded fixtures, not a production readiness cert
 
 The separate [Aurora PostgreSQL 16 → 17 upgrade timing extension](docs/upgrade-timing.md) records six successful 16.15 → 17.11 upgrades across fixed 4 ACU and `db.r6g.large`, at 1x/4x/16x synthetic data sizes. Measured upgrades took 7:31–9:02; the original 0.5–2 ACU attempt failed and remains in the evidence. Start with its findings table, then inspect the [upgrade receipts](evidence/upgrade-timing.json) and code-provenance instructions. These observations do not guarantee a production maintenance window and are independent of the retention performance conclusions above.
 
+A [standard RDS PostgreSQL timing study](docs/rds-upgrade-timing.md) is being prepared separately, using a 32 GiB Graviton instance and direct PostgreSQL probes. Its measurements must not be substituted with the Aurora results. The notes also record the dated 16.8 provisioning limitation and the 16.15 replacement baseline.
+
 ### Validate the published study without AWS or Docker
 
 From the repository root, using Python 3:
