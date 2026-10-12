@@ -38,7 +38,7 @@ Cleanup completed on October 12: the stack reached `DELETE_COMPLETE`; independen
 
 ## Authorized capacity follow-up
 
-The first fixed-4-ACU baseline succeeded: **481.63 seconds (8 minutes 2 seconds)** from request to verified target-engine/SQL availability. All five counts matched. Database size was 453,478,999 bytes before and 453,412,083 after. The Data API interruption upper envelope was 480.32 seconds. This is one successful 1x observation, not a larger-tier or production-window guarantee. Its stack and upgrade snapshots were then verified deleted. The 4x case also succeeded at **541.99 seconds (9 minutes 2 seconds)** with 1,791,257,175 bytes before upgrade and all five counts preserved. Its API interruption upper envelope was 480.33 seconds; SQL recovered before AWS finished reporting the upgrade as complete. The remaining cases are still running.
+The first fixed-4-ACU baseline succeeded: **481.63 seconds (8 minutes 2 seconds)** from request to verified target-engine/SQL availability. All five counts matched. Database size was 453,478,999 bytes before and 453,412,083 after. The Data API interruption upper envelope was 480.32 seconds. This is one successful 1x observation, not a larger-tier or production-window guarantee. Its stack and upgrade snapshots were then verified deleted. The 4x case also succeeded at **541.99 seconds (9 minutes 2 seconds)** with 1,791,257,175 bytes before upgrade and all five counts preserved. Its API interruption upper envelope was 480.33 seconds; SQL recovered before AWS finished reporting the upgrade as complete. The 16x case also succeeded at **451.41 seconds (7 minutes 31 seconds)** with 7,177,587,287 bytes (6.68 GiB) before upgrade; all five counts matched. Its API interruption upper envelope was 420.21 seconds. All three fixed-4-ACU sizes have passed and their stacks and upgrade snapshots were verified deleted. The provisioned comparison is still running.
 
 
 After reviewing the failed baseline, the owner authorized a higher-capacity test and completion of the process. The follow-up configuration `serverless_4acu` holds both minimum and maximum at 4 ACU; it is distinct from the original `serverless_v2` 0.5–2 ACU case. Fresh clusters remain required per case. A passing baseline will be followed by the 4x and 16x tiers and the provisioned comparison while budget permits. The failed receipt remains published.
@@ -61,7 +61,7 @@ The existing `benchmarks/workload.py` **typical** profile supplies the five rela
 
 The prior ~425 MiB figure and its multiples are sizing expectations, not acceptance targets. We do not pad values, disable compression, or manufacture uncompressible data to hit them. `pg_database_size()` and each table's `pg_total_relation_size()`, heap size and index size are recorded before/after. Total relation size naturally includes TOAST; it must not be described as uncompressed logical HTML size. Compression settings are recorded, and comparisons use measured sizes rather than inferred multiples. Database size includes catalogs and other database overhead.
 
-Configurations are Serverless v2 (`db.serverless`, 0.5–2 ACU) and provisioned `db.r6g.large`, each with one private writer and no reader. They are different capacity models, not equal hardware. One run per case is an observation, not a latency distribution or proof of a causal instance-size effect.
+Configurations are the original Serverless v2 case (`db.serverless`, 0.5–2 ACU), the authorized fixed-4-ACU follow-up (`db.serverless`, minimum and maximum both 4), and provisioned `db.r6g.large`, each with one private writer and no reader. Capacity is configured when each fresh cluster is created. They are different capacity models, not equal hardware. One run per case is an observation, not a latency distribution or proof of a causal instance-size effect.
 
 ## Version selection and measurement
 
@@ -85,7 +85,7 @@ An initial `available` response from PostgreSQL 16 is not upgrade completion. Re
 ```sh
 # Existing benchmark venv with benchmarks/requirements.txt; authenticated AWS default profile.
 .lab/perf-venv/bin/python scripts/run-upgrade-timing.py run \
-  --tier 1x --config serverless_v2 --source 16.15 --target 17.11 \
+  --tier 1x --config serverless_4acu --source 16.15 --target 17.11 \
   --prior-spend-usd 11.60
 ```
 
