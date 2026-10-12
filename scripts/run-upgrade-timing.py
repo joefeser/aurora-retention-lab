@@ -24,7 +24,17 @@ spec = importlib.util.spec_from_file_location(
 w = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(w)
 TIERS = {"1x": 32768, "4x": 131072, "16x": 524288}
-CLASSES = {"serverless_v2": "db.serverless", "provisioned": "db.r6g.large"}
+CLASSES = {
+    "serverless_v2": "db.serverless",
+    "serverless_4acu": "db.serverless",
+    "provisioned": "db.r6g.large",
+}
+CAPACITIES = {
+    "serverless_v2": (0.5, 2.0),
+    "serverless_4acu": (4.0, 4.0),
+    "provisioned": (None, None),
+}
+RUN_RESERVE_USD = 5.0
 SCHEMA = "upgrade_bench"
 
 
@@ -359,9 +369,9 @@ def run(args):
         )
     # Reservations are never refunded automatically based on delayed billing.
     reserved = sum(s.get("reserved_usd", 6.0) for s in existing)
-    if args.prior_spend_usd + reserved + 6 > 50:
+    if args.prior_spend_usd + reserved + RUN_RESERVE_USD > 50:
         raise ValueError(
-            "Conservative six-dollar run reserve would exceed total $50 budget"
+            "Conservative five-dollar run reserve would exceed total $50 budget"
         )
     rid = uuid.uuid4().hex[:12]
     directory = PRIVATE / rid
@@ -372,7 +382,7 @@ def run(args):
         "account": old["account"],
         "region": args.region,
         "created_at": utc(),
-        "reserved_usd": 6.0,
+        "reserved_usd": RUN_RESERVE_USD,
         "prior_spend_usd": args.prior_spend_usd,
         "cleanup": "retained",
     }
@@ -383,8 +393,8 @@ def run(args):
         "tier": args.tier,
         "config": args.config,
         "instance_class": CLASSES[args.config],
-        "min_acu": 0.5 if args.config == "serverless_v2" else None,
-        "max_acu": 2.0 if args.config == "serverless_v2" else None,
+        "min_acu": CAPACITIES[args.config][0],
+        "max_acu": CAPACITIES[args.config][1],
         "engine_requested_before": args.source,
         "engine_requested_after": args.target,
         "parent_rows": TIERS[args.tier],
@@ -420,6 +430,12 @@ def run(args):
                 {"ParameterKey": "LabMode", "ParameterValue": "upgrade"},
                 {"ParameterKey": "UpgradeEngineVersion", "ParameterValue": args.source},
                 {
+                    "ParameterKey": "UpgradeCapacityMode",
+                    "ParameterValue": (
+                        "fixed4" if args.config == "serverless_4acu" else "baseline"
+                    ),
+                },
+                {
                     "ParameterKey": "UpgradeInstanceClass",
                     "ParameterValue": CLASSES[args.config],
                 },
@@ -451,6 +467,12 @@ def run(args):
             or writer["DBInstanceClass"] != CLASSES[args.config]
         ):
             raise ValueError("Pre-load version/class mismatch")
+        if CLASSES[args.config] == "db.serverless":
+            capacity = cluster["ServerlessV2ScalingConfiguration"]
+            if (capacity["MinCapacity"], capacity["MaxCapacity"]) != CAPACITIES[
+                args.config
+            ]:
+                raise ValueError("Live serverless capacity mismatch")
         record["stage"] = "load"
         persist_receipt(directory, record)
         started = time.monotonic()
@@ -638,6 +660,10 @@ def publish(run_ids):
             or record["instance_class"] != CLASSES[record["config"]]
         ):
             raise ValueError("Case configuration mismatch")
+        if (record.get("min_acu"), record.get("max_acu")) != CAPACITIES[
+            record["config"]
+        ]:
+            raise ValueError("Receipt capacity does not match named configuration")
         if record["passed"]:
             if (
                 record["stage"] != "complete"

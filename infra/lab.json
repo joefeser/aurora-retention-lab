@@ -27,6 +27,14 @@
         "db.serverless",
         "db.r6g.large"
       ]
+    },
+    "UpgradeCapacityMode": {
+      "Type": "String",
+      "Default": "baseline",
+      "AllowedValues": [
+        "baseline",
+        "fixed4"
+      ]
     }
   },
   "Resources": {
@@ -553,8 +561,20 @@
           "Fn::If": [
             "UpgradeServerless",
             {
-              "MinCapacity": 0.5,
-              "MaxCapacity": 2
+              "MinCapacity": {
+                "Fn::If": [
+                  "UpgradeFixed4",
+                  4,
+                  0.5
+                ]
+              },
+              "MaxCapacity": {
+                "Fn::If": [
+                  "UpgradeFixed4",
+                  4,
+                  2
+                ]
+              }
             },
             {
               "Ref": "AWS::NoValue"
@@ -688,6 +708,14 @@
           "Ref": "UpgradeInstanceClass"
         },
         "db.serverless"
+      ]
+    },
+    "UpgradeFixed4": {
+      "Fn::Equals": [
+        {
+          "Ref": "UpgradeCapacityMode"
+        },
+        "fixed4"
       ]
     }
   }

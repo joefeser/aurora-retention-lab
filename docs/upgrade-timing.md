@@ -36,6 +36,14 @@ The old engine became available after rollback, so an `available` status alone w
 
 Cleanup completed on October 12: the stack reached `DELETE_COMPLETE`; independent reads confirmed the cluster, writer and managed secret absent, and zero cluster snapshots. Raw logs and the ownership inventory are retained only locally. AWS billing can lag resource deletion; the $6 run allowance is not a measured invoice.
 
+## Authorized capacity follow-up
+
+After reviewing the failed baseline, the owner authorized a higher-capacity test and completion of the process. The follow-up configuration `serverless_4acu` holds both minimum and maximum at 4 ACU; it is distinct from the original `serverless_v2` 0.5–2 ACU case. Fresh clusters remain required per case. A passing baseline will be followed by the 4x and 16x tiers and the provisioned comparison while budget permits. The failed receipt remains published.
+
+[AWS capacity guidance](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-serverless-v2.setting-capacity.html) recommends raising the minimum and/or maximum for memory pressure and notes that Aurora manages `shared_buffers` dynamically. Holding 4 ACU avoids a low idle capacity; it does not guarantee that the underlying upgrade failure is fixed.
+
+New attempts reserve $5 each, while the original attempt retains its $6 reservation: the prior $11.60 allowance plus $6 plus six new $5 reservations totals $47.60. At the verified $0.12/ACU-hour rate, fixed 4 ACU costs $0.48/hour. Approximately 6.25 hours of bounded phase waits would allow $3 compute, leaving $2 per run for other usage; this is planning, not an enforced cap. Review usage and stop before exceeding the overall $50 constraint.
+
 ## Experimental design
 
 Use a fresh PostgreSQL 16 cluster for every size/configuration. The original retention lab, including its VPC and subnet group, was verified deleted on October 9. `infra/lab.json` therefore adds an opt-in `LabMode=upgrade` with `UpgradeCluster`/`UpgradeWriter` and recreates the same isolated network layout. It does not recreate the old PostgreSQL 17 cluster or its S3 archive resources. Each run has a distinct stack and private ownership inventory under `.lab/upgrade-timing/`; `.lab/aws.json` remains the original lab inventory.
@@ -80,7 +88,7 @@ An initial `available` response from PostgreSQL 16 is not upgrade completion. Re
 
 Replace tier/config only after reviewing the prior run and remaining budget. The prior-spend figure is a conservative October 12 readback of Ohio RDS/S3/Secrets Manager/KMS/CloudWatch charges since October 8, including unrelated account activity; it is not an exact lab invoice. It must be refreshed for later reuse. Current regional compute rates read from AWS Pricing were $0.12/ACU-hour (at most $0.24/hour here) and $0.26/hour for standard Aurora `db.r6g.large`; storage, I/O, snapshots, secret/API usage and tax are additional.
 
-The harness reserves $6 per attempted case against the total $50 budget and never refunds that reservation automatically based on delayed billing. This is an operational planning allowance, **not an AWS-enforced spending cap**. It rejects another case while any earlier owned run remains retained. Creation, loading, upgrade and cleanup have bounded waits. Review actual usage/cost between cases and stop the matrix if the allowance becomes insufficient.
+The initial harness reserved $6 per attempted case; new follow-up attempts reserve $5 each against the total $50 budget and never refunds that reservation automatically based on delayed billing. This is an operational planning allowance, **not an AWS-enforced spending cap**. It rejects another case while any earlier owned run remains retained. Creation, loading, upgrade and cleanup have bounded waits. Review actual usage/cost between cases and stop the matrix if the allowance becomes insufficient.
 
 Failed upgrades and unknown CLI outcomes are recorded without resubmitting the upgrade. Raw CLI stdout/stderr and failure details stay in the private run directory; public receipts contain typed failure metadata, not account IDs, ARNs or credentials. Failure stops that run and leaves it for inspection. There is no automatic retry of a failed case.
 
