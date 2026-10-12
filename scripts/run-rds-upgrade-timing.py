@@ -18,7 +18,7 @@ import uuid
 ROOT = Path(__file__).resolve().parents[1]
 PRIVATE = ROOT / '.lab/rds-upgrade-timing'
 TIERS = {'small': 32768, 'medium': 524288, 'large': 2097152}
-RESERVE_USD = 8.0  # Conservative admission reservation; never a billing guarantee.
+RESERVE_USD = 7.0  # Conservative admission reservation; never a billing guarantee.
 spec = importlib.util.spec_from_file_location('aurora_fixture', ROOT / 'scripts/run-upgrade-timing.py')
 fixture = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(fixture)
@@ -54,6 +54,13 @@ def matched(before, after, parents):
     expected = fixture.expected_counts(parents)
     return all(before['tables'][name]['rows'] == after['tables'][name]['rows'] == count
                for name, count in expected.items())
+
+
+def reserved_total(receipts, next_reservation):
+    reservations = [r['budget_reservation_usd'] for r in receipts] + [next_reservation]
+    if any(not isinstance(x, (int, float)) or not math.isfinite(x) or x <= 0 for x in reservations):
+        raise ValueError('Invalid recorded budget reservation')
+    return sum(reservations)
 
 
 def source_receipt():
@@ -229,10 +236,12 @@ def run(args):
         source = source_receipt()
         if not (PRIVATE / 'global-bundle.pem').is_file():
             raise ValueError('Download the documented AWS TLS certificate bundle first')
-        prior = [json.loads(p.read_text()) for p in PRIVATE.glob('*/inventory.json')]
+        prior_paths = list(PRIVATE.glob('*/inventory.json'))
+        prior = [json.loads(p.read_text()) for p in prior_paths]
         if any(s.get('cleanup') != 'verified_stack_deleted_database_snapshots_secret_absent' for s in prior):
             raise ValueError('Previous run needs reconciliation/cleanup before another case')
-        if (len(prior) + 1) * RESERVE_USD > args.budget_usd:
+        previous_receipts = [json.loads((p.parent / 'receipt.json').read_text()) for p in prior_paths]
+        if reserved_total(previous_receipts, RESERVE_USD) > args.budget_usd:
             raise ValueError('Admission reservations exceed batch planning budget')
         local = json.loads((ROOT / '.lab/aws.json').read_text())
         lab = Lab(args.region, local['account'])

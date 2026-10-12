@@ -81,6 +81,14 @@ class RdsUpgradeTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'approved public schema'):
             u.public_receipt(data)
 
+    def test_budget_keeps_original_reservations_when_configuration_changes(self):
+        previous = [{'budget_reservation_usd': 8}, {'budget_reservation_usd': 8},
+                    {'budget_reservation_usd': 7}]
+        self.assertEqual(30, u.reserved_total(previous, 7))
+        self.assertEqual(31, u.reserved_total(previous, 8))
+        with self.assertRaisesRegex(ValueError, 'Invalid'):
+            u.reserved_total([{'budget_reservation_usd': float('nan')}], 7)
+
 
 if __name__ == '__main__':
     unittest.main()
