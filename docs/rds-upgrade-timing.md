@@ -1,6 +1,6 @@
-# Standard RDS PostgreSQL upgrade timing: planned follow-up
+# Standard RDS PostgreSQL upgrade timing: run guide
 
-Status: planned; no standard-RDS benchmark results have been collected yet. The existing Aurora receipts remain Aurora-only evidence.
+Status: in progress. The first two standard-RDS cases are published in the [results report](rds-upgrade-results.md); the large fixture and instance-class comparison are pending. The existing Aurora receipts remain Aurora-only evidence.
 
 ## Selected version and instance
 
