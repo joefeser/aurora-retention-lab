@@ -141,5 +141,54 @@ class RdsUpgradeTests(unittest.TestCase):
         self.assertEqual(1, call.call_count)
 
 
+    def test_malformed_receipts_require_reconciliation(self):
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / 'inventory.json'
+            receipt = path.parent / 'receipt.json'
+            for raw in ['{', 'null', '[]', '"text"', '{}',
+                        '{"budget_reservation_usd":true}', '{"budget_reservation_usd":"7"}',
+                        '{"budget_reservation_usd":-1}', '{"budget_reservation_usd":NaN}']:
+                with self.subTest(raw=raw):
+                    receipt.write_text(raw)
+                    with self.assertRaisesRegex(ValueError, 'reconcile private inventory'):
+                        u.prior_reservations([path])
+            receipt.write_text('{"budget_reservation_usd":8}')
+            self.assertEqual([{'budget_reservation_usd': 8}], u.prior_reservations([path]))
+
+    def test_confirmed_deletion_then_absence_and_recovery(self):
+        lab = Mock()
+        lab.stack.side_effect = [{'StackId': 'owned', 'StackStatus': 'CREATE_COMPLETE'}, None]
+        lab.db.return_value = None
+        lab.rds.get_paginator.return_value.paginate.return_value = []
+        state = {'run_id': 'mine'}
+        with TemporaryDirectory() as directory:
+            u.cleanup(lab, Path(directory), state)
+            saved = json.loads((Path(directory) / 'inventory.json').read_text())
+            self.assertEqual('owned', saved['stack_delete_accepted'])
+            self.assertEqual('owned', saved['stack_deletion_observed'])
+            lab.stack.side_effect = None
+            lab.stack.return_value = None
+            u.cleanup(lab, Path(directory), saved)
+        lab.cf.delete_stack.assert_called_once_with(StackName='owned')
+        self.assertEqual('verified_stack_deleted_database_snapshots_secret_absent', saved['cleanup'])
+
+    def test_observed_terminal_deletion_is_saved_before_absent_poll(self):
+        lab = Mock()
+        lab.stack.side_effect = [{'StackId': 'owned', 'StackStatus': 'DELETE_COMPLETE'}, None]
+        lab.db.return_value = None
+        lab.rds.get_paginator.return_value.paginate.return_value = []
+        with TemporaryDirectory() as directory:
+            state = {'run_id': 'mine'}
+            u.cleanup(lab, Path(directory), state)
+            self.assertEqual('owned', state['stack_deletion_observed'])
+        lab.cf.delete_stack.assert_not_called()
+
+    def test_unbound_deletion_does_not_authorize_absence(self):
+        for state in [{'stack_id': 'owned'}, {'stack_id': 'owned', 'stack_delete_accepted': 'other'},
+                      {'stack_deletion_observed': 'owned'}]:
+            with self.subTest(state=state):
+                self.assertFalse(u.deletion_confirmed(state))
+
+
 if __name__ == '__main__':
     unittest.main()

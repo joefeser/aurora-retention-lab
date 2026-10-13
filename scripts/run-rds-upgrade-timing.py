@@ -75,6 +75,8 @@ def matched(before, after, parents):
 
 
 def reserved_total(receipts, next_reservation):
+    if any(not isinstance(r, dict) or 'budget_reservation_usd' not in r for r in receipts):
+        raise ValueError('Malformed prior receipt; reconcile private inventory before another case')
     reservations = [r['budget_reservation_usd'] for r in receipts] + [next_reservation]
     if any(isinstance(x, bool) or not isinstance(x, (int, float)) or not math.isfinite(x) or x <= 0 for x in reservations):
         raise ValueError('Invalid recorded budget reservation')
@@ -115,7 +117,12 @@ def prior_reservations(paths):
         receipt = path.parent / 'receipt.json'
         if not receipt.is_file():
             raise ValueError('Missing prior receipt; reconcile private inventory before another case')
-        records.append(json.loads(receipt.read_text()))
+        try:
+            record = json.loads(receipt.read_text())
+            reserved_total([record], RESERVE_USD)
+        except (ValueError, TypeError, OverflowError) as exc:
+            raise ValueError('Malformed prior receipt; reconcile private inventory before another case') from exc
+        records.append(record)
     return records
 
 
@@ -233,12 +240,24 @@ def wait_for(check, seconds, label):
         time.sleep(20)
 
 
+def deletion_confirmed(state):
+    """Absence is terminal only after deletion evidence bound to the exact stack."""
+    identifier = state.get('stack_id')
+    return bool(identifier and (state.get('stack_delete_accepted') == identifier or
+                                state.get('stack_deletion_observed') == identifier))
+
+
 def cleanup(lab, directory, state):
     stack = lab.stack(state)
-    if stack is None:
+    if stack is None and not deletion_confirmed(state):
         # A missing lookup cannot disprove acceptance of an ambiguous create.
         raise ValueError('Stack outcome unresolved; retain inventory and reconcile before cleanup')
-    state['stack_id'] = stack['StackId']
+    if stack:
+        state['stack_id'] = stack['StackId']
+        if stack['StackStatus'] in ('DELETE_IN_PROGRESS', 'DELETE_COMPLETE'):
+            state['stack_delete_accepted'] = stack['StackId']
+        if stack['StackStatus'] == 'DELETE_COMPLETE':
+            state['stack_deletion_observed'] = stack['StackId']
     save(directory / 'inventory.json', state)
     db = lab.db(state, absent_ok=True)
     if state.get('upgrade_requested') and db and (db['DBInstanceStatus'] != 'available' or db['EngineVersion'] != state['target_version']):
@@ -257,11 +276,17 @@ def cleanup(lab, directory, state):
     save(directory / 'inventory.json', state)
     if stack and stack['StackStatus'] not in ('DELETE_IN_PROGRESS', 'DELETE_COMPLETE'):
         lab.cf.delete_stack(StackName=stack['StackId'])
+        state['stack_delete_accepted'] = stack['StackId']
+        save(directory / 'inventory.json', state)
     def deleted():
         current = lab.stack(state)
         if current and current['StackStatus'] == 'DELETE_FAILED':
             raise RuntimeError('Cleanup failed; inspect private stack events')
-        return current is not None and current['StackStatus'] == 'DELETE_COMPLETE'
+        complete = (current is not None and current['StackStatus'] == 'DELETE_COMPLETE') or (current is None and deletion_confirmed(state))
+        if complete:
+            state['stack_deletion_observed'] = state['stack_id']
+            save(directory / 'inventory.json', state)
+        return complete
     wait_for(deleted, 3600, 'Stack deletion timeout')
     for identifier in state['snapshots']:
         try:
