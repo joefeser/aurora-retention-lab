@@ -41,6 +41,8 @@ The 400 GiB allocation holds the gp3 baseline at 12,000 IOPS / 500 MiB/s across 
 
 Prerequisites: AWS CLI authentication in the default profile, the existing private `.lab/aws.json` account inventory, and the Python dependencies in `benchmarks/requirements.txt`. Download the public AWS certificate bundle:
 
+For a fresh clone, create the ignored `.lab/aws.json` with an `account` property containing the expected 12-digit **lab** account ID. The harness compares that expectation with STS before provisioning. Linux, macOS or WSL is required for its file lock. Prepare the Python environment with `python3 -m venv .lab/perf-venv` and `.lab/perf-venv/bin/pip install -r benchmarks/requirements.txt`.
+
 ```sh
 mkdir -p .lab/rds-upgrade-timing
 curl -fsSL https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem \
@@ -67,6 +69,16 @@ The runner reserves $7 for each new attempted case, retains the original $8 rese
 Review the first two receipts before deciding on the 2,097,152-parent large case or an instance-class comparison. The fixtures use 32,768, 524,288 and 2,097,152 parents respectively. Five relation counts, sampled first/last-row content hashes and constraints are checked before and after. This is not a full database content checksum or application compatibility test.
 
 Probes open a fresh TLS connection and execute `SELECT 1` plus a version query. They wait five seconds between completed attempts; connection and query time make the actual interval longer during failures. Each interruption has a separate last-success / first-success envelope, with unbounded edges labeled. Twenty-second control-plane polling separately bounds request-to-target-readiness. AWS events remain private, while their timestamps/categories can be published. Neither mechanism isolates the `pg_upgrade` phase.
+
+While an owned instance still exists, capture its service logs from a separate terminal:
+
+```sh
+.lab/perf-venv/bin/python scripts/capture-rds-upgrade-logs.py --run-id RUN_ID
+```
+
+Run this after the target engine starts responding and before teardown. The collector verifies ownership, saves bounded raw captures privately, and exports only exact phase labels such as `Linking user relation files`. The initial two cases used the same APIs manually; later captures record the collector commit and source hash. Public observations are in `evidence/rds-upgrade-log-observations.json`. Captured phase labels do not define SQL downtime.
+
+For independent cleanup verification, inspect retained automated backups using the original `DbiResourceId` or enumerate and match the recorded unique instance identifiers. `DescribeDBInstanceAutomatedBackups` with its `DBInstanceIdentifier` request parameter requires an existing instance, so a not-found response after deletion is insufficient evidence. See the [AWS API contract](https://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_DescribeDBInstanceAutomatedBackups.html).
 
 After all selected cases have passed and cleanup is verified, publish the sanitized receipts:
 
