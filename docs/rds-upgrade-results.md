@@ -12,6 +12,8 @@ One trial per case, PostgreSQL **16.15 → 17.11**, Ohio (`us-east-2`), Single-A
 | medium | db.r7g.xlarge / 32 / 4 | 6.455 | 4:06 | 7:53 | 2:33 | 28:16 |
 | large | db.r7g.xlarge / 32 / 4 | 25.800 | 16:15 | 12:42 | 3:03 | 43:31 |
 
+On the 32 GiB baseline, measured database size rose from 0.411 to 25.800 GiB (62.8×). The three SQL interruption upper bounds were 3:03, 2:33, 3:03. Managed request-to-readiness rose from 6:32 to 12:42. The observed SQL interruption did not grow in proportion to bytes in this fixed-object fixture. This is a descriptive comparison of three one-off runs, not a production scaling law.
+
 Request-to-readiness ends only after AWS reports the target version available and a fresh PostgreSQL connection has returned the target version. SQL interruption is a last-success to first-success observation envelope, not an exact outage duration. The full receipts retain every episode; the table shows the largest bound if there are multiple episodes. No failed sample would not prove zero downtime between probes.
 
 [Full sanitized receipts](../evidence/upgrade-timing-rds.json) contain all probes, AWS status samples, five-table byte measurements, constraints, sampled content hashes, configuration and code hashes. [CSV](report/rds-upgrade-timing.csv) retains unrounded values. [Service-log observations](../evidence/rds-upgrade-log-observations.json) retain safe phase labels and raw-capture hashes; raw logs remain private.

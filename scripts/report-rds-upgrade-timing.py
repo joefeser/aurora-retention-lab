@@ -49,6 +49,16 @@ def main():
     table = ['| Fixture | Class / RAM GiB / vCPU | Database GiB | Load | Request → ready | Largest SQL interruption upper bound | Total incl. setup/teardown |',
              '|---|---|---:|---:|---:|---:|---:|']
     table.extend(f"| {r['tier']} | {r['instance_class']} / {r['memory_gib']} / {r['vcpu']} | {r['database_gib']:.3f} | {clock(r['load_seconds'])} | {clock(r['request_to_ready_seconds'])} | {clock(r['sql_episode_upper_seconds'])} | {clock(r['total_seconds'])} |" for r in rows)
+    baseline = [r for r in rows if r['instance_class'] == 'db.r7g.xlarge']
+    finding = ''
+    if len(baseline) == 3:
+        first, last = baseline[0], baseline[-1]
+        finding = (f"On the 32 GiB baseline, measured database size rose from {first['database_gib']:.3f} "
+            f"to {last['database_gib']:.3f} GiB ({last['database_gib']/first['database_gib']:.1f}×). "
+            f"The three SQL interruption upper bounds were {', '.join(clock(r['sql_episode_upper_seconds']) for r in baseline)}. "
+            f"Managed request-to-readiness rose from {clock(first['request_to_ready_seconds'])} "
+            f"to {clock(last['request_to_ready_seconds'])}. The observed SQL interruption did not grow "
+            'in proportion to bytes in this fixed-object fixture. This is a descriptive comparison of three one-off runs, not a production scaling law.')
     counts = ['| Fixture / RAM | Parents | Queue | Push children | History | Templates |', '|---|---:|---:|---:|---:|---:|']
     for c in cases:
         t = c['before']['tables']
@@ -70,6 +80,8 @@ def main():
 One trial per case, PostgreSQL **16.15 → 17.11**, Ohio (`us-east-2`), Single-AZ, encrypted **400 GiB gp3**, observed **12,000 IOPS / 500 MiB/s**. The instance classes use Graviton3. Times are minutes:seconds, rounded for readability. Allocated storage and measured database bytes are different quantities.
 
 {chr(10).join(table)}
+
+{finding}
 
 Request-to-readiness ends only after AWS reports the target version available and a fresh PostgreSQL connection has returned the target version. SQL interruption is a last-success to first-success observation envelope, not an exact outage duration. The full receipts retain every episode; the table shows the largest bound if there are multiple episodes. No failed sample would not prove zero downtime between probes.
 
