@@ -1,0 +1,25 @@
+Follow-up: independent RDS study review and internal rehearsal plan
+
+Thank you for independently checking the four synthetic RDS timing receipts. Please revise the team assessment with the corrections below, then identify the smallest internal rehearsal needed to establish an upgrade window. Use the private statistics and environment facts already available in this work workspace. This is an analysis request, not authorization to create resources, change production SQL, truncate data or execute upgrades.
+
+Public study: https://github.com/joefeser/aurora-retention-lab
+Start with docs/rds-upgrade-results.md, evidence/upgrade-timing-rds.json, docs/rds-review-dispositions.md and the per-trial execution commits/source hashes.
+
+Two corrections to the review:
+
+1. The explicit post-upgrade ANALYZE runs AFTER request_to_ready_seconds is recorded. It belongs to validation_seconds and total lifecycle time, not request-to-ready. Validation combines after-measurement checks and ANALYZE; those two substeps were not separately timed. Managed request-to-readiness and the sampled SQL interruption envelope are different measurements. Do not claim that individual AWS preparation, snapshot, restart or recovery phases were separately isolated by this harness.
+2. Replace “catalog complexity, not bytes” with a qualified statement: catalog complexity matters, and stored bytes alone do not justify linear downtime extrapolation. Our experiment increased data size while holding the five-table object structure fixed. It did not experimentally vary object counts or prove catalog complexity is the dominant bottleneck in the private environment. Keep that explanation as a hypothesis supported by relevant primary documentation, not a measured production conclusion.
+
+Please return:
+
+A. A corrected, short team-ready assessment separating independently verified public results, private facts, inferences and unknowns. Do not describe the four one-off synthetic trials as a production timing guarantee. Preserve the historical validation limitations: sampled content checks, constraint names/types/validation flags rather than full definitions, and service-log captures for only the three 32 GiB runs.
+
+B. A private-environment comparison matrix and missing-evidence checklist. Confirm actual RDS service, source version, instance class, CPU/RAM, storage settings, Single-AZ/Multi-AZ topology, all databases, relation/index/partition counts, installed extensions, custom parameters and cross-region replication mechanism. Do not infer RAM from architecture or PostgreSQL settings. For logical replication, distinguish slot types and state and verify the exact RDS major-upgrade prerequisites using current AWS primary documentation; do not treat every slot or foreign-data-wrapper connection as equivalent.
+
+C. An internal Test A plan: restore an approved stage snapshot to an isolated matching RDS instance, document restored engine version and hydration/warmup, and measure authorized upgrade behavior with timestamped read/write probes, managed-operation status, logs/events, application/pool recovery and post-upgrade statistics work. Define success, timeout, rollback/restore readiness and cleanup criteria before execution. Use the outcome to establish a window rather than derive one by multiplying our small-fixture timing by production bytes.
+
+D. An optional Test A2 plan from the same snapshot/configuration with an approved retention cleanup. Validate dependencies, legal/business retention requirements and the archive/replication pipeline first. Treat any benefit to upgrade, backups or recovery as a hypothesis to measure. Do not recommend truncating a private table merely because it is large. Separate the time and cost of cleanup from the subsequent upgrade.
+
+E. A sanitized response for the public-repo agent: corrections or confirmed caveats, whether any public patch is needed, and the next evidence required. Omit company names, internal schema/table names, endpoints, account IDs, real aggregate counts, screenshots and real data. Keep the detailed private comparison exclusively in the work environment. Public synthetic fixture values are safe to repeat.
+
+Identify the actual reviewer/model used without making model choice a quality claim. Base acceptance on reproducible calculations and evidence. If a result is unknown, say so rather than filling it with a confident estimate.
