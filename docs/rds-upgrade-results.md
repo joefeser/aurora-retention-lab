@@ -1,6 +1,6 @@
 # Standard RDS PostgreSQL 16 → 17 timing results
 
-2/4 planned synthetic cases completed and cleaned. Unmeasured: large on db.r7g.xlarge, medium on db.r7g.large. These are standard RDS (`Engine=postgres`) measurements; the separate Aurora receipts are not used in this report.
+3/4 planned synthetic cases completed and cleaned. Unmeasured: medium on db.r7g.large. These are standard RDS (`Engine=postgres`) measurements; the separate Aurora receipts are not used in this report.
 
 ## Measurements
 
@@ -10,6 +10,7 @@ One trial per case, PostgreSQL **16.15 → 17.11**, Ohio (`us-east-2`), Single-A
 |---|---|---:|---:|---:|---:|---:|
 | small | db.r7g.xlarge / 32 / 4 | 0.411 | 0:18 | 6:32 | 3:03 | 18:01 |
 | medium | db.r7g.xlarge / 32 / 4 | 6.455 | 4:06 | 7:53 | 2:33 | 28:16 |
+| large | db.r7g.xlarge / 32 / 4 | 25.800 | 16:15 | 12:42 | 3:03 | 43:31 |
 
 Request-to-readiness ends only after AWS reports the target version available and a fresh PostgreSQL connection has returned the target version. SQL interruption is a last-success to first-success observation envelope, not an exact outage duration. The full receipts retain every episode; the table shows the largest bound if there are multiple episodes. No failed sample would not prove zero downtime between probes.
 
@@ -25,18 +26,19 @@ A proportional stored-bytes model is therefore not a justified way to predict pr
 
 ## Data checks and cleanup
 
-Every published case preserved expected relation counts, first/last-row content hashes, constraints and the target SQL version. Recorded heap, index and total bytes were unchanged in **2/2** cases. These are counts and sampled content checks, not a full content checksum or application compatibility test.
+Every published case preserved expected relation counts, first/last-row content hashes, constraints and the target SQL version. Recorded heap, index and total bytes were unchanged in **3/3** cases. These are counts and sampled content checks, not a full content checksum or application compatibility test.
 
 | Fixture / RAM | Parents | Queue | Push children | History | Templates |
 |---|---:|---:|---:|---:|---:|
 | small / 32 GiB | 32,768 | 32,768 | 98,304 | 8,192 | 1 |
 | medium / 32 GiB | 524,288 | 524,288 | 1,572,864 | 131,072 | 1 |
+| large / 32 GiB | 2,097,152 | 2,097,152 | 6,291,456 | 524,288 | 1 |
 
 The harness verified each published stack deleted, database absent, snapshots absent and managed secret absent before admitting another case. Independent retained-backup verification is separate from an AWS deletion request. Resource absence is not a confirmation that delayed billing reports have settled.
 
 ## Cost and reproduction
 
-Using the dated [AWS pricing receipt](../evidence/rds-instance-pricing.json) and the full recorded lifecycle duration gives an approximate compute-plus-allocated-storage estimate of **$0.42** for the published cases. This is an elapsed-time estimate, not an invoice, and excludes snapshot storage, public IPv4, Secrets Manager, transfer and taxes. The batch's admission reservations total at most $30 and are not an AWS-enforced spending cap.
+Using the dated [AWS pricing receipt](../evidence/rds-instance-pricing.json) and the full recorded lifecycle duration gives an approximate compute-plus-allocated-storage estimate of **$0.81** for the published cases. This is an elapsed-time estimate, not an invoice, and excludes snapshot storage, public IPv4, Secrets Manager, transfer and taxes. The batch's admission reservations total at most $30 and are not an AWS-enforced spending cap.
 
 Follow the [run guide](rds-upgrade-timing.md) to reproduce the selected synthetic cases. PostgreSQL 16.8 was reported deprecated and rejected for the selected new-instance provisioning combination in our dated Ohio API check; these tests use 16.15 and do not measure a 16.8 upgrade. The actual deprecation date is unknown. [Version/orderability receipt](../evidence/rds-version-orderability.json).
 
@@ -44,6 +46,7 @@ Regenerate this report offline with `python3 scripts/report-rds-upgrade-timing.p
 
 - small / db.r7g.xlarge: `fc5b81c3789fd878c9fef98b07015a6726870891`
 - medium / db.r7g.xlarge: `22efd30c1f726c6580e78dab4bcc15ead80dc4ab`
+- large / db.r7g.xlarge: `00fd930e42c6e400fbea7c19a341bd49f6a2b1b9`
 
 The fixture, infrastructure and probe logic are fixed across these cases; intervening harness changes tightened version/export guards and retained budget reservations. Service-log collection was made repeatable after the initial two manual API captures. Consult each receipt's source hashes rather than assuming the current checkout is the execution version.
 

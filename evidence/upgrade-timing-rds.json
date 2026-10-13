@@ -2023,6 +2023,1466 @@
       ],
       "cleanup": "verified_stack_deleted_database_snapshots_secret_absent",
       "total_seconds": 1081.3232000404969
+    },
+    {
+      "schema_version": 1,
+      "engine": "postgres",
+      "tier": "large",
+      "source_version": "16.15",
+      "target_version": "17.11",
+      "instance_class": "db.r7g.xlarge",
+      "region": "us-east-2",
+      "allocated_storage_gib": 400,
+      "storage_type": "gp3",
+      "multi_az": false,
+      "parents": 2097152,
+      "provenance": {
+        "git_head": "00fd930e42c6e400fbea7c19a341bd49f6a2b1b9",
+        "sha256": {
+          "scripts/run-rds-upgrade-timing.py": "87f0d9573cf5389f6241ec41bab8fed2a317b4b309df05fa89138ae000439470",
+          "scripts/run-upgrade-timing.py": "033ebc4ae42e71f895142dd6cdc0941ca9dc641b89b5c2e55fe778ffad6a16d6",
+          "infra/rds-upgrade.json": "3c158317325e84f7d7a95dd25dad1fca7526284118a853eae8098eeaa58b03c3",
+          "benchmarks/workload.py": "a047a5cee803ba98752f483fe51aebf0e9216d54df22ec1333bbc9b4c83ef1e1"
+        }
+      },
+      "created_at": "2026-10-12T23:52:25.771303+00:00",
+      "stage": "complete",
+      "sql_samples": [
+        {
+          "start_seconds": 6.332993507385254e-06,
+          "sql_ok": true,
+          "server_version": "16.15",
+          "end_seconds": 0.4538305411115289
+        },
+        {
+          "start_seconds": 5.459520583041012,
+          "sql_ok": true,
+          "server_version": "16.15",
+          "end_seconds": 5.821963583119214
+        },
+        {
+          "start_seconds": 10.830817332491279,
+          "sql_ok": true,
+          "server_version": "16.15",
+          "end_seconds": 11.192447999492288
+        },
+        {
+          "start_seconds": 16.201912375167012,
+          "sql_ok": true,
+          "server_version": "16.15",
+          "end_seconds": 16.597669416107237
+        },
+        {
+          "start_seconds": 21.60755637474358,
+          "sql_ok": true,
+          "server_version": "16.15",
+          "end_seconds": 21.964859750121832
+        },
+        {
+          "start_seconds": 26.97404395788908,
+          "sql_ok": true,
+          "server_version": "16.15",
+          "end_seconds": 27.33821354061365
+        },
+        {
+          "start_seconds": 32.34068779088557,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 32.78144000004977
+        },
+        {
+          "start_seconds": 37.78238345775753,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 37.82583624962717
+        },
+        {
+          "start_seconds": 42.835898290388286,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 42.87895245756954
+        },
+        {
+          "start_seconds": 47.88103049993515,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 47.95225620828569
+        },
+        {
+          "start_seconds": 52.960284166038036,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 53.00179866608232
+        },
+        {
+          "start_seconds": 58.002297041006386,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 58.04794754087925
+        },
+        {
+          "start_seconds": 63.04904558323324,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 63.11216429062188
+        },
+        {
+          "start_seconds": 68.11819383315742,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 68.16278866585344
+        },
+        {
+          "start_seconds": 73.16422754060477,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 73.21762695815414
+        },
+        {
+          "start_seconds": 78.2223839154467,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 78.39141741581261
+        },
+        {
+          "start_seconds": 83.40137262456119,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 83.44704074971378
+        },
+        {
+          "start_seconds": 88.45559029094875,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 88.50500537455082
+        },
+        {
+          "start_seconds": 93.51508187502623,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 93.58562595769763
+        },
+        {
+          "start_seconds": 98.59070445783436,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 98.63820654060692
+        },
+        {
+          "start_seconds": 103.64245679043233,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 103.68756116554141
+        },
+        {
+          "start_seconds": 108.68912154063582,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 108.763959874399
+        },
+        {
+          "start_seconds": 113.77333416603506,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 113.81820962484926
+        },
+        {
+          "start_seconds": 118.81887379102409,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 118.8733921656385
+        },
+        {
+          "start_seconds": 123.87792687490582,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 123.95113233290613
+        },
+        {
+          "start_seconds": 128.95837420783937,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 129.00947387516499
+        },
+        {
+          "start_seconds": 134.01468970812857,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 134.05744570773095
+        },
+        {
+          "start_seconds": 139.06515929102898,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 139.17437612451613
+        },
+        {
+          "start_seconds": 144.17748187482357,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 144.22189512476325
+        },
+        {
+          "start_seconds": 149.2236529160291,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 149.26870904117823
+        },
+        {
+          "start_seconds": 154.2764621656388,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 154.39176587481052
+        },
+        {
+          "start_seconds": 159.39362083282322,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 159.45423837471753
+        },
+        {
+          "start_seconds": 164.4615651248023,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 164.50583629123867
+        },
+        {
+          "start_seconds": 169.515784624964,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 169.58417670801282
+        },
+        {
+          "start_seconds": 174.59424679074436,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 174.6368308328092
+        },
+        {
+          "start_seconds": 179.6409794576466,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 179.6909304158762
+        },
+        {
+          "start_seconds": 184.70099612511694,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 184.76643316540867
+        },
+        {
+          "start_seconds": 189.7763284156099,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 189.82901574950665
+        },
+        {
+          "start_seconds": 194.83907820750028,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 194.89249029103667
+        },
+        {
+          "start_seconds": 199.8943478325382,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 199.96081329043955
+        },
+        {
+          "start_seconds": 204.97084808256477,
+          "sql_ok": false,
+          "error_type": "OperationalError",
+          "end_seconds": 205.01286758296192
+        },
+        {
+          "start_seconds": 210.02291275002062,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 210.38797429110855
+        },
+        {
+          "start_seconds": 215.39409520756453,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 215.77591137494892
+        },
+        {
+          "start_seconds": 220.78092524968088,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 221.14111249987036
+        },
+        {
+          "start_seconds": 226.15119154099375,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 226.52132541593164
+        },
+        {
+          "start_seconds": 231.52549745794386,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 231.91759554110467
+        },
+        {
+          "start_seconds": 236.91908679064363,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 237.30595729127526
+        },
+        {
+          "start_seconds": 242.3066461244598,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 242.67639670800418
+        },
+        {
+          "start_seconds": 247.68160662520677,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 248.0722484998405
+        },
+        {
+          "start_seconds": 253.08156895823777,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 253.44980658311397
+        },
+        {
+          "start_seconds": 258.4511267496273,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 258.82479566615075
+        },
+        {
+          "start_seconds": 263.8315293332562,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 264.2117975000292
+        },
+        {
+          "start_seconds": 269.21405058261007,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 269.5763211250305
+        },
+        {
+          "start_seconds": 274.5803575832397,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 274.95151599962264
+        },
+        {
+          "start_seconds": 279.95660991594195,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 280.3844242496416
+        },
+        {
+          "start_seconds": 285.38893949985504,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 285.7525261659175
+        },
+        {
+          "start_seconds": 290.7606395408511,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 291.12467550020665
+        },
+        {
+          "start_seconds": 296.1303497077897,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 296.50618691556156
+        },
+        {
+          "start_seconds": 301.5063838744536,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 301.8644497906789
+        },
+        {
+          "start_seconds": 306.86470691580325,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 307.23597029037774
+        },
+        {
+          "start_seconds": 312.24399541597813,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 312.63704079110175
+        },
+        {
+          "start_seconds": 317.64710349962115,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 318.0153698325157
+        },
+        {
+          "start_seconds": 323.0254073748365,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 323.387513208203
+        },
+        {
+          "start_seconds": 328.39769812487066,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 328.789633249864
+        },
+        {
+          "start_seconds": 333.79375795740634,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 334.1572159156203
+        },
+        {
+          "start_seconds": 339.16727329045534,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 339.5352588323876
+        },
+        {
+          "start_seconds": 344.5433156248182,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 344.92919229064137
+        },
+        {
+          "start_seconds": 349.93841787520796,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 350.3078725002706
+        },
+        {
+          "start_seconds": 355.3103667497635,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 355.66878420766443
+        },
+        {
+          "start_seconds": 360.67703841626644,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 361.0618599578738
+        },
+        {
+          "start_seconds": 366.06651604082435,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 366.43749404046685
+        },
+        {
+          "start_seconds": 371.44370570778847,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 371.80879862513393
+        },
+        {
+          "start_seconds": 376.81823970749974,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 377.2020067498088
+        },
+        {
+          "start_seconds": 382.209262332879,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 382.5754005825147
+        },
+        {
+          "start_seconds": 387.57576262485236,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 387.94852841552347
+        },
+        {
+          "start_seconds": 392.95858262479305,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 393.33960324991494
+        },
+        {
+          "start_seconds": 398.3497005412355,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 398.73417099937797
+        },
+        {
+          "start_seconds": 403.7414728747681,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 404.11363879125565
+        },
+        {
+          "start_seconds": 409.12358066625893,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 409.51899170782417
+        },
+        {
+          "start_seconds": 414.5270199999213,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 414.89190012495965
+        },
+        {
+          "start_seconds": 419.89350737445056,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 420.2713415827602
+        },
+        {
+          "start_seconds": 425.28093929123133,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 425.6699520824477
+        },
+        {
+          "start_seconds": 430.6770492903888,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 431.04414787516
+        },
+        {
+          "start_seconds": 436.0517575824633,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 436.41259054094553
+        },
+        {
+          "start_seconds": 441.4205724578351,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 441.8253612499684
+        },
+        {
+          "start_seconds": 446.8262032903731,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 447.18808195739985
+        },
+        {
+          "start_seconds": 452.19330820813775,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 452.5593244154006
+        },
+        {
+          "start_seconds": 457.56444462481886,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 457.9422897910699
+        },
+        {
+          "start_seconds": 462.95235891547054,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 463.31314245797694
+        },
+        {
+          "start_seconds": 468.31831529084593,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 468.6769905826077
+        },
+        {
+          "start_seconds": 473.68113641627133,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 474.11079812515527
+        },
+        {
+          "start_seconds": 479.1181749999523,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 479.50601012445986
+        },
+        {
+          "start_seconds": 484.51372154057026,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 484.88354995753616
+        },
+        {
+          "start_seconds": 489.8842971660197,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 490.26832595746964
+        },
+        {
+          "start_seconds": 495.27653091587126,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 495.63064562436193
+        },
+        {
+          "start_seconds": 500.6316267075017,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 500.9996453328058
+        },
+        {
+          "start_seconds": 506.002081790939,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 506.41560683306307
+        },
+        {
+          "start_seconds": 511.41814737487584,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 511.7773375408724
+        },
+        {
+          "start_seconds": 516.7873956244439,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 517.1556260827929
+        },
+        {
+          "start_seconds": 522.1656997911632,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 522.5537553327158
+        },
+        {
+          "start_seconds": 527.5627394579351,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 527.9320248747244
+        },
+        {
+          "start_seconds": 532.9343958748505,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 533.3071677908301
+        },
+        {
+          "start_seconds": 538.3156709996983,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 538.7026131246239
+        },
+        {
+          "start_seconds": 543.7121925000101,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 544.0891589997336
+        },
+        {
+          "start_seconds": 549.094496040605,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 549.4596077911556
+        },
+        {
+          "start_seconds": 554.4697219999507,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 554.9026913326234
+        },
+        {
+          "start_seconds": 559.9121639579535,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 560.3098645824939
+        },
+        {
+          "start_seconds": 565.3159461244941,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 565.6791719999164
+        },
+        {
+          "start_seconds": 570.6862381659448,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 571.1177355404943
+        },
+        {
+          "start_seconds": 576.1262596659362,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 576.4938030410558
+        },
+        {
+          "start_seconds": 581.4996449574828,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 581.8765167081729
+        },
+        {
+          "start_seconds": 586.8778392495587,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 587.4207519581541
+        },
+        {
+          "start_seconds": 592.4261168744415,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 592.7943654162809
+        },
+        {
+          "start_seconds": 597.8044495405629,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 598.1680325409397
+        },
+        {
+          "start_seconds": 603.1781433327124,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 603.5644704578444
+        },
+        {
+          "start_seconds": 608.5673778746277,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 608.9356105001643
+        },
+        {
+          "start_seconds": 613.9398617912084,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 614.3154149996117
+        },
+        {
+          "start_seconds": 619.3177468329668,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 619.7027707500383
+        },
+        {
+          "start_seconds": 624.7118957079947,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 625.0755887906998
+        },
+        {
+          "start_seconds": 630.0843890411779,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 630.4534997502342
+        },
+        {
+          "start_seconds": 635.4593744995072,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 635.8482722910121
+        },
+        {
+          "start_seconds": 640.84963845741,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 641.236819374375
+        },
+        {
+          "start_seconds": 646.2468906249851,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 646.6140235001221
+        },
+        {
+          "start_seconds": 651.6190337911248,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 651.9985922500491
+        },
+        {
+          "start_seconds": 657.0038610408083,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 657.3716716654599
+        },
+        {
+          "start_seconds": 662.3817574996501,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 662.7517844159156
+        },
+        {
+          "start_seconds": 667.7581792501733,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 668.1516924994066
+        },
+        {
+          "start_seconds": 673.1597260832787,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 673.5212005404755
+        },
+        {
+          "start_seconds": 678.5294611658901,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 678.8858003746718
+        },
+        {
+          "start_seconds": 683.8873819578439,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 684.2776587912813
+        },
+        {
+          "start_seconds": 689.2877126662061,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 689.6485292082652
+        },
+        {
+          "start_seconds": 694.6561214998364,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 695.0105209574103
+        },
+        {
+          "start_seconds": 700.0157340830192,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 700.4421697081998
+        },
+        {
+          "start_seconds": 705.4465719582513,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 705.8042634576559
+        },
+        {
+          "start_seconds": 710.8100933749229,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 711.1807309994474
+        },
+        {
+          "start_seconds": 716.1907845828682,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 716.5778704574332
+        },
+        {
+          "start_seconds": 721.5865251244977,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 721.9860504576936
+        },
+        {
+          "start_seconds": 726.9961528331041,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 727.3730074996129
+        },
+        {
+          "start_seconds": 732.3765166252851,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 732.7703963331878
+        },
+        {
+          "start_seconds": 737.7800327911973,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 738.1598343746737
+        },
+        {
+          "start_seconds": 743.1699307495728,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 743.544048415497
+        },
+        {
+          "start_seconds": 748.5530503746122,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 748.9537453325465
+        },
+        {
+          "start_seconds": 753.9555245824158,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 754.3192964997143
+        },
+        {
+          "start_seconds": 759.3276809575036,
+          "sql_ok": true,
+          "server_version": "17.11",
+          "end_seconds": 759.7074285000563
+        }
+      ],
+      "control_samples": [
+        {
+          "seconds": 1.6761094573885202,
+          "status": "available",
+          "engine_version": "16.15"
+        },
+        {
+          "seconds": 22.152904790826142,
+          "status": "upgrading",
+          "engine_version": "16.15"
+        },
+        {
+          "seconds": 42.64019333291799,
+          "status": "upgrading",
+          "engine_version": "16.15"
+        },
+        {
+          "seconds": 63.143105041235685,
+          "status": "upgrading",
+          "engine_version": "16.15"
+        },
+        {
+          "seconds": 83.6835441654548,
+          "status": "upgrading",
+          "engine_version": "16.15"
+        },
+        {
+          "seconds": 104.16613554116338,
+          "status": "upgrading",
+          "engine_version": "16.15"
+        },
+        {
+          "seconds": 124.65737308282405,
+          "status": "upgrading",
+          "engine_version": "16.15"
+        },
+        {
+          "seconds": 145.22232349961996,
+          "status": "upgrading",
+          "engine_version": "16.15"
+        },
+        {
+          "seconds": 166.14749174937606,
+          "status": "upgrading",
+          "engine_version": "16.15"
+        },
+        {
+          "seconds": 186.6671008747071,
+          "status": "upgrading",
+          "engine_version": "16.15"
+        },
+        {
+          "seconds": 207.2523075826466,
+          "status": "upgrading",
+          "engine_version": "16.15"
+        },
+        {
+          "seconds": 227.83993258327246,
+          "status": "upgrading",
+          "engine_version": "16.15"
+        },
+        {
+          "seconds": 248.50023837480694,
+          "status": "upgrading",
+          "engine_version": "17.11"
+        },
+        {
+          "seconds": 269.0149063747376,
+          "status": "upgrading",
+          "engine_version": "17.11"
+        },
+        {
+          "seconds": 289.5658505409956,
+          "status": "upgrading",
+          "engine_version": "17.11"
+        },
+        {
+          "seconds": 310.1430470412597,
+          "status": "upgrading",
+          "engine_version": "17.11"
+        },
+        {
+          "seconds": 330.79453345760703,
+          "status": "upgrading",
+          "engine_version": "17.11"
+        },
+        {
+          "seconds": 351.345153125003,
+          "status": "upgrading",
+          "engine_version": "17.11"
+        },
+        {
+          "seconds": 371.8759186659008,
+          "status": "upgrading",
+          "engine_version": "17.11"
+        },
+        {
+          "seconds": 392.3880556244403,
+          "status": "upgrading",
+          "engine_version": "17.11"
+        },
+        {
+          "seconds": 412.932604374364,
+          "status": "upgrading",
+          "engine_version": "17.11"
+        },
+        {
+          "seconds": 433.47475045826286,
+          "status": "upgrading",
+          "engine_version": "17.11"
+        },
+        {
+          "seconds": 454.0144646661356,
+          "status": "upgrading",
+          "engine_version": "17.11"
+        },
+        {
+          "seconds": 474.5059539154172,
+          "status": "upgrading",
+          "engine_version": "17.11"
+        },
+        {
+          "seconds": 495.20813712477684,
+          "status": "upgrading",
+          "engine_version": "17.11"
+        },
+        {
+          "seconds": 515.7072094995528,
+          "status": "upgrading",
+          "engine_version": "17.11"
+        },
+        {
+          "seconds": 536.2116675404832,
+          "status": "upgrading",
+          "engine_version": "17.11"
+        },
+        {
+          "seconds": 556.8193594580516,
+          "status": "upgrading",
+          "engine_version": "17.11"
+        },
+        {
+          "seconds": 577.3966304576024,
+          "status": "upgrading",
+          "engine_version": "17.11"
+        },
+        {
+          "seconds": 597.9264763332903,
+          "status": "backing-up",
+          "engine_version": "17.11"
+        },
+        {
+          "seconds": 618.4873042907566,
+          "status": "backing-up",
+          "engine_version": "17.11"
+        },
+        {
+          "seconds": 638.9969761660323,
+          "status": "backing-up",
+          "engine_version": "17.11"
+        },
+        {
+          "seconds": 659.5250325826928,
+          "status": "backing-up",
+          "engine_version": "17.11"
+        },
+        {
+          "seconds": 680.0030598323792,
+          "status": "configuring-enhanced-monitoring",
+          "engine_version": "17.11"
+        },
+        {
+          "seconds": 700.5067692911252,
+          "status": "configuring-enhanced-monitoring",
+          "engine_version": "17.11"
+        },
+        {
+          "seconds": 721.0585819995031,
+          "status": "configuring-enhanced-monitoring",
+          "engine_version": "17.11"
+        },
+        {
+          "seconds": 741.811286999844,
+          "status": "modifying",
+          "engine_version": "17.11"
+        },
+        {
+          "seconds": 762.3820925829932,
+          "status": "available",
+          "engine_version": "17.11"
+        }
+      ],
+      "passed": true,
+      "budget_reservation_usd": 7.0,
+      "observed_storage": {
+        "AllocatedStorage": 400,
+        "StorageType": "gp3",
+        "Iops": 12000,
+        "StorageThroughput": 500,
+        "StorageEncrypted": true
+      },
+      "provision_seconds": 505.92112975008786,
+      "load_seconds": 975.4012804571539,
+      "before": {
+        "server_version": "16.15",
+        "database_bytes": 27702287383,
+        "tables": {
+          "notification_event": {
+            "rows": 2097152,
+            "total_bytes": 19161636864,
+            "heap_bytes": 3501670400,
+            "index_bytes": 47120384,
+            "sampled_row_hashes": [
+              [
+                1,
+                "386da39027c7541f23ceb439e0d83385"
+              ],
+              [
+                2097152,
+                "0df5d1e33fd6b7a4a793cbfbd0eb57bb"
+              ]
+            ]
+          },
+          "delivery_queue": {
+            "rows": 2097152,
+            "total_bytes": 6838509568,
+            "heap_bytes": 4054736896,
+            "index_bytes": 94240768,
+            "sampled_row_hashes": [
+              [
+                1,
+                "75768bd2b1c843ca0e052593657f4d5f"
+              ],
+              [
+                2097152,
+                "0419a7e3d37b4e2e0285fa374672f65b"
+              ]
+            ]
+          },
+          "push_delivery": {
+            "rows": 6291456,
+            "total_bytes": 1617240064,
+            "heap_bytes": 1288495104,
+            "index_bytes": 328368128,
+            "sampled_row_hashes": [
+              [
+                101,
+                "67b7cc356fa0c47a9e340264f626f927"
+              ],
+              [
+                209715203,
+                "07b4d418806856e924bbf782501b21d9"
+              ]
+            ]
+          },
+          "send_history": {
+            "rows": 524288,
+            "total_bytes": 76668928,
+            "heap_bytes": 53026816,
+            "index_bytes": 23592960,
+            "sampled_row_hashes": [
+              [
+                4,
+                "736da0b8fde7b0c5e97168f9d62b2603"
+              ],
+              [
+                2097152,
+                "d6ef06e4f1620c0aa671ee668639900f"
+              ]
+            ]
+          },
+          "notification_template": {
+            "rows": 1,
+            "total_bytes": 32768,
+            "heap_bytes": 8192,
+            "index_bytes": 16384,
+            "sampled_row_hashes": [
+              [
+                1,
+                "b613d3a88e7ac36bae633f775f0d5e98"
+              ]
+            ]
+          }
+        },
+        "constraints": [
+          [
+            "delivery_queue_notification_event_id_fkey",
+            "f",
+            true
+          ],
+          [
+            "delivery_queue_notification_template_id_fkey",
+            "f",
+            true
+          ],
+          [
+            "delivery_queue_pkey",
+            "p",
+            true
+          ],
+          [
+            "notification_event_notification_template_id_fkey",
+            "f",
+            true
+          ],
+          [
+            "notification_event_pkey",
+            "p",
+            true
+          ],
+          [
+            "notification_template_pkey",
+            "p",
+            true
+          ],
+          [
+            "push_delivery_notification_event_id_fkey",
+            "f",
+            true
+          ],
+          [
+            "push_delivery_pkey",
+            "p",
+            true
+          ],
+          [
+            "send_history_pkey",
+            "p",
+            true
+          ]
+        ]
+      },
+      "request_started_seconds": 0.4543981244787574,
+      "request_at": "2026-10-13T00:17:24.765348+00:00",
+      "request_returned_seconds": 1.1190320001915097,
+      "request_to_ready_seconds": 761.9276944585145,
+      "interruption": {
+        "episodes": [
+          {
+            "first_failure_seconds": 32.34068779088557,
+            "last_success_before_seconds": 26.97404395788908,
+            "first_success_after_seconds": 210.38797429110855,
+            "upper_seconds": 183.41393033321947
+          }
+        ],
+        "failed_samples": 35,
+        "note": "Fresh TLS connection + SELECT 1 probes; envelopes include connection/query time. No failed samples does not prove zero downtime. Multiple episodes remain separate."
+      },
+      "after": {
+        "server_version": "17.11",
+        "database_bytes": 27702195891,
+        "tables": {
+          "notification_event": {
+            "rows": 2097152,
+            "total_bytes": 19161636864,
+            "heap_bytes": 3501670400,
+            "index_bytes": 47120384,
+            "sampled_row_hashes": [
+              [
+                1,
+                "386da39027c7541f23ceb439e0d83385"
+              ],
+              [
+                2097152,
+                "0df5d1e33fd6b7a4a793cbfbd0eb57bb"
+              ]
+            ]
+          },
+          "delivery_queue": {
+            "rows": 2097152,
+            "total_bytes": 6838509568,
+            "heap_bytes": 4054736896,
+            "index_bytes": 94240768,
+            "sampled_row_hashes": [
+              [
+                1,
+                "75768bd2b1c843ca0e052593657f4d5f"
+              ],
+              [
+                2097152,
+                "0419a7e3d37b4e2e0285fa374672f65b"
+              ]
+            ]
+          },
+          "push_delivery": {
+            "rows": 6291456,
+            "total_bytes": 1617240064,
+            "heap_bytes": 1288495104,
+            "index_bytes": 328368128,
+            "sampled_row_hashes": [
+              [
+                101,
+                "67b7cc356fa0c47a9e340264f626f927"
+              ],
+              [
+                209715203,
+                "07b4d418806856e924bbf782501b21d9"
+              ]
+            ]
+          },
+          "send_history": {
+            "rows": 524288,
+            "total_bytes": 76668928,
+            "heap_bytes": 53026816,
+            "index_bytes": 23592960,
+            "sampled_row_hashes": [
+              [
+                4,
+                "736da0b8fde7b0c5e97168f9d62b2603"
+              ],
+              [
+                2097152,
+                "d6ef06e4f1620c0aa671ee668639900f"
+              ]
+            ]
+          },
+          "notification_template": {
+            "rows": 1,
+            "total_bytes": 32768,
+            "heap_bytes": 8192,
+            "index_bytes": 16384,
+            "sampled_row_hashes": [
+              [
+                1,
+                "b613d3a88e7ac36bae633f775f0d5e98"
+              ]
+            ]
+          }
+        },
+        "constraints": [
+          [
+            "delivery_queue_notification_event_id_fkey",
+            "f",
+            true
+          ],
+          [
+            "delivery_queue_notification_template_id_fkey",
+            "f",
+            true
+          ],
+          [
+            "delivery_queue_pkey",
+            "p",
+            true
+          ],
+          [
+            "notification_event_notification_template_id_fkey",
+            "f",
+            true
+          ],
+          [
+            "notification_event_pkey",
+            "p",
+            true
+          ],
+          [
+            "notification_template_pkey",
+            "p",
+            true
+          ],
+          [
+            "push_delivery_notification_event_id_fkey",
+            "f",
+            true
+          ],
+          [
+            "push_delivery_pkey",
+            "p",
+            true
+          ],
+          [
+            "send_history_pkey",
+            "p",
+            true
+          ]
+        ]
+      },
+      "validation_seconds": 5.953318541869521,
+      "checks": {
+        "expected_counts_preserved": true,
+        "sampled_rows_preserved": true,
+        "constraints_preserved": true,
+        "target_sql_version": true
+      },
+      "event_categories": [
+        {
+          "date": "2026-10-13 00:17:51.011000+00:00",
+          "categories": [
+            "maintenance"
+          ]
+        },
+        {
+          "date": "2026-10-13 00:17:52.841000+00:00",
+          "categories": [
+            "maintenance"
+          ]
+        },
+        {
+          "date": "2026-10-13 00:17:57.465000+00:00",
+          "categories": [
+            "availability"
+          ]
+        },
+        {
+          "date": "2026-10-13 00:18:14.090000+00:00",
+          "categories": [
+            "backup"
+          ]
+        },
+        {
+          "date": "2026-10-13 00:20:43.436000+00:00",
+          "categories": [
+            "maintenance"
+          ]
+        },
+        {
+          "date": "2026-10-13 00:20:51.629000+00:00",
+          "categories": [
+            "availability"
+          ]
+        },
+        {
+          "date": "2026-10-13 00:21:05.148000+00:00",
+          "categories": [
+            "maintenance"
+          ]
+        },
+        {
+          "date": "2026-10-13 00:21:05.150000+00:00",
+          "categories": [
+            "maintenance"
+          ]
+        },
+        {
+          "date": "2026-10-13 00:21:05.152000+00:00",
+          "categories": [
+            "maintenance"
+          ]
+        },
+        {
+          "date": "2026-10-13 00:27:20.165000+00:00",
+          "categories": [
+            "backup"
+          ]
+        },
+        {
+          "date": "2026-10-13 00:27:20.375000+00:00",
+          "categories": []
+        },
+        {
+          "date": "2026-10-13 00:27:20.379000+00:00",
+          "categories": [
+            "maintenance"
+          ]
+        },
+        {
+          "date": "2026-10-13 00:27:24.858000+00:00",
+          "categories": [
+            "backup"
+          ]
+        },
+        {
+          "date": "2026-10-13 00:28:26.700000+00:00",
+          "categories": [
+            "backup"
+          ]
+        }
+      ],
+      "cleanup": "verified_stack_deleted_database_snapshots_secret_absent",
+      "total_seconds": 2611.353165499866
     }
   ],
   "limitations": [

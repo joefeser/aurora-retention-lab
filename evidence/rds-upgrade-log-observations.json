@@ -68,6 +68,49 @@
         "Excerpts from a point-in-time service log capture; raw logs remain private.",
         "These log phases are not the complete managed operation or measured SQL outage."
       ]
+    },
+    {
+      "schema_version": 1,
+      "source": "RDS DownloadDBLogFilePortion",
+      "captured_at": "2026-10-13T00:22:21.709088+00:00",
+      "tier": "large",
+      "instance_class": "db.r7g.xlarge",
+      "execution_git_head": "00fd930e42c6e400fbea7c19a341bd49f6a2b1b9",
+      "collector_provenance": {
+        "git_head": "2cd210038277ee97e97e1f8fa6bd0cc8f49c73d1",
+        "sha256": "d9ee0cf7a3d9095aff21a85284ad23d05eb4d30ce054ca67a05d7bcdf2b2284b"
+      },
+      "engine": "postgres",
+      "source_version": "16.15",
+      "target_version": "17.11",
+      "observed_control_status": "upgrading",
+      "logs": [
+        {
+          "kind": "pg_upgrade_internal",
+          "raw_sha256": "0e7cadffd4d52c6bebda3268a28f9e36169fb3b32e5733575ce026ca725b2a59",
+          "captured_bytes": 65276,
+          "listed_file_size_bytes": 65276,
+          "additional_data_pending": false,
+          "excerpts": [
+            "Performing Upgrade",
+            "Linking user relation files",
+            "Upgrade Complete"
+          ]
+        },
+        {
+          "kind": "other_upgrade_log",
+          "raw_sha256": "48c16e0c2651db3903a9923306e29d1f4b99e00ef42dc50ef912dc30ee3b24c3",
+          "captured_bytes": 8832,
+          "listed_file_size_bytes": 8832,
+          "additional_data_pending": false,
+          "excerpts": []
+        }
+      ],
+      "limitations": [
+        "Point-in-time bounded service log capture; raw logs and identifiers remain private.",
+        "Phase labels do not measure the complete managed operation or SQL interruption.",
+        "The initial two cases used the equivalent manual API capture before this collector existed."
+      ]
     }
   ]
 }

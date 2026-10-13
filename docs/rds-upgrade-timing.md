@@ -1,6 +1,6 @@
 # Standard RDS PostgreSQL upgrade timing: run guide
 
-Status: in progress. The first two standard-RDS cases are published in the [results report](rds-upgrade-results.md); the large fixture and instance-class comparison are pending. The existing Aurora receipts remain Aurora-only evidence.
+Status: in progress. The three 32 GiB standard-RDS cases are published in the [results report](rds-upgrade-results.md); the 16 GiB instance-class comparison is pending. The existing Aurora receipts remain Aurora-only evidence.
 
 ## Selected version and instance
 
