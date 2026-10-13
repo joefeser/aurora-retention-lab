@@ -1,0 +1,46 @@
+{
+  "checked_at": "2026-10-12T23:09:13.418275+00:00",
+  "region": "us-east-2",
+  "engine": "postgres",
+  "instance_class": "db.r7g.xlarge",
+  "observations": [
+    {
+      "engine_version": "16.8",
+      "status": "deprecated",
+      "major_upgrade_targets": [
+        "17.5",
+        "17.6",
+        "17.7",
+        "17.8",
+        "17.9",
+        "17.10",
+        "17.11",
+        "18.1",
+        "18.2",
+        "18.3",
+        "18.4",
+        "18.6"
+      ],
+      "orderable_gp3": false,
+      "orderability_error_code": "InvalidParameterCombination",
+      "orderability_error_message": "Cannot find version 16.8 for postgres"
+    },
+    {
+      "engine_version": "16.15",
+      "status": "available",
+      "major_upgrade_targets": [
+        "17.11",
+        "18.6"
+      ],
+      "orderable_gp3": true
+    },
+    {
+      "engine_version": "17.11",
+      "status": "available",
+      "major_upgrade_targets": [
+        "18.6"
+      ],
+      "orderable_gp3": true
+    }
+  ]
+}

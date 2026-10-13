@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-10-13T02:03:54.810672+00:00",
+  "method": "Authenticated account checked against private inventories; exact owned stack/database/snapshot/secret checks and region-wide paginated automated-backup census matched to each private run identifier.",
+  "cases": [
+    {
+      "tier": "medium",
+      "instance_class": "db.r7g.large",
+      "stack_delete_complete": true,
+      "database_absent": true,
+      "snapshot_count": 0,
+      "retained_automated_backup_count": 0,
+      "managed_secret_absent": true
+    },
+    {
+      "tier": "medium",
+      "instance_class": "db.r7g.xlarge",
+      "stack_delete_complete": true,
+      "database_absent": true,
+      "snapshot_count": 0,
+      "retained_automated_backup_count": 0,
+      "managed_secret_absent": true
+    },
+    {
+      "tier": "small",
+      "instance_class": "db.r7g.xlarge",
+      "stack_delete_complete": true,
+      "database_absent": true,
+      "snapshot_count": 0,
+      "retained_automated_backup_count": 0,
+      "managed_secret_absent": true
+    },
+    {
+      "tier": "large",
+      "instance_class": "db.r7g.xlarge",
+      "stack_delete_complete": true,
+      "database_absent": true,
+      "snapshot_count": 0,
+      "retained_automated_backup_count": 0,
+      "managed_secret_absent": true
+    }
+  ],
+  "limitation": "Resource absence does not confirm that delayed billing has settled."
+}

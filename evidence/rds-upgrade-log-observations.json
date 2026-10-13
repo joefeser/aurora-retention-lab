@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "observations": [
+    {
+      "schema_version": 1,
+      "source": "RDS DownloadDBLogFilePortion",
+      "captured_at": "2026-10-12T23:19:01.219351+00:00",
+      "tier": "small",
+      "execution_git_head": "fc5b81c3789fd878c9fef98b07015a6726870891",
+      "engine": "postgres",
+      "source_version": "16.15",
+      "target_version": "17.11",
+      "observed_control_status": "backing-up",
+      "logs": [
+        {
+          "kind": "pg_upgrade_internal",
+          "raw_sha256": "115f59995661ec93eb964749e499ed18c20f7cd6ce6cdbd98a541892a78be3f0",
+          "captured_bytes": 61845,
+          "excerpts": [
+            "Performing Upgrade",
+            "Linking user relation files",
+            "Upgrade Complete"
+          ]
+        },
+        {
+          "kind": "other_upgrade_log",
+          "raw_sha256": "bb2c4ee7c1c2a3d8c83c960615a75b9836f6141e32a1ae169c6c37cf9132816e",
+          "captured_bytes": 8831,
+          "excerpts": []
+        }
+      ],
+      "limitations": [
+        "Excerpts from a point-in-time service log capture; raw logs remain private.",
+        "These log phases are not the complete managed operation or measured SQL outage."
+      ]
+    },
+    {
+      "schema_version": 1,
+      "source": "RDS DownloadDBLogFilePortion",
+      "captured_at": "2026-10-12T23:42:01.273982+00:00",
+      "tier": "medium",
+      "execution_git_head": "22efd30c1f726c6580e78dab4bcc15ead80dc4ab",
+      "engine": "postgres",
+      "source_version": "16.15",
+      "target_version": "17.11",
+      "observed_control_status": "backing-up",
+      "logs": [
+        {
+          "kind": "pg_upgrade_internal",
+          "raw_sha256": "d1581207d812ab564bf2b284c22fa464ef8ce1db93c16a758900291848e42af9",
+          "captured_bytes": 62299,
+          "additional_data_pending": false,
+          "excerpts": [
+            "Performing Upgrade",
+            "Linking user relation files",
+            "Upgrade Complete"
+          ]
+        },
+        {
+          "kind": "other_upgrade_log",
+          "raw_sha256": "979fe1e01003238e47bb6e6c355a2ef1aeb45344c2c47ce7d3b9276648a17caa",
+          "captured_bytes": 8832,
+          "additional_data_pending": false,
+          "excerpts": []
+        }
+      ],
+      "limitations": [
+        "Excerpts from a point-in-time service log capture; raw logs remain private.",
+        "These log phases are not the complete managed operation or measured SQL outage."
+      ]
+    },
+    {
+      "schema_version": 1,
+      "source": "RDS DownloadDBLogFilePortion",
+      "captured_at": "2026-10-13T00:22:21.709088+00:00",
+      "tier": "large",
+      "instance_class": "db.r7g.xlarge",
+      "execution_git_head": "00fd930e42c6e400fbea7c19a341bd49f6a2b1b9",
+      "collector_provenance": {
+        "git_head": "2cd210038277ee97e97e1f8fa6bd0cc8f49c73d1",
+        "sha256": "d9ee0cf7a3d9095aff21a85284ad23d05eb4d30ce054ca67a05d7bcdf2b2284b"
+      },
+      "engine": "postgres",
+      "source_version": "16.15",
+      "target_version": "17.11",
+      "observed_control_status": "upgrading",
+      "logs": [
+        {
+          "kind": "pg_upgrade_internal",
+          "raw_sha256": "0e7cadffd4d52c6bebda3268a28f9e36169fb3b32e5733575ce026ca725b2a59",
+          "captured_bytes": 65276,
+          "listed_file_size_bytes": 65276,
+          "additional_data_pending": false,
+          "excerpts": [
+            "Performing Upgrade",
+            "Linking user relation files",
+            "Upgrade Complete"
+          ]
+        },
+        {
+          "kind": "other_upgrade_log",
+          "raw_sha256": "48c16e0c2651db3903a9923306e29d1f4b99e00ef42dc50ef912dc30ee3b24c3",
+          "captured_bytes": 8832,
+          "listed_file_size_bytes": 8832,
+          "additional_data_pending": false,
+          "excerpts": []
+        }
+      ],
+      "limitations": [
+        "Point-in-time bounded service log capture; raw logs and identifiers remain private.",
+        "Phase labels do not measure the complete managed operation or SQL interruption.",
+        "The initial two cases used the equivalent manual API capture before this collector existed."
+      ]
+    }
+  ]
+}
