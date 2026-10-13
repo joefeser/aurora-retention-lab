@@ -91,7 +91,7 @@ Request-to-readiness ends only after AWS reports the target version available an
 
 The small, medium and large fixtures retain the same five-table schema, indexes, constraints and data-generation rules while increasing parent counts. This tests size sensitivity for a fixed object shape. It does not vary catalog complexity, database count, extensions, partition count, replication or concurrent application activity. The 16 GiB comparison changes both RAM and vCPU count; it cannot isolate a RAM-only effect.
 
-The RDS service logs captured for the initial cases report `Linking user relation files` and `Upgrade Complete`. This supports AWS's documented use of `pg_upgrade --link`, which avoids a full data-file copy during that step. It does not mean snapshots, preparation, restart, managed recovery or subsequent statistics work take no time. [AWS object-count guidance](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/PostgreSQL.HighObjectCount.html).
+The RDS service logs captured for the three 32 GiB cases report `Linking user relation files` and `Upgrade Complete`. This supports AWS's documented use of `pg_upgrade --link`, which avoids a full data-file copy during that step. It does not mean snapshots, preparation, restart, managed recovery or subsequent statistics work take no time. [AWS object-count guidance](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/PostgreSQL.HighObjectCount.html).
 
 A proportional stored-bytes model is therefore not a justified way to predict production downtime. These measurements can challenge that model for this fixture, but one trial per case cannot establish a reliable slope, variance or confidence interval. A rehearsal of the actual environment is still needed for an operational maintenance window.
 
@@ -101,7 +101,7 @@ Every published case preserved expected relation counts, first/last-row content 
 
 {chr(10).join(counts)}
 
-The harness verified each published stack deleted, database absent, snapshots absent and managed secret absent before admitting another case. Independent retained-backup verification is separate from an AWS deletion request. Resource absence is not a confirmation that delayed billing reports have settled.
+The harness verified each published stack deleted, database absent, snapshots absent and managed secret absent before admitting another case. The [independent cleanup census](../evidence/rds-cleanup-verification.json) also verifies zero retained automated backups for all four runs. Service logs were captured for the three 32 GiB runs; the 16 GiB run was deleted before its logs were captured. Resource absence is not a confirmation that delayed billing reports have settled.
 
 ## Cost and reproduction
 

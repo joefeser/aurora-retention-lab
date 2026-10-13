@@ -1,6 +1,6 @@
 # Standard RDS PostgreSQL upgrade timing: run guide
 
-Status: in progress. The three 32 GiB standard-RDS cases are published in the [results report](rds-upgrade-results.md); the 16 GiB instance-class comparison is pending. The existing Aurora receipts remain Aurora-only evidence.
+Status: all four planned synthetic cases are complete and cleaned, including the 16 GiB instance-class comparison. See the [results report](rds-upgrade-results.md) and [Opus handoff](opus-rds-upgrade-analysis-prompt.md). Production rehearsal remains untested. The existing Aurora receipts remain Aurora-only evidence.
 
 ## Selected version and instance
 

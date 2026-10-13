@@ -7,13 +7,14 @@ Study PR: https://github.com/joefeser/aurora-retention-lab/pull/12
 
 Start with `docs/rds-upgrade-results.md`, then `docs/rds-upgrade-timing.md`, `evidence/upgrade-timing-rds.json`, `evidence/rds-upgrade-log-observations.json`, and `scripts/run-rds-upgrade-timing.py`. These are **standard RDS**, not the earlier Aurora study. Check each execution commit and its source hashes; do not substitute the current checkout or Aurora timings for the recorded RDS execution.
 
-Public synthetic measurements: 3/4 planned synthetic cases completed and cleaned. Unmeasured: medium on db.r7g.large.
+Public synthetic measurements: 4/4 planned synthetic cases completed and cleaned.
 
 | Fixture | Class / RAM GiB / vCPU | Database GiB | Load | Request → ready | Largest SQL interruption upper bound | Total incl. setup/teardown |
 |---|---|---:|---:|---:|---:|---:|
 | small | db.r7g.xlarge / 32 / 4 | 0.411 | 0:18 | 6:32 | 3:03 | 18:01 |
 | medium | db.r7g.xlarge / 32 / 4 | 6.455 | 4:06 | 7:53 | 2:33 | 28:16 |
 | large | db.r7g.xlarge / 32 / 4 | 25.800 | 16:15 | 12:42 | 3:03 | 43:31 |
+| medium | db.r7g.large / 16 / 2 | 6.455 | 4:35 | 8:56 | 3:04 | 28:33 |
 
 Configuration: PostgreSQL 16.15 → 17.11, Single-AZ Ohio, fixed 400 GiB gp3, observed 12,000 IOPS / 500 MiB/s. The baseline class has 32 GiB and 4 vCPUs; the comparison class has 16 GiB and 2 vCPUs. Each combination has one trial. The schema and fixture rules stay fixed while row counts increase. The case receipts include counts, measured bytes, sampled first/last-row hashes, constraints and cleanup checks.
 
