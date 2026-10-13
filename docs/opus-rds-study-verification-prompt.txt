@@ -1,0 +1,52 @@
+Independent verification of the merged standard-RDS study
+
+Please act as a skeptical technical reviewer, not a summarizer. Determine which conclusions are defensible, which need correction, and what the team still needs before approving an upgrade window. Use the private work statistics available to you; do not assume our synthetic lab matches production.
+
+PR #12 has merged. Pin your public review to merge commit 5ba889ae9cfa3e3f298178b35d8f40c91fe8ddca:
+https://github.com/joefeser/aurora-retention-lab/tree/5ba889ae9cfa3e3f298178b35d8f40c91fe8ddca
+
+Additional review instructions:
+
+1. Independently recompute the four table rows from evidence/upgrade-timing-rds.json and compare with docs/report/rds-upgrade-timing.csv. Check probe ordering, interval endpoints, failed samples, interruption episodes and managed-readiness conditions. Identify whether any timing includes sampling delay, retry delay or control-plane polling. Do not treat the upper observation envelope as exact outage duration. The explicit post-upgrade ANALYZE runs after request-to-ready timing ends; it belongs to validation_seconds and total lifecycle time, not request-to-ready. Verify that boundary in each execution version.
+2. Check each receipt's execution commit and source hashes. Review the code used for that trial, not only the final harness. Read docs/rds-review-dispositions.md: later recovery/reporting repairs were tested locally and do not retroactively strengthen historical validation. Confirm the limited historical constraint checks, sampled content checks and which three cases have service-log captures.
+3. Compare the private environment with the lab in a matrix: service/engine, source and target minors, class/CPU/RAM, storage capacity/IOPS/throughput, Single-AZ or Multi-AZ topology, regions and replication mechanism, database count, relation/index/partition counts, payload/TOAST composition, extensions, parameters and workload. Label every private item as verified, reported or unknown. Separate installed extensions from mere availability; do not infer instance RAM from PostgreSQL settings or architecture alone.
+4. Challenge both the old hours-level estimate and any new minutes-level expectation. Fixed five-table synthetic fixtures with one run each cannot establish a production slope, variance or guaranteed window. Distinguish the pg_upgrade relation-linking step from snapshots, preparation, restart, managed recovery, statistics work and application recovery. Verify AWS behavior using current primary documentation. If the evidence does not support an extrapolation, say so and give the smallest useful rehearsal rather than inventing a number.
+5. Return a claim audit table: claim, public evidence, private comparison, verdict (supported / qualified / unsupported / contradicted), severity and correction. Include concrete receipt fields, source paths/lines or official sources. Then give a short team-ready assessment and a prioritized internal rehearsal plan with acceptance criteria and stop conditions. If you find defects in the public study, return a sanitized actionable patch list.
+
+Keep two outputs separate: a precise private team analysis and a sanitized reply I can bring back to the public-repo agent. The latter must omit real company/schema/table names, account IDs, endpoints, actual private aggregate counts, screenshots and real data. Do not conceal methodological defects while sanitizing. No AWS provisioning, production SQL changes, destructive cleanup, or upgrade execution is authorized by this analysis request.
+
+The original study handoff follows for configuration, measured results and proposed internal Test A/A2:
+
+# Opus analysis prompt: standard RDS PostgreSQL 16 → 17 timing
+
+Please assess whether our upgrade-window assumptions are supported by the new standard-RDS evidence. Use this public synthetic study alongside the private environment facts already available in this work workspace. Keep private data in the work environment. This request authorizes analysis and a proposed rehearsal plan, not AWS execution or production changes.
+
+Repository: https://github.com/joefeser/aurora-retention-lab
+Study PR: https://github.com/joefeser/aurora-retention-lab/pull/12
+
+Start with `docs/rds-upgrade-results.md`, then `docs/rds-upgrade-timing.md`, `evidence/upgrade-timing-rds.json`, `evidence/rds-upgrade-log-observations.json`, and `scripts/run-rds-upgrade-timing.py`. These are **standard RDS**, not the earlier Aurora study. Check each execution commit and its source hashes; do not substitute the current checkout or Aurora timings for the recorded RDS execution.
+
+Public synthetic measurements: 4/4 planned synthetic cases completed and cleaned.
+
+| Fixture | Class / RAM GiB / vCPU | Database GiB | Load | Request → ready | Largest SQL interruption upper bound | Total incl. setup/teardown |
+|---|---|---:|---:|---:|---:|---:|
+| small | db.r7g.xlarge / 32 / 4 | 0.411 | 0:18 | 6:32 | 3:03 | 18:01 |
+| medium | db.r7g.xlarge / 32 / 4 | 6.455 | 4:06 | 7:53 | 2:33 | 28:16 |
+| large | db.r7g.xlarge / 32 / 4 | 25.800 | 16:15 | 12:42 | 3:03 | 43:31 |
+| medium | db.r7g.large / 16 / 2 | 6.455 | 4:35 | 8:56 | 3:04 | 28:33 |
+
+Configuration: PostgreSQL 16.15 → 17.11, Single-AZ Ohio, fixed 400 GiB gp3, observed 12,000 IOPS / 500 MiB/s. The baseline class has 32 GiB and 4 vCPUs; the comparison class has 16 GiB and 2 vCPUs. Each combination has one trial. The schema and fixture rules stay fixed while row counts increase. The case receipts include counts, measured bytes, sampled first/last-row hashes, constraint metadata and cleanup checks. Historical constraint checks cover names/types/validation flags, not complete definitions.
+
+Our dated Ohio API check found 16.8 reported deprecated and rejected for the selected new-instance provisioning combination. The exact deprecation date and snapshot-restore behavior are unknown. The lab consequently measured 16.15, not 16.8. This is not evidence that every PostgreSQL 16 release is unavailable or that existing instances immediately stop working.
+
+The captured service logs say `Linking user relation files`. AWS documents `pg_upgrade --link`; a claim that this step must copy every table/TOAST byte is therefore unsupported. Managed preparation, backups, restart, recovery and statistics work remain separate. Request-to-AWS-readiness is different from the sampled SQL interruption envelope, and the minimal read probe does not measure application write availability or recovery.
+
+Please return:
+
+1. A team-ready answer separating measured facts, inferences and untested assumptions. Does a multi-hour downtime estimate follow from stored bytes alone? Do not replace it with a minutes-level production guarantee from these small fixed-object fixtures.
+2. A comparison denominator using the private environment: actual RDS class and storage settings, topology, all databases, catalog/index/partition counts, extensions in every database, custom parameters, prepared transactions and logical replication slots. Explain the cross-region active-active mechanism rather than assuming its behavior. Keep those private identifiers and aggregate counts out of public artifacts.
+3. A proposed internal Test A: restore an approved real-data snapshot into an isolated matching RDS configuration, record the actual restored version, document any hydration/warmup, perform the authorized upgrade, and independently measure read/write connectivity, managed-operation time, logs/events, post-upgrade analysis, application recovery and rollback/restore readiness. Account for the source-minor substitution if exact 16.8 restoration is unavailable.
+4. A proposed internal Test A2 from the same snapshot/configuration, with an approved payload-retention cleanup before the upgrade. Validate dependencies and retention requirements first. Do not assume cleanup is safe or that it halves downtime; distinguish upgrade, backup and post-upgrade maintenance benefits. TRUNCATE already reclaims its table storage; subsequent VACUUM is not required merely to reclaim that storage.
+5. Remaining blockers, and the smallest additional evidence needed for an operational maintenance window. The class comparison changes CPU and RAM together, and one trial per case gives no variance estimate. Extension support in PostgreSQL 17 alone does not prove an environment has no upgrade blockers.
+
+Use precise private facts for the internal team analysis. If returning a summary for the public repository, sanitize it: no company names, internal schema/table names, account IDs, endpoints, private aggregate counts, raw screenshots or real data. Public synthetic fixture values above are safe to reuse.
