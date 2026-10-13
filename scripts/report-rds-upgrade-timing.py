@@ -43,10 +43,10 @@ def main():
             'total_seconds': c['total_seconds'], 'elapsed_compute_storage_estimate_usd': rate * c['total_seconds'] / 3600,
             'execution_git_head': c['provenance']['git_head']})
     with (ROOT / 'docs/report/rds-upgrade-timing.csv').open('w', newline='') as stream:
-        writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(stream, fieldnames=list(rows[0]), lineterminator='\n')
         writer.writeheader()
         writer.writerows(rows)
-    table = ['| Fixture | Class / RAM / vCPU | Database GiB | Load | Request → ready | Largest SQL interruption upper bound | Total incl. setup/teardown |',
+    table = ['| Fixture | Class / RAM GiB / vCPU | Database GiB | Load | Request → ready | Largest SQL interruption upper bound | Total incl. setup/teardown |',
              '|---|---|---:|---:|---:|---:|---:|']
     table.extend(f"| {r['tier']} | {r['instance_class']} / {r['memory_gib']} / {r['vcpu']} | {r['database_gib']:.3f} | {clock(r['load_seconds'])} | {clock(r['request_to_ready_seconds'])} | {clock(r['sql_episode_upper_seconds'])} | {clock(r['total_seconds'])} |" for r in rows)
     counts = ['| Fixture / RAM | Parents | Queue | Push children | History | Templates |', '|---|---:|---:|---:|---:|---:|']

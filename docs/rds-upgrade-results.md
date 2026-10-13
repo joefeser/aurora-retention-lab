@@ -6,7 +6,7 @@
 
 One trial per case, PostgreSQL **16.15 → 17.11**, Ohio (`us-east-2`), Single-AZ, encrypted **400 GiB gp3**, observed **12,000 IOPS / 500 MiB/s**. The instance classes use Graviton3. Times are minutes:seconds, rounded for readability. Allocated storage and measured database bytes are different quantities.
 
-| Fixture | Class / RAM / vCPU | Database GiB | Load | Request → ready | Largest SQL interruption upper bound | Total incl. setup/teardown |
+| Fixture | Class / RAM GiB / vCPU | Database GiB | Load | Request → ready | Largest SQL interruption upper bound | Total incl. setup/teardown |
 |---|---|---:|---:|---:|---:|---:|
 | small | db.r7g.xlarge / 32 / 4 | 0.411 | 0:18 | 6:32 | 3:03 | 18:01 |
 | medium | db.r7g.xlarge / 32 / 4 | 6.455 | 4:06 | 7:53 | 2:33 | 28:16 |
