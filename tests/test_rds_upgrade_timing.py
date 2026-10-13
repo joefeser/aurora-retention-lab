@@ -2,7 +2,8 @@ import importlib.util
 import json
 from pathlib import Path
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
+from tempfile import TemporaryDirectory
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location('rds_upgrade', ROOT / 'scripts/run-rds-upgrade-timing.py')
@@ -88,6 +89,56 @@ class RdsUpgradeTests(unittest.TestCase):
         self.assertEqual(31, u.reserved_total(previous, 8))
         with self.assertRaisesRegex(ValueError, 'Invalid'):
             u.reserved_total([{'budget_reservation_usd': float('nan')}], 7)
+
+
+    def test_boolean_reservation_is_not_money(self):
+        with self.assertRaisesRegex(ValueError, 'Invalid'):
+            u.reserved_total([{'budget_reservation_usd': True}], 7)
+
+    def test_missing_stack_does_not_release_inventory_or_delete(self):
+        lab = Mock()
+        lab.stack.return_value = None
+        with TemporaryDirectory() as directory:
+            with self.assertRaisesRegex(ValueError, 'outcome unresolved'):
+                u.cleanup(lab, Path(directory), {'run_id': 'mine'})
+        lab.cf.delete_stack.assert_not_called()
+        lab.db.assert_not_called()
+
+    def test_unknown_upgrade_state_does_not_delete_stack(self):
+        lab = Mock()
+        lab.stack.return_value = {'StackId': 'owned', 'StackStatus': 'CREATE_COMPLETE'}
+        lab.db.return_value = {'DBInstanceStatus': 'upgrading', 'EngineVersion': '16.15'}
+        with TemporaryDirectory() as directory:
+            with self.assertRaisesRegex(ValueError, 'Upgrade outcome unresolved'):
+                u.cleanup(lab, Path(directory), {'run_id': 'mine', 'upgrade_requested': True,
+                    'target_version': '17.11'})
+        lab.cf.delete_stack.assert_not_called()
+
+    def test_recovery_cannot_take_active_run_lock(self):
+        with TemporaryDirectory() as directory, patch.object(u, 'PRIVATE', Path(directory)):
+            with u.run_lock():
+                with self.assertRaises(BlockingIOError):
+                    with u.run_lock():
+                        self.fail('Concurrent recovery acquired active run lock')
+            with u.run_lock():
+                pass
+
+    def test_missing_receipt_requires_reconciliation(self):
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / 'inventory.json'
+            with self.assertRaisesRegex(ValueError, 'Missing prior receipt'):
+                u.prior_reservations([path])
+
+    def test_reads_retry_transient_errors_but_not_access_denied(self):
+        from botocore.exceptions import EndpointConnectionError, ClientError
+        call = Mock(side_effect=[EndpointConnectionError(endpoint_url='https://example.invalid'), {'ok': True}])
+        with patch.object(u.time, 'sleep'):
+            self.assertEqual({'ok': True}, u.read_with_retry(call))
+        self.assertEqual(2, call.call_count)
+        call = Mock(side_effect=ClientError({'Error': {'Code': 'AccessDenied'}}, 'DescribeStacks'))
+        with self.assertRaises(ClientError):
+            u.read_with_retry(call)
+        self.assertEqual(1, call.call_count)
 
 
 if __name__ == '__main__':

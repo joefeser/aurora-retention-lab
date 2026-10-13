@@ -29,7 +29,7 @@ A proportional stored-bytes model is therefore not a justified way to predict pr
 
 ## Data checks and cleanup
 
-Every published case preserved expected relation counts, first/last-row content hashes, constraints and the target SQL version. Recorded heap, index and total bytes were unchanged in **4/4** cases. These are counts and sampled content checks, not a full content checksum or application compatibility test.
+Every published case preserved expected relation counts, first/last-row content hashes, constraint names/types/validation flags and the target SQL version. Historical receipts did not compare constraint definitions or referenced relations; future harness runs record canonical definitions and owning relations as well. Recorded heap, index and total bytes were unchanged in **4/4** cases. These are counts and sampled content checks, not a full content checksum or application compatibility test.
 
 | Fixture / RAM | Parents | Queue | Push children | History | Templates |
 |---|---:|---:|---:|---:|---:|

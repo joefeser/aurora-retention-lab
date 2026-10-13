@@ -16,7 +16,7 @@ Public synthetic measurements: 4/4 planned synthetic cases completed and cleaned
 | large | db.r7g.xlarge / 32 / 4 | 25.800 | 16:15 | 12:42 | 3:03 | 43:31 |
 | medium | db.r7g.large / 16 / 2 | 6.455 | 4:35 | 8:56 | 3:04 | 28:33 |
 
-Configuration: PostgreSQL 16.15 → 17.11, Single-AZ Ohio, fixed 400 GiB gp3, observed 12,000 IOPS / 500 MiB/s. The baseline class has 32 GiB and 4 vCPUs; the comparison class has 16 GiB and 2 vCPUs. Each combination has one trial. The schema and fixture rules stay fixed while row counts increase. The case receipts include counts, measured bytes, sampled first/last-row hashes, constraints and cleanup checks.
+Configuration: PostgreSQL 16.15 → 17.11, Single-AZ Ohio, fixed 400 GiB gp3, observed 12,000 IOPS / 500 MiB/s. The baseline class has 32 GiB and 4 vCPUs; the comparison class has 16 GiB and 2 vCPUs. Each combination has one trial. The schema and fixture rules stay fixed while row counts increase. The case receipts include counts, measured bytes, sampled first/last-row hashes, constraint metadata and cleanup checks. Historical constraint checks cover names/types/validation flags, not complete definitions.
 
 Our dated Ohio API check found 16.8 reported deprecated and rejected for the selected new-instance provisioning combination. The exact deprecation date and snapshot-restore behavior are unknown. The lab consequently measured 16.15, not 16.8. This is not evidence that every PostgreSQL 16 release is unavailable or that existing instances immediately stop working.
 

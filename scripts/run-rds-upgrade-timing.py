@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Standard RDS synthetic upgrade timing. Private inventory; explicit public export."""
 import argparse
+from contextlib import contextmanager
 import datetime as dt
 import hashlib
 import importlib.util
@@ -11,6 +12,7 @@ import re
 from pathlib import Path
 import subprocess
 import threading
+import tempfile
 import time
 import urllib.request
 import uuid
@@ -22,7 +24,23 @@ RESERVE_USD = 7.0  # Conservative admission reservation; never a billing guarant
 spec = importlib.util.spec_from_file_location('aurora_fixture', ROOT / 'scripts/run-upgrade-timing.py')
 fixture = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(fixture)
-save = fixture.save
+
+
+def save(path, data):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.NamedTemporaryFile(mode='w', dir=path.parent, suffix='.tmp', delete=False) as stream:
+        temporary = Path(stream.name)
+        try:
+            stream.write(json.dumps(data, indent=2, default=str, allow_nan=False) + '\n')
+            stream.flush()
+        except BaseException:
+            temporary.unlink(missing_ok=True)
+            raise
+    try:
+        temporary.replace(path)
+    finally:
+        temporary.unlink(missing_ok=True)
+
 utc = fixture.utc
 
 
@@ -58,9 +76,47 @@ def matched(before, after, parents):
 
 def reserved_total(receipts, next_reservation):
     reservations = [r['budget_reservation_usd'] for r in receipts] + [next_reservation]
-    if any(not isinstance(x, (int, float)) or not math.isfinite(x) or x <= 0 for x in reservations):
+    if any(isinstance(x, bool) or not isinstance(x, (int, float)) or not math.isfinite(x) or x <= 0 for x in reservations):
         raise ValueError('Invalid recorded budget reservation')
     return sum(reservations)
+
+
+@contextmanager
+def run_lock():
+    """One checkout, one operator: run and recovery cleanup share the lock."""
+    import fcntl
+    PRIVATE.mkdir(parents=True, exist_ok=True)
+    with (PRIVATE / '.run.lock').open('a') as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        yield
+
+
+def read_with_retry(call, **kwargs):
+    """Bound transient reads only; mutations remain single-attempt."""
+    from botocore.exceptions import ConnectionError, HTTPClientError, ClientError
+    for attempt in range(3):
+        try:
+            return call(**kwargs)
+        except (ConnectionError, HTTPClientError, ClientError) as exc:
+            if isinstance(exc, ClientError):
+                code = exc.response['Error']['Code']
+                status = exc.response.get('ResponseMetadata', {}).get('HTTPStatusCode', 0)
+                if status < 500 and code not in ('Throttling', 'ThrottlingException', 'RequestLimitExceeded'):
+                    raise
+            if attempt == 2:
+                raise
+            time.sleep(2**attempt)
+
+
+def prior_reservations(paths):
+    """Never silently release a reservation because its receipt is missing."""
+    records = []
+    for path in paths:
+        receipt = path.parent / 'receipt.json'
+        if not receipt.is_file():
+            raise ValueError('Missing prior receipt; reconcile private inventory before another case')
+        records.append(json.loads(receipt.read_text()))
+    return records
 
 
 def source_receipt():
@@ -102,7 +158,7 @@ class Lab:
 
     def stack(self, state):
         try:
-            stack = self.cf.describe_stacks(StackName=state.get('stack_id', state['run_id']))['Stacks'][0]
+            stack = read_with_retry(self.cf.describe_stacks, StackName=state.get('stack_id', state['run_id']))['Stacks'][0]
         except self.cf.exceptions.ClientError as exc:
             if exc.response['Error']['Code'] == 'ValidationError' and 'does not exist' in exc.response['Error']['Message']:
                 return None
@@ -116,7 +172,7 @@ class Lab:
 
     def db(self, state, absent_ok=False):
         try:
-            db = self.rds.describe_db_instances(DBInstanceIdentifier=state['run_id'])['DBInstances'][0]
+            db = read_with_retry(self.rds.describe_db_instances, DBInstanceIdentifier=state['run_id'])['DBInstances'][0]
         except self.rds.exceptions.DBInstanceNotFoundFault:
             if absent_ok:
                 return None
@@ -158,7 +214,7 @@ def measure(conn):
         ).fetchall()
     version, total = conn.execute("SELECT current_setting('server_version'), pg_database_size(current_database())").fetchone()
     constraints = conn.execute(
-        'SELECT conname, contype, convalidated FROM pg_constraint '
+        'SELECT conname, contype, convalidated, conrelid::regclass::text, pg_get_constraintdef(oid) FROM pg_constraint '
         'WHERE connamespace=%s::regnamespace ORDER BY conname', (fixture.SCHEMA,)
     ).fetchall()
     return {'server_version': version, 'database_bytes': total, 'tables': tables,
@@ -177,7 +233,14 @@ def wait_for(check, seconds, label):
 
 def cleanup(lab, directory, state):
     stack = lab.stack(state)
+    if stack is None:
+        # A missing lookup cannot disprove acceptance of an ambiguous create.
+        raise ValueError('Stack outcome unresolved; retain inventory and reconcile before cleanup')
+    state['stack_id'] = stack['StackId']
+    save(directory / 'inventory.json', state)
     db = lab.db(state, absent_ok=True)
+    if state.get('upgrade_requested') and db and (db['DBInstanceStatus'] != 'available' or db['EngineVersion'] != state['target_version']):
+        raise ValueError('Upgrade outcome unresolved; wait for target readiness before cleanup')
     if db:
         state['secret_arn'] = db.get('MasterUserSecret', {}).get('SecretArn')
     # Inventory exact-instance snapshots before deleting their parent; identities stay private.
@@ -196,7 +259,7 @@ def cleanup(lab, directory, state):
         current = lab.stack(state)
         if current and current['StackStatus'] == 'DELETE_FAILED':
             raise RuntimeError('Cleanup failed; inspect private stack events')
-        return current is None or current['StackStatus'] == 'DELETE_COMPLETE'
+        return current is not None and current['StackStatus'] == 'DELETE_COMPLETE'
     wait_for(deleted, 3600, 'Stack deletion timeout')
     for identifier in state['snapshots']:
         try:
@@ -226,13 +289,11 @@ def cleanup(lab, directory, state):
 
 
 def run(args):
-    import fcntl
     import psycopg
     PRIVATE.mkdir(parents=True, exist_ok=True)
     if not math.isfinite(args.budget_usd) or not 0 < args.budget_usd <= 30:
         raise ValueError('This authorized batch has a maximum $30 planning budget')
-    with (PRIVATE / '.run.lock').open('a') as lock:
-        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    with run_lock():
         source = source_receipt()
         if not (PRIVATE / 'global-bundle.pem').is_file():
             raise ValueError('Download the documented AWS TLS certificate bundle first')
@@ -240,7 +301,7 @@ def run(args):
         prior = [json.loads(p.read_text()) for p in prior_paths]
         if any(s.get('cleanup') != 'verified_stack_deleted_database_snapshots_secret_absent' for s in prior):
             raise ValueError('Previous run needs reconciliation/cleanup before another case')
-        previous_receipts = [json.loads((p.parent / 'receipt.json').read_text()) for p in prior_paths]
+        previous_receipts = prior_reservations(prior_paths)
         if reserved_total(previous_receipts, RESERVE_USD) > args.budget_usd:
             raise ValueError('Admission reservations exceed batch planning budget')
         local = json.loads((ROOT / '.lab/aws.json').read_text())
@@ -252,7 +313,7 @@ def run(args):
         directory = PRIVATE / run_id
         state = {'run_id': run_id, 'region': args.region, 'account': lab.account,
                  'instance_class': args.instance_class, 'created_at': utc(), 'tier': args.tier,
-                 'source_version': args.source, 'target_version': args.target, 'client_cidr': f'{client_ip}/32'}
+                 'source_version': args.source, 'target_version': args.target, 'create_outcome': 'unknown', 'client_cidr': f'{client_ip}/32'}
         receipt = {'schema_version': 1, 'engine': 'postgres', 'tier': args.tier, 'source_version': args.source,
                    'target_version': args.target, 'instance_class': args.instance_class, 'region': args.region,
                    'allocated_storage_gib': 400, 'storage_type': 'gp3', 'multi_az': False,
@@ -273,6 +334,7 @@ def run(args):
                 Tags=[{'Key': 'RdsBenchmarkRun', 'Value': run_id}, {'Key': 'Project', 'Value': 'aurora-retention-lab'}],
                 ClientRequestToken=run_id, TimeoutInMinutes=60, OnFailure='DELETE')
             state['stack_id'] = result['StackId']
+            state['create_outcome'] = 'accepted'
             save(directory / 'inventory.json', state)
             def ready():
                 stack = lab.stack(state)
@@ -330,6 +392,8 @@ def run(args):
             receipt['request_at'] = utc()
             save(directory / 'receipt.json', receipt)
             print(f'{args.tier}: direct probes active; requesting major upgrade once', flush=True)
+            state['upgrade_requested'] = True
+            save(directory / 'inventory.json', state)
             lab.rds.modify_db_instance(DBInstanceIdentifier=run_id, EngineVersion=args.target,
                                        AllowMajorVersionUpgrade=True, ApplyImmediately=True)
             receipt['request_returned_seconds'] = time.monotonic() - upgrade_start
@@ -454,10 +518,11 @@ def main():
         if not __import__('re').fullmatch(r'rds-upgrade-[a-f0-9]{12}', args.run_id):
             raise ValueError('Invalid run identifier')
         directory = PRIVATE / args.run_id
-        state = json.loads((directory / 'inventory.json').read_text())
-        if state['run_id'] != args.run_id:
-            raise ValueError('Inventory identity mismatch')
-        cleanup(Lab(state['region'], state['account']), directory, state)
+        with run_lock():
+            state = json.loads((directory / 'inventory.json').read_text())
+            if state['run_id'] != args.run_id:
+                raise ValueError('Inventory identity mismatch')
+            cleanup(Lab(state['region'], state['account']), directory, state)
 
 
 if __name__ == '__main__':

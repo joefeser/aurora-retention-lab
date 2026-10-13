@@ -17,3 +17,8 @@ class LogCaptureTests(unittest.TestCase):
 
     def test_copy_phase_is_kept_if_the_service_really_reports_it(self):
         self.assertEqual(['Copying user relation files'], u.public_lines('Copying user relation files'))
+
+    def test_incomplete_capture_cannot_replace_public_observations(self):
+        with self.assertRaisesRegex(ValueError, 'remains private'):
+            u.require_complete_logs([{'excerpts': ['Performing Upgrade']}])
+        u.require_complete_logs([{'excerpts': ['Linking user relation files', 'Upgrade Complete']}])

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Read owned RDS service logs; publish static phase labels, never raw messages."""
 import argparse
+import fcntl
 import hashlib
 import importlib.util
 import json
@@ -19,7 +20,12 @@ def public_lines(raw):
     return [line.strip() for line in raw.splitlines() if line.strip() in PHASE_LABELS]
 
 
-def capture(run_id):
+def require_complete_logs(observations):
+    if not any('Upgrade Complete' in x['excerpts'] for x in observations):
+        raise ValueError('Incomplete log capture remains private; existing public observations preserved')
+
+
+def _capture(run_id):
     if not re.fullmatch(r'rds-upgrade-[a-f0-9]{12}', run_id):
         raise ValueError('Invalid run identifier')
     directory = u.PRIVATE / run_id
@@ -59,6 +65,8 @@ def capture(run_id):
         'limitations': ['Point-in-time bounded service log capture; raw logs and identifiers remain private.',
             'Phase labels do not measure the complete managed operation or SQL interruption.',
             'The initial two cases used the equivalent manual API capture before this collector existed.']}
+    require_complete_logs(observations)
+    record['observed_engine_version'] = db['EngineVersion']
     output = ROOT / 'evidence/rds-upgrade-log-observations.json'
     existing = json.loads(output.read_text())['observations'] if output.exists() else []
     # Historical initial captures were both on the documented 32 GiB baseline.
@@ -67,6 +75,13 @@ def capture(run_id):
     u.save(output, {'schema_version': 1, 'observations': [*existing, record]})
     print(json.dumps({'tier': record['tier'], 'instance_class': record['instance_class'],
                       'logs_captured': len(logs), 'phase_labels': [x['excerpts'] for x in observations]}))
+
+
+def capture(run_id):
+    u.PRIVATE.mkdir(parents=True, exist_ok=True)
+    with (u.PRIVATE / '.log-capture.lock').open('a') as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        return _capture(run_id)
 
 
 if __name__ == '__main__':

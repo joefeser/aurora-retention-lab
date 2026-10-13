@@ -87,3 +87,13 @@ After all selected cases have passed and cleanup is verified, publish the saniti
 ```
 
 Output: `evidence/upgrade-timing-rds.json`. Inventory, account identifiers, endpoint, credentials, raw errors and raw AWS event messages stay under ignored `.lab/`. The Aurora evidence is unchanged.
+
+## Research recovery boundaries
+
+The budget reservation guard and inventory are local to one checkout. Run this study from one checkout with one operator; concurrent batches on other machines/checkouts are unsupported and cannot share the $30 plan. This is not an account-wide spending control.
+
+Run and recovery cleanup acquire the same local lock. Transient stack/database reads retry at most three times; mutations remain single-attempt. A missing stack lookup after creation is unresolved, not proof that no resources were created. Preserve its private inventory, inspect the exact run in CloudFormation, and retry the documented cleanup only after the owned stack is discoverable. Cleanup refuses a requested upgrade until the database is available on the target version; if AWS rejected or rolled back the request, reconcile privately instead of forcing deletion from this harness.
+
+A missing or stale receipt remains an explicit recovery blocker. Cleanup does not promote an interrupted trial to successful scientific evidence. Preserve the inventory, original reservation and receipt; inspect the partial stage and reconcile before another trial. Publication intentionally fails closed if any private attempt is failed or incomplete. To publish a deliberate subset, separately review and archive the excluded attempts with their cleanup and failure evidence first; do not silently omit failures.
+
+Historical constraint evidence covers names, types and validation flags. It does not prove unchanged canonical definitions or referenced relations. Future runs capture definitions and owning relations too. None of these harness fixes changes the recorded timings or their execution hashes. Log capture is serialized locally and incomplete captures remain private rather than replacing published completed phase observations.

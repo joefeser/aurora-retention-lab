@@ -22,9 +22,25 @@ def clock(seconds):
     return f'{rounded // 60}:{rounded % 60:02}'
 
 
+def validate_configuration(cases):
+    for c in cases:
+        if (c['engine'], c['source_version'], c['target_version'], c['region'],
+                c['allocated_storage_gib'], c['storage_type'], c['multi_az']) != (
+                'postgres', '16.15', '17.11', 'us-east-2', 400, 'gp3', False):
+            raise ValueError('Report supports only the documented benchmark configuration')
+        if c['observed_storage'] != {'AllocatedStorage': 400, 'StorageType': 'gp3',
+                'Iops': 12000, 'StorageThroughput': 500, 'StorageEncrypted': True}:
+            raise ValueError('Observed storage differs from the report configuration')
+
+
+def sql_label(row):
+    return 'no observed interruption' if row['sql_episode_count'] == 0 else clock(row['sql_episode_upper_seconds'])
+
+
 def main():
     raw = json.loads((ROOT / 'evidence/upgrade-timing-rds.json').read_text())
     cases = [u.public_receipt(c) for c in raw['cases']]
+    validate_configuration(cases)
     keys = [(c['tier'], c['instance_class']) for c in cases]
     if len(set(keys)) != len(keys) or not set(keys) <= PLANNED:
         raise ValueError('Report expects one trial per planned tier/class')
@@ -48,7 +64,7 @@ def main():
         writer.writerows(rows)
     table = ['| Fixture | Class / RAM GiB / vCPU | Database GiB | Load | Request → ready | Largest SQL interruption upper bound | Total incl. setup/teardown |',
              '|---|---|---:|---:|---:|---:|---:|']
-    table.extend(f"| {r['tier']} | {r['instance_class']} / {r['memory_gib']} / {r['vcpu']} | {r['database_gib']:.3f} | {clock(r['load_seconds'])} | {clock(r['request_to_ready_seconds'])} | {clock(r['sql_episode_upper_seconds'])} | {clock(r['total_seconds'])} |" for r in rows)
+    table.extend(f"| {r['tier']} | {r['instance_class']} / {r['memory_gib']} / {r['vcpu']} | {r['database_gib']:.3f} | {clock(r['load_seconds'])} | {clock(r['request_to_ready_seconds'])} | {sql_label(r)} | {clock(r['total_seconds'])} |" for r in rows)
     baseline = [r for r in rows if r['instance_class'] == 'db.r7g.xlarge']
     finding = ''
     if len(baseline) == 3:
@@ -97,7 +113,7 @@ A proportional stored-bytes model is therefore not a justified way to predict pr
 
 ## Data checks and cleanup
 
-Every published case preserved expected relation counts, first/last-row content hashes, constraints and the target SQL version. Recorded heap, index and total bytes were unchanged in **{sizes_equal}/{len(cases)}** cases. These are counts and sampled content checks, not a full content checksum or application compatibility test.
+Every published case preserved expected relation counts, first/last-row content hashes, constraint names/types/validation flags and the target SQL version. Historical receipts did not compare constraint definitions or referenced relations; future harness runs record canonical definitions and owning relations as well. Recorded heap, index and total bytes were unchanged in **{sizes_equal}/{len(cases)}** cases. These are counts and sampled content checks, not a full content checksum or application compatibility test.
 
 {chr(10).join(counts)}
 
@@ -133,7 +149,7 @@ Public synthetic measurements: {status}
 
 {chr(10).join(table)}
 
-Configuration: PostgreSQL 16.15 → 17.11, Single-AZ Ohio, fixed 400 GiB gp3, observed 12,000 IOPS / 500 MiB/s. The baseline class has 32 GiB and 4 vCPUs; the comparison class has 16 GiB and 2 vCPUs. Each combination has one trial. The schema and fixture rules stay fixed while row counts increase. The case receipts include counts, measured bytes, sampled first/last-row hashes, constraints and cleanup checks.
+Configuration: PostgreSQL 16.15 → 17.11, Single-AZ Ohio, fixed 400 GiB gp3, observed 12,000 IOPS / 500 MiB/s. The baseline class has 32 GiB and 4 vCPUs; the comparison class has 16 GiB and 2 vCPUs. Each combination has one trial. The schema and fixture rules stay fixed while row counts increase. The case receipts include counts, measured bytes, sampled first/last-row hashes, constraint metadata and cleanup checks. Historical constraint checks cover names/types/validation flags, not complete definitions.
 
 Our dated Ohio API check found 16.8 reported deprecated and rejected for the selected new-instance provisioning combination. The exact deprecation date and snapshot-restore behavior are unknown. The lab consequently measured 16.15, not 16.8. This is not evidence that every PostgreSQL 16 release is unavailable or that existing instances immediately stop working.
 
