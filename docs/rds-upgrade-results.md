@@ -49,4 +49,4 @@ The fixture, infrastructure and probe logic are fixed across these cases; interv
 
 ## What remains internal
 
-An actual-data snapshot rehearsal and a cleanup-versus-no-cleanup comparison belong in the approved internal environment. This synthetic study does not establish that deleting a large payload table will halve downtime. Cross-region active-active behavior, application recovery, custom parameters, logical replication slots and extension upgrades were not exercised. Keep private identifiers, aggregate counts and real data outside this public repository.
+An actual-data snapshot rehearsal and a cleanup-versus-no-cleanup comparison belong in the approved internal environment. This synthetic study does not establish that deleting a large payload table will halve downtime. The minimal read probe does not measure write availability, pooled-connection recovery or application query latency. Cross-region active-active behavior, application recovery, custom parameters, logical replication slots and extension upgrades were not exercised. Keep private identifiers, aggregate counts and real data outside this public repository.
