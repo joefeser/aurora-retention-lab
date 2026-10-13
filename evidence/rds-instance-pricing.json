@@ -1,0 +1,12 @@
+{
+  "checked_at": "2026-10-12T23:32:06.627650+00:00",
+  "region": "us-east-2",
+  "deployment": "Single-AZ",
+  "engine": "PostgreSQL",
+  "instance_prices_usd_per_hour": {
+    "db.r7g.xlarge": 0.478,
+    "db.r7g.large": 0.239
+  },
+  "gp3_storage_usd_per_gb_month": 0.115,
+  "estimate_month_hours": 730
+}
