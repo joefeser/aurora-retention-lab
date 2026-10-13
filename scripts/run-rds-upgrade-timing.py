@@ -200,17 +200,19 @@ class Lab:
 
 
 def measure(conn):
+    from psycopg import sql
     tables = {}
     for name in fixture.w.TABLES:
         relation = f'{fixture.SCHEMA}.{name}'
-        rows = conn.execute(f'SELECT count(*) FROM {relation}').fetchone()[0]
+        rows = conn.execute(sql.SQL('SELECT count(*) FROM {}').format(sql.Identifier(fixture.SCHEMA, name))).fetchone()[0]
         sizes = conn.execute('SELECT pg_total_relation_size(%s::regclass), pg_relation_size(%s::regclass), pg_indexes_size(%s::regclass)', (relation, relation, relation)).fetchone()
         tables[name] = dict(zip(('rows', 'total_bytes', 'heap_bytes', 'index_bytes'), (rows, *sizes)))
         # Bounded content checks supplement counts; these are explicitly sampled.
         tables[name]['sampled_row_hashes'] = conn.execute(
-            f'SELECT id, md5(to_jsonb(t)::text) FROM {relation} t '
-            f'WHERE id IN (SELECT min(id) FROM {relation}) '
-            f'OR id IN (SELECT max(id) FROM {relation}) ORDER BY id'
+            sql.SQL('SELECT id, md5(to_jsonb(t)::text) FROM {relation} t '
+                    'WHERE id IN (SELECT min(id) FROM {relation}) '
+                    'OR id IN (SELECT max(id) FROM {relation}) ORDER BY id').format(
+                        relation=sql.Identifier(fixture.SCHEMA, name))
         ).fetchall()
     version, total = conn.execute("SELECT current_setting('server_version'), pg_database_size(current_database())").fetchone()
     constraints = conn.execute(
@@ -420,7 +422,7 @@ def run(args):
             with psycopg.connect(**credentials, autocommit=True) as conn:
                 receipt['after'] = measure(conn)
                 for table in fixture.w.TABLES:
-                    conn.execute(f'ANALYZE {fixture.SCHEMA}.{table}')
+                    conn.execute(psycopg.sql.SQL('ANALYZE {}').format(psycopg.sql.Identifier(fixture.SCHEMA, table)))
             receipt['validation_seconds'] = time.monotonic() - validate_start
             receipt['checks'] = {
                 'expected_counts_preserved': matched(receipt['before'], receipt['after'], TIERS[args.tier]),
